@@ -1,0 +1,17 @@
+<div class="product-grid-container">
+  <div class="loading-state" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <p>Carregando produtos...</p>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && products.length === 0">
+    <i class="fa-solid fa-box-open"></i>
+    <h3>Nenhum produto encontrado</h3>
+    <p>Tente buscar por outro termo ou categoria</p>
+  </div>
+
+  <div class="product-grid" *ngIf="!loading && products.length > 0">
+    <app-product-card *ngFor="let product of products" [product]="product" (viewDetails)="onViewDetails($event)"
+      (addToCart)="onAddToCart($event)"></app-product-card>
+  </div>
+</div>

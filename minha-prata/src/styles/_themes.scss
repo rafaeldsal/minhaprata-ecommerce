@@ -56,9 +56,9 @@
   @include dark-theme;
 }
 
-// Media Query para preferência do sistema
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    @include dark-theme;
-  }
-}
+// // Media Query para preferência do sistema
+// @media (prefers-color-scheme: dark) {
+//   :root:not([data-theme='light']) {
+//     @include dark-theme;
+//   }
+// }

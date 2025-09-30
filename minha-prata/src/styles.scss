@@ -9,10 +9,15 @@
 // =============================================
 // RESET & BASE STYLES
 // =============================================
+:root {
+  @include light-theme;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  color-scheme: light !important;
 }
 
 html {
@@ -29,6 +34,11 @@ body {
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
+}
+
+html,
+body {
+  color-scheme: light only;
 }
 
 // =============================================
