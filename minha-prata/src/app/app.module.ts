@@ -20,6 +20,8 @@ import { PaymentFormComponent } from './features/checkout/payment-form/payment-f
 import { ProductsModule } from './features/products/products/products.module';
 import { CategoryComponent } from './features/category/category/category.component';
 import { PageNotFoundComponent } from './shared/components/page-not-found/page-not-found.component';
+import { ProductGridComponent } from './features/products/components/product-grid/product-grid.component';
+import { PageContainerComponent } from './shared/components/page-container/page-container.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +38,9 @@ import { PageNotFoundComponent } from './shared/components/page-not-found/page-n
     AddressSelectComponent,
     PaymentFormComponent,
     CategoryComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    ProductGridComponent,
+    PageContainerComponent
   ],
   imports: [
     BrowserModule,

@@ -4,11 +4,17 @@
 
 // Responsive Breakpoints
 $breakpoints: (
+  'xs': 480px,
+  // Mobile landscape
   'sm': 640px,
+  // Tablet small
   'md': 768px,
+  // Tablet
   'lg': 1024px,
+  // Desktop
   'xl': 1280px,
-  '2xl': 1536px,
+  // Desktop large
+  '2xl': 1536px, // Desktop extra large
 );
 
 @mixin respond-to($breakpoint) {
