@@ -1,1 +1,73 @@
 /* You can add global styles to this file, and also import other style files */
+// =============================================
+// IMPORTS
+// =============================================
+@import './styles/variables';
+@import './styles/themes';
+@import './styles/mixins';
+
+// =============================================
+// RESET & BASE STYLES
+// =============================================
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+// =============================================
+// UTILITY CLASSES
+// =============================================
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+
+  @include respond-to('md') {
+    padding: 0 var(--space-6);
+  }
+}
+
+.text-center {
+  text-align: center;
+}
+.text-left {
+  text-align: left;
+}
+.text-right {
+  text-align: right;
+}
+
+// Spacing Utilities
+.mt-1 {
+  margin-top: var(--space-1);
+}
+.mt-2 {
+  margin-top: var(--space-2);
+}
+.mt-4 {
+  margin-top: var(--space-4);
+}
+.mb-4 {
+  margin-bottom: var(--space-4);
+}
+.p-4 {
+  padding: var(--space-4);
+}

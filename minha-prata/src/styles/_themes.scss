@@ -1,0 +1,64 @@
+// =============================================
+// MIXINS PARA TEMAS
+// =============================================
+
+@mixin light-theme {
+  // Backgrounds
+  --bg-primary: var(--color-white);
+  --bg-secondary: var(--color-gray-50);
+  --bg-tertiary: var(--color-gray-100);
+
+  // Texts
+  --text-primary: var(--color-gray-900);
+  --text-secondary: var(--color-gray-700);
+  --text-tertiary: var(--color-gray-500);
+  --text-inverse: var(--color-white);
+
+  // Borders
+  --border-primary: var(--color-gray-200);
+  --border-secondary: var(--color-gray-300);
+
+  // Components
+  --card-bg: var(--color-white);
+  --input-bg: var(--color-white);
+  --header-bg: var(--color-white);
+}
+
+@mixin dark-theme {
+  // Backgrounds
+  --bg-primary: var(--color-gray-900);
+  --bg-secondary: var(--color-gray-800);
+  --bg-tertiary: var(--color-gray-700);
+
+  // Texts
+  --text-primary: var(--color-gray-100);
+  --text-secondary: var(--color-gray-300);
+  --text-tertiary: var(--color-gray-400);
+  --text-inverse: var(--color-gray-900);
+
+  // Borders
+  --border-primary: var(--color-gray-700);
+  --border-secondary: var(--color-gray-600);
+
+  // Components
+  --card-bg: var(--color-gray-800);
+  --input-bg: var(--color-gray-800);
+  --header-bg: var(--color-gray-800);
+}
+
+// Aplica o tema light por padrão
+:root {
+  @include light-theme;
+}
+
+// Classe para dark mode (será controlada via JavaScript depois)
+[data-theme='dark'] {
+  @include dark-theme;
+}
+
+// Media Query para preferência do sistema
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include dark-theme;
+  }
+}
