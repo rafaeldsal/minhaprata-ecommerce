@@ -1,25 +1,37 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { CategoryService } from '../../products/services/category.service';
 
 @Component({
   selector: 'app-category',
-  template: `
-    <div class="category-page">
-      <h2>Produtos da Categoria: {{ categoryId }}</h2>
-      <!-- Aqui vai a lista de produtos por categoria -->
-    </div>
-  `,
+  templateUrl: './category.component.html',
   styleUrls: ['./category.component.scss']
 })
-export class CategoryComponent {
+export class CategoryComponent implements OnInit {
   categoryId: string = '';
+  categoryName: string = '';
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(
+    private route: ActivatedRoute,
+    private categoryService: CategoryService
+  ) { }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.categoryId = params['categoryId'];
-      // Carregar os produtos por categoria
-    })
+      this.loadCategoryName();
+    });
+  }
+
+  loadCategoryName(): void {
+    this.categoryService.getCategoryBySlug(this.categoryId).subscribe({
+      next: (category) => {
+        this.categoryName = category?.name || 'Categoria';
+      },
+      error: (error) => {
+        console.error('Erro ao carregar categoria:', error);
+        this.categoryName = 'Categoria';
+      }
+    });
   }
 }

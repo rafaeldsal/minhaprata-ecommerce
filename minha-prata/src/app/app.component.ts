@@ -7,4 +7,10 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'minha-prata';
+
+  selectedCategory: string = 'all';
+
+  onCategorySelected(categorySlug: string): void {
+    this.selectedCategory = categorySlug;
+  }
 }
