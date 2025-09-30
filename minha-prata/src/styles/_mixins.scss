@@ -5,21 +5,27 @@
 // Responsive Breakpoints
 $breakpoints: (
   'xs': 480px,
-  // Mobile landscape
   'sm': 640px,
-  // Tablet small
   'md': 768px,
-  // Tablet
   'lg': 1024px,
-  // Desktop
   'xl': 1280px,
-  // Desktop large
-  '2xl': 1536px, // Desktop extra large
+  '2xl': 1536px,
 );
 
 @mixin respond-to($breakpoint) {
   @if map-has-key($breakpoints, $breakpoint) {
     @media (min-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    @warn "Breakpoint #{$breakpoint} não encontrado.";
+  }
+}
+
+@mixin respond-to-max($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    $max-width: map-get($breakpoints, $breakpoint) - 1px;
+    @media (max-width: $max-width) {
       @content;
     }
   } @else {

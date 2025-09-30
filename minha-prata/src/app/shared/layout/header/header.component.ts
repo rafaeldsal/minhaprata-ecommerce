@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Category, CategorySlug } from '../../models/category';
 import { ModalService } from '../../services/modal.service';
@@ -12,10 +12,11 @@ import { CategoryService } from 'src/app/features/products/services/category.ser
 export class HeaderComponent implements OnInit {
 
   @Output() categorySelected = new EventEmitter<string>();
-  @Output() searchChanged = new EventEmitter<string>();
 
   categories: Category[] = [];
   activeCategory = CategorySlug.ALL;
+  isMobileMenuOpen = false;
+  cartItemsCount = 0;
 
   constructor(
     private router: Router,
@@ -24,13 +25,27 @@ export class HeaderComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-      this.loadCategories();
+    this.loadCategories();
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    if (window.innerWidth >= 768 && this.isMobileMenuOpen) {
+      this.closeMobileMenu();
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapePress(): void {
+    if (this.isMobileMenuOpen) {
+      this.closeMobileMenu();
+    }
   }
 
   loadCategories(): void {
     this.categoryService.getAllCategories().subscribe({
       next: (categories) => {
-        this.categories = categories
+        this.categories = categories;
       },
       error: (error) => {
         console.error('Erro ao carregar categorias: ', error);
@@ -38,13 +53,41 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  onLogoClick() {
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    this.updateBodyScroll();
+  }
+
+  closeMobileMenu(): void {
+    this.isMobileMenuOpen = false;
+    this.updateBodyScroll();
+  }
+
+  private updateBodyScroll(): void {
+    if (this.isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    }
+  }
+
+  onMobileCategorySelect(category: Category): void {
+    this.onCategorySelect(category);
+    this.closeMobileMenu();
+  }
+
+  onLogoClick(): void {
     this.router.navigate(['/']);
     this.activeCategory = CategorySlug.ALL;
     this.categorySelected.emit(CategorySlug.ALL);
+    this.closeMobileMenu();
   }
 
-  onCategorySelect(category: Category) {
+  onCategorySelect(category: Category): void {
     this.activeCategory = category.slug;
     this.categorySelected.emit(category.slug);
 
@@ -59,16 +102,11 @@ export class HeaderComponent implements OnInit {
     return category.slug;
   }
 
-  onUserClick() {
+  onUserClick(): void {
     this.modalService.openLoginModal();
   }
 
-  onCartClick() {
+  onCartClick(): void {
     this.modalService.openCartModal();
   }
-
-  onSearchChange(searchTerm: string) {
-    this.searchChanged.emit(searchTerm);
-  }
-
 }
