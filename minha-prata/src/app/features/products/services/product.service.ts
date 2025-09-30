@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Product } from '../models/product';
-import { Observable, of } from 'rxjs';
+import { delay, Observable, of } from 'rxjs';
 import { PRODUCT_OPTIONS_BY_CATEGORY } from '../models/product-options';
 
 @Injectable({
@@ -252,7 +252,9 @@ export class ProductService {
       this.enhanceProductWithOptions(p)
     );
 
-    return of(enhancedProducts)
+    return of(enhancedProducts).pipe(
+      delay(1000)
+    )
   }
 
   getByCategory(category: string): Observable<Product[]> {
@@ -264,7 +266,9 @@ export class ProductService {
       .filter(p => p.category.name === category)
       .map(p => this.enhanceProductWithOptions(p));
 
-    return of(filtered);
+    return of(filtered).pipe(
+      delay(800)
+    );
   }
 
 
