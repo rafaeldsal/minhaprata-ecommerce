@@ -18,6 +18,8 @@ import { AddressListComponent } from './features/address/address-list/address-li
 import { AddressSelectComponent } from './features/address/address-select/address-select.component';
 import { PaymentFormComponent } from './features/checkout/payment-form/payment-form.component';
 import { ProductsModule } from './features/products/products/products.module';
+import { CategoryComponent } from './features/category/category/category.component';
+import { PageNotFoundComponent } from './shared/components/page-not-found/page-not-found.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,9 @@ import { ProductsModule } from './features/products/products/products.module';
     AddressFormComponent,
     AddressListComponent,
     AddressSelectComponent,
-    PaymentFormComponent
+    PaymentFormComponent,
+    CategoryComponent,
+    PageNotFoundComponent
   ],
   imports: [
     BrowserModule,

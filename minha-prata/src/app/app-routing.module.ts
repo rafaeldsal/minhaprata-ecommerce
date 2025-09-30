@@ -2,10 +2,15 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TestProductComponent } from './features/products/components/test-product/test-product.component';
 import { HomeComponent } from './features/home/home.component';
+import { CategoryComponent } from './features/category/category/category.component';
+import { PageNotFoundComponent } from './shared/components/page-not-found/page-not-found.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'test-product', component: TestProductComponent }
+  { path: 'categoria/:categoryId', component: CategoryComponent },
+
+
+  { path: '**', component: PageNotFoundComponent }
 ];
 
 @NgModule({
