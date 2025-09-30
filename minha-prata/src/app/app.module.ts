@@ -17,6 +17,7 @@ import { AddressFormComponent } from './features/address/address-form/address-fo
 import { AddressListComponent } from './features/address/address-list/address-list.component';
 import { AddressSelectComponent } from './features/address/address-select/address-select.component';
 import { PaymentFormComponent } from './features/checkout/payment-form/payment-form.component';
+import { ProductsModule } from './features/products/products/products.module';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { PaymentFormComponent } from './features/checkout/payment-form/payment-f
   imports: [
     BrowserModule,
     AppRoutingModule,
-    SharedModule
+    SharedModule,
+    ProductsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
