@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Product, ProductOption } from '../../models/product';
 import { ProductService } from '../../services/product.service';
-// import { CartService } from '../../../cart/services/cart.service';
+import { CartService } from '../../../cart/services/cart.service';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
   selector: 'app-product-details',
@@ -21,7 +22,8 @@ export class ProductDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private productService: ProductService,
-    // private cartService: CartService
+    private cartService: CartService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -117,17 +119,23 @@ export class ProductDetailsComponent implements OnInit {
   // Adicionar ao carrinho
   addToCart(): void {
     if (this.product && this.isProductInStock() && this.areAllOptionsSelected()) {
-      const productToAdd = {
-        ...this.product,
-        selectedOptions: { ...this.selectedOptions },
-        quantity: this.quantity
-      };
+      this.cartService.addToCart(
+        this.product,
+        this.quantity,
+        this.selectedOptions
+      );
 
-      // this.cartService.addToCart(productToAdd, this.quantity);
-      console.log('Produto adicionado ao carrinho:', this.product.name);
-
-      // Opcional: mostrar mensagem de sucesso
-      alert(`${this.product.name} adicionado ao carrinho!`);
+      this.notificationService.showSuccess(
+        `${this.product.name} adicionado ao carrinho!`
+      );
+    } else if (!this.areAllOptionsSelected()) {
+      this.notificationService.showWarning(
+        'Por favor, selecione todas as opções antes de adicionar ao carrinho.'
+      );
+    } else if (!this.isProductInStock()) {
+      this.notificationService.showError(
+        'Este produto está fora de estoque.'
+      );
     }
   }
 

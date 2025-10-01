@@ -1,0 +1,17 @@
+<div class="toast-container">
+  <div *ngFor="let notification of notifications" class="toast" [class]="'toast-' + notification.type" role="alert"
+    aria-live="polite">
+
+    <div class="toast-icon">
+      <i class="fas" [class]="getNotificationIcon(notification.type)"></i>
+    </div>
+
+    <div class="toast-content">
+      <p class="toast-message">{{ notification.message }}</p>
+    </div>
+
+    <button class="toast-close" (click)="closeNotification(notification.id)" aria-label="Fechar notificação">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+</div>

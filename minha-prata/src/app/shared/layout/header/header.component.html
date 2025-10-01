@@ -35,17 +35,7 @@
         <i class="fa-regular fa-user" aria-hidden="true"></i>
         <span class="visually-hidden">Minha conta</span>
       </button>
-      <button id="cartBtn" (click)="onCartClick()" (keyup.enter)="onCartClick()" (keyup.space)="onCartClick()"
-        [attr.aria-label]="cartItemsCount > 0 ? 'Carrinho de compras com ' + cartItemsCount + ' itens' : 'Carrinho de compras'"
-        type="button">
-        <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
-        <span class="cart-badge" *ngIf="cartItemsCount > 0" aria-hidden="true">
-          {{ cartItemsCount }}
-        </span>
-        <span class="visually-hidden">
-          {{ cartItemsCount > 0 ? 'Carrinho com ' + cartItemsCount + ' itens' : 'Carrinho vazio' }}
-        </span>
-      </button>
+      <app-cart-icon></app-cart-icon>
     </div>
 
     <!-- Mobile Navigation Overlay -->

@@ -1,0 +1,78 @@
+<div class="cart-page">
+  <div class="cart-container">
+    <div class="cart-header">
+      <h1>Meu Carrinho</h1>
+      <button class="continue-shopping-btn" (click)="continueShopping()">
+        ← Continuar Comprando
+      </button>
+    </div>
+
+    <div class="cart-content" *ngIf="cartState$ | async as cartState">
+      <!-- Carrinho Vazio -->
+      <div class="empty-cart" *ngIf="isCartEmpty(cartState)">
+        <div class="empty-icon">🛒</div>
+        <h2>Seu carrinho está vazio</h2>
+        <p>Adicione alguns produtos incríveis para começar!</p>
+        <button class="btn-primary" (click)="continueShopping()">
+          Explorar Produtos
+        </button>
+      </div>
+
+      <!-- Carrinho com Itens -->
+      <div class="cart-with-items" *ngIf="!isCartEmpty(cartState)">
+        <div class="cart-items-section">
+          <div class="items-header">
+            <span>Produto</span>
+            <span>Quantidade</span>
+            <span>Total</span>
+            <span></span>
+          </div>
+
+          <div class="cart-items">
+            <app-cart-item *ngFor="let item of cartState.items" [item]="item"
+              (quantityChange)="onQuantityChange(item, $event)" (remove)="onRemoveItem(item)"></app-cart-item>
+          </div>
+
+          <div class="cart-actions">
+            <button class="clear-cart-btn" (click)="clearCart()">
+              <i class="fas fa-trash"></i>
+              Limpar Carrinho
+            </button>
+          </div>
+        </div>
+
+        <div class="cart-summary">
+          <div class="summary-card">
+            <h3>Resumo do Pedido</h3>
+
+            <div class="summary-row">
+              <span>Subtotal:</span>
+              <span>R$ {{ cartState.total.toFixed(2) }}</span>
+            </div>
+
+            <div class="summary-row">
+              <span>Frete:</span>
+              <span class="free-shipping">Grátis</span>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-total">
+              <span>Total:</span>
+              <span class="total-price">R$ {{ cartState.total.toFixed(2) }}</span>
+            </div>
+
+            <button class="checkout-btn" (click)="proceedToCheckout()">
+              Finalizar Compra
+            </button>
+
+            <div class="security-info">
+              <i class="fas fa-lock"></i>
+              <span>Compra 100% segura</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

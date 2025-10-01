@@ -1,4 +1,4 @@
-<div class="product-card">
+<div class="product-card" (click)="onCardClick()">
   <div class="product-img">
     <img [src]="product.imgUrl" [alt]="'Produto: ' + product.name" class="product-image">
     <div class="product-badge" *ngIf="product.inStock === false">
@@ -17,12 +17,16 @@
     <div class="product-price">R$ {{ product.price.toFixed(2) }}</div>
 
     <div class="product-actions">
-      <button class="btn-view-details" (click)="onViewDetails($event)" [attr.arial.label]="'Ver detalhes de ' + product.name">
+      <button class="btn-view-details" (click)="onViewDetails($event)"
+        [attr.aria-label]="'Ver detalhes de ' + product.name">
         Ver Detalhes
       </button>
 
-      <button class="btn-add-cart" (click)="onAddToCart()" [disabled]="!product.inStock"
-        [attr.arial.label]="'Adicionar ' + product.name + ' ao carinho'"><i class="fa-solid fa-cart-plus"></i></button>
+      <!-- ATUALIZADO: Agora chama onAddToCart com event -->
+      <button class="btn-add-cart" (click)="onAddToCart($event)" [disabled]="!product.inStock"
+        [attr.aria-label]="'Adicionar ' + product.name + ' ao carrinho'">
+        <i class="fa-solid fa-cart-plus"></i>
+      </button>
     </div>
   </div>
 </div>
