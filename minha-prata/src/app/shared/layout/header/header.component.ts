@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Category, CategorySlug } from '../../models/category';
 import { ModalService } from '../../services/modal.service';
 import { CategoryService } from 'src/app/features/products/services/category.service';
+import { CategoryStateService } from 'src/app/shared/services/category-state.service';
 
 @Component({
   selector: 'app-header',
@@ -11,8 +12,6 @@ import { CategoryService } from 'src/app/features/products/services/category.ser
 })
 export class HeaderComponent implements OnInit {
 
-  @Output() categorySelected = new EventEmitter<string>();
-
   categories: Category[] = [];
   activeCategory = CategorySlug.ALL;
   isMobileMenuOpen = false;
@@ -20,7 +19,8 @@ export class HeaderComponent implements OnInit {
   constructor(
     private router: Router,
     private categoryService: CategoryService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private categoryStateService: CategoryStateService
   ) { }
 
   ngOnInit(): void {
@@ -82,13 +82,13 @@ export class HeaderComponent implements OnInit {
   onLogoClick(): void {
     this.router.navigate(['/']);
     this.activeCategory = CategorySlug.ALL;
-    this.categorySelected.emit(CategorySlug.ALL);
+    this.categoryStateService.setSelectedCategory(CategorySlug.ALL);
     this.closeMobileMenu();
   }
 
   onCategorySelect(category: Category): void {
     this.activeCategory = category.slug;
-    this.categorySelected.emit(category.slug);
+    this.categoryStateService.setSelectedCategory(category.slug);
 
     if (category.slug === CategorySlug.ALL) {
       this.router.navigate(['/']);

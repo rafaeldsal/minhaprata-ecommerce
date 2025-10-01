@@ -1,4 +1,20 @@
 <div class="product-grid-container">
+  <!-- Debug: Mostrar Informações -->
+  <!-- DEBUG TEMPORÁRIO -->
+  <div style="background: #e3f2fd; padding: 15px; margin: 10px; border-radius: 8px; border: 2px solid #2196f3;">
+    <h3>🔍 DEBUG INFO</h3>
+    <p><strong>Loading:</strong> {{ loading }}</p>
+    <p><strong>Products Array:</strong> {{ products.length }} items</p>
+    <p><strong>Displayed Products:</strong> {{ displayedProducts.length }} items</p>
+    <p><strong>Is Searching:</strong> {{ isSearching }}</p>
+    <p><strong>Search Term:</strong> "{{ searchTerm }}"</p>
+    <div *ngIf="displayedProducts.length > 0">
+      <p><strong>Produtos para exibir:</strong></p>
+      <ul>
+        <li *ngFor="let product of displayedProducts">{{ product.name }}</li>
+      </ul>
+    </div>
+  </div>
   <!-- Header com informações da busca -->
   <div class="search-results-header" *ngIf="isSearching || searchTerm">
     <div class="search-info">

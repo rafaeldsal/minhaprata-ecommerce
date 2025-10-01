@@ -19,13 +19,8 @@
 
       <!-- Coluna da ESQUERDA: Gallery -->
       <div class="product-gallery">
-        <div class="main-image">
-          <img [src]="product.imgUrl" [alt]="product.name" class="product-image">
-        </div>
-        <!-- Placeholder para o futuro carousel -->
-        <div class="image-placeholder">
-          <p>🎨 Em breve: Carousel de imagens</p>
-        </div>
+        <app-product-image-carousel [images]="getProductImages()" [productName]="product.name">
+        </app-product-image-carousel>
       </div>
 
       <!-- Coluna da DIREITA: Product Info -->
@@ -122,6 +117,17 @@
       </div>
     </div>
 
+    <!-- Seção de Especificações -->
+    <section class="specifications-section" *ngIf="product.specifications && product.specifications.length > 0">
+      <h2>Especificações do Produto</h2>
+      <div class="specs-grid">
+        <div class="spec-item" *ngFor="let spec of product.specifications">
+          <span class="spec-name">{{ spec.name }}:</span>
+          <span class="spec-value">{{ spec.value }}</span>
+        </div>
+      </div>
+    </section>
+
     <!-- Seção Features Centralizada -->
     <section class="features-section">
       <h2 class="features-title">Características do Produto</h2>
@@ -148,6 +154,9 @@
         </div>
       </div>
     </section>
+
+    <app-related-products [currentProductId]="product.id" [categoryId]="product.category.id" [limit]="4">
+    </app-related-products>
   </div>
 
   <!-- Product Not Found -->

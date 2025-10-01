@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Product } from '../models/product';
-import { delay, Observable, of } from 'rxjs';
+import { Product, ProductReview } from '../models/product';
+import { delay, map, Observable, of } from 'rxjs';
 import { PRODUCT_OPTIONS_BY_CATEGORY } from '../models/product-options';
 
 @Injectable({
@@ -244,6 +244,64 @@ export class ProductService {
     }
   ];
 
+  getRelatedProducts(productId: string, categoryId: string, limit: number = 4): Observable<Product[]> {
+    return this.getAll().pipe(
+      map(products =>
+        products
+          .filter(p => p.id !== productId && p.category.id === categoryId)
+          .slice(0, limit)
+      )
+    );
+  }
+
+  // NOVO: Buscar avaliações do produto
+  getProductReviews(productId: string): Observable<ProductReview[]> {
+    // Mock data - depois integra com API real
+    const mockReviews: ProductReview[] = [
+      {
+        id: '1',
+        userName: 'Ana Silva',
+        rating: 5,
+        comment: 'Produto excelente! Acabamento impecável e entrega rápida.',
+        date: '2024-01-15',
+        verifiedPurchase: true
+      },
+      {
+        id: '2',
+        userName: 'Carlos Oliveira',
+        rating: 4,
+        comment: 'Muito bonito, porém um pouco menor do que esperava.',
+        date: '2024-01-10',
+        verifiedPurchase: true
+      }
+    ];
+
+    return of(mockReviews);
+  }
+
+  addProductReview(productId: string, review: Omit<ProductReview, 'id' | 'date'>): Observable<ProductReview> {
+    const newReview: ProductReview = {
+      ...review,
+      id: Math.random().toString(36).substr(2, 9),
+      date: new Date().toISOString().split('T')[0]
+    };
+
+    return of(newReview);
+  }
+
+  // NOVO: Gerar images array a partir de imgUrl se não existir
+  normalizeProductImages(product: Product): Product {
+    if (!product.images || product.images.length === 0) {
+      product.images = [{
+        id: '1',
+        url: product.imgUrl,
+        alt: product.name,
+        isPrimary: true,
+        order: 0
+      }];
+    }
+    return product;
+  }
 
   constructor() { }
 
@@ -257,17 +315,31 @@ export class ProductService {
     )
   }
 
-  getByCategory(category: string): Observable<Product[]> {
-    if (category === 'all') {
-      return this.getAll();
-    }
+  getByCategory(categorySlug: string): Observable<Product[]> {
+    console.log('ProductService: Buscando produtos da categoria:', categorySlug);
 
-    const filtered = this.mockProducts
-      .filter(p => p.category.name === category)
-      .map(p => this.enhanceProductWithOptions(p));
+    return this.getAll().pipe(
+      map(products => {
+        // Mapeamento de slugs para IDs
+        const categoryMapping: { [key: string]: string } = {
+          'aneis': '1',
+          'brincos': '2',
+          'colares': '3',
+          'braceletes': '4'
+        };
 
-    return of(filtered).pipe(
-      delay(800)
+        const categoryId = categoryMapping[categorySlug] || categorySlug;
+
+        const filtered = products.filter(product => {
+          // Tenta buscar pelo ID mapeado OU pelo slug direto
+          const matches = product.category.id === categoryId;
+          console.log(`Product: ${product.name}, Category ID: ${product.category.id}, Looking for: ${categoryId}, Match: ${matches}`);
+          return matches;
+        });
+
+        console.log('ProductService: Produtos encontrados:', filtered.length);
+        return filtered;
+      })
     );
   }
 
@@ -289,6 +361,51 @@ export class ProductService {
     );
 
     return of(filtered);
+  }
+
+  // Adicione este método para mock data de imagens múltiplas
+  getProductWithMockImages(productId: string): Observable<Product> {
+    return this.getById(productId).pipe(
+      map(product => {
+        if (!product) throw new Error('Product not found');
+
+        // Mock de imagens múltiplas para demonstração
+        if (!product.images || product.images.length === 0) {
+          product.images = [
+            {
+              id: '1',
+              url: product.imgUrl,
+              alt: `${product.name} - Vista principal`,
+              isPrimary: true,
+              order: 0
+            },
+            {
+              id: '2',
+              url: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&h=500&fit=crop',
+              alt: `${product.name} - Detalhe do acabamento`,
+              isPrimary: false,
+              order: 1
+            },
+            {
+              id: '3',
+              url: 'https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=500&h=500&fit=crop',
+              alt: `${product.name} - Vista lateral`,
+              isPrimary: false,
+              order: 2
+            },
+            {
+              id: '4',
+              url: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=500&h=500&fit=crop',
+              alt: `${product.name} - Em uso`,
+              isPrimary: false,
+              order: 3
+            }
+          ];
+        }
+
+        return product;
+      })
+    );
   }
 
 }

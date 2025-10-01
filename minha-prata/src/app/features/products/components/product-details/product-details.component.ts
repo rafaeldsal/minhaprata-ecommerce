@@ -148,4 +148,22 @@ export class ProductDetailsComponent implements OnInit {
   getCategoryName(product: Product): string {
     return product.category.name;
   }
+
+  getProductImages(): any[] {
+    if (!this.product) return [];
+
+    // Se já tem images array, usa ele
+    if (this.product.images && this.product.images.length > 0) {
+      return this.product.images;
+    }
+
+    // Senão, cria array a partir do imgUrl (backward compatibility)
+    return [{
+      id: '1',
+      url: this.product.imgUrl,
+      alt: this.product.name,
+      isPrimary: true,
+      order: 0
+    }];
+  }
 }

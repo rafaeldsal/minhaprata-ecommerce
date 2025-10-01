@@ -1,17 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { TestProductComponent } from './features/products/components/test-product/test-product.component';
-import { HomeComponent } from './features/home/home.component';
-import { CategoryComponent } from './features/category/category/category.component';
 import { PageNotFoundComponent } from './shared/components/page-not-found/page-not-found.component';
-import { ProductDetailsComponent } from './features/products/components/product-details/product-details.component';
-import { CartPageComponent } from './features/cart/components/cart-page/cart-page.component';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'categoria/:categoryId', component: CategoryComponent },
-  { path: 'produto/:id', component: ProductDetailsComponent },
-  { path: 'carrinho', component: CartPageComponent },
+  { path: '', loadChildren: () => import('./features/home/home.module').then(m => m.HomeModule) },
+  { path: 'categoria/:categoryId', loadChildren: () => import('./features/category/category.module').then(m => m.CategoryModule) },
+  { path: 'produto/:id', loadChildren: () => import('./features/products/pages/product-details/product-details.module').then(m => m.ProductDetailsModule) },
+  { path: 'carrinho', loadChildren: () => import('./features/cart/cart.module').then(m => m.CartModule) },
 
 
   { path: '**', component: PageNotFoundComponent }

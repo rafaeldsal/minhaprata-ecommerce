@@ -1,16 +1,17 @@
-import { Component, OnInit, OnChanges, SimpleChanges, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Product } from '../../models/product';
 import { ProductService } from '../../services/product.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SearchStateService } from '../../../../shared/services/search-state.service';
+import { CategoryStateService } from 'src/app/shared/services/category-state.service';
 
 @Component({
   selector: 'app-product-grid',
   templateUrl: './product-grid.component.html',
   styleUrls: ['./product-grid.component.scss']
 })
-export class ProductGridComponent implements OnInit, OnChanges, OnDestroy {
+export class ProductGridComponent implements OnInit, OnDestroy {
   @Input() categoryFilter: string = 'all';
 
   products: Product[] = [];
@@ -28,27 +29,41 @@ export class ProductGridComponent implements OnInit, OnChanges, OnDestroy {
     private productService: ProductService,
     private activatedRoute: ActivatedRoute,
     private searchStateService: SearchStateService,
+    private categoryStateService: CategoryStateService,
     private router: Router
-  ) { }
+  ) {
+    console.log('🔄 ProductGrid: CONSTRUTOR chamado'); // ← DEBUG
+  }
 
   ngOnInit() {
-    this.activatedRoute.params.subscribe(params => {
-      const categorySlug = params['categoryId'];
-      if (categorySlug) {
+    console.log('ProductGrid: Inicializando...'); // DEBUG
+
+    // ESCUTE mudanças de categoria do service
+    const categorySub = this.categoryStateService.selectedCategory$.subscribe(
+      categorySlug => {
+        console.log('ProductGrid: Categoria recebida do service:', categorySlug); // DEBUG
         this.loadProductsByCategory(categorySlug);
+      }
+    );
+
+    // Também escute a rota (para quando acessar diretamente /categoria/aneis)
+    const routeSub = this.activatedRoute.params.subscribe(params => {
+      const categorySlug = params['categoryId'];
+      console.log('ProductGrid: Parâmetro da rota:', categorySlug); // DEBUG
+
+      if (categorySlug) {
+        this.categoryStateService.setSelectedCategory(categorySlug);
       } else {
+        // Se não tem categoria na rota, carrega todos
         this.loadAllProducts();
       }
     });
 
     // Escutar o estado da busca
     this.subscribeToSearchState();
-  }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['categoryFilter']) {
-      this.loadProductsByCategory(this.categoryFilter);
-    }
+    this.subscriptions.add(categorySub);
+    this.subscriptions.add(routeSub);
   }
 
   ngOnDestroy(): void {
@@ -101,6 +116,7 @@ export class ProductGridComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   loadAllProducts(): void {
+    console.log('ProductGrid: Carregando TODOS os produtos'); // DEBUG
     this.loading = true;
     this.productService.getAll().subscribe({
       next: (products) => {
@@ -124,19 +140,29 @@ export class ProductGridComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   loadProductsByCategory(categorySlug: string): void {
+    console.log('ProductGrid: Filtrando por categoria:', categorySlug); // DEBUG
+
+    if (categorySlug === 'all') {
+      this.loadAllProducts();
+      return;
+    }
+
     this.loading = true;
     this.productService.getByCategory(categorySlug).subscribe({
       next: (products) => {
+        console.log('ProductGrid: Produtos recebidos do service:', products);
         this.products = products;
+        this.displayedProducts = products; // ← SEMPRE atualiza
+        this.loading = false;
+        console.log('ProductGrid: displayedProducts forçado:', this.displayedProducts.length);
+        // this.products = products;
 
-        // Verificar se há busca ativa
-        if (this.searchStateService.isSearching && this.searchStateService.searchTerm) {
-          // Busca tem prioridade sobre filtro de categoria
-          this.loading = false;
-        } else {
-          this.displayedProducts = products;
-          this.loading = false;
-        }
+        // if (this.searchStateService.isSearching && this.searchStateService.searchTerm) {
+        //   this.loading = false;
+        // } else {
+        //   this.displayedProducts = products;
+        //   this.loading = false;
+        // }
       },
       error: (error) => {
         console.error('Erro ao filtrar produtos:', error);

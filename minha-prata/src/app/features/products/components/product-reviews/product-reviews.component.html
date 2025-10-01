@@ -1,0 +1,158 @@
+<section class="product-reviews-section" *ngIf="productId">
+  <div class="section-header">
+    <h2 class="section-title">Avaliações do Produto</h2>
+
+    <!-- Rating Summary -->
+    <div class="rating-summary" *ngIf="hasReviews() && !loading">
+      <div class="overall-rating">
+        <div class="average-rating">
+          <span class="rating-number">{{ averageRating.toFixed(1) }}</span>
+          <div class="rating-stars">
+            <div class="stars">
+              <span *ngFor="let star of [1,2,3,4,5]" class="star" [class.filled]="star <= roundRating(averageRating)">
+                ★
+              </span>
+            </div>
+            <span class="rating-count">({{ totalReviews }} avaliação{{ totalReviews !== 1 ? 'es' : '' }})</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rating Distribution -->
+      <div class="rating-distribution">
+        <div class="distribution-bar" *ngFor="let dist of ratingDistribution">
+          <span class="rating-label">{{ dist.rating }} estrelas</span>
+          <div class="bar-container">
+            <div class="bar" [style.width.%]="dist.percentage"></div>
+          </div>
+          <span class="rating-count">{{ dist.count }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <p>Carregando avaliações...</p>
+  </div>
+
+  <!-- Write Review Button -->
+  <div class="review-actions" *ngIf="!loading">
+    <button class="btn-write-review" (click)="toggleReviewForm()">
+      <i class="fas fa-edit"></i>
+      {{ showReviewForm ? 'Cancelar' : 'Escrever Avaliação' }}
+    </button>
+  </div>
+
+  <!-- Review Form -->
+  <div class="review-form-container" *ngIf="showReviewForm">
+    <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="review-form">
+      <h3>Escreva sua avaliação</h3>
+
+      <!-- Rating Stars -->
+      <div class="form-group">
+        <label class="form-label">Sua avaliação *</label>
+        <div class="rating-input">
+          <div class="stars-selector">
+            <span *ngFor="let star of [1,2,3,4,5]" class="star-selector" [class.active]="star <= rating"
+              [class.hover]="star <= hoverRating" (click)="setRating(star)" (mouseenter)="setHoverRating(star)"
+              (mouseleave)="clearHoverRating()">
+              ★
+            </span>
+          </div>
+          <div class="rating-text" *ngIf="rating > 0">
+            {{ getRatingText(rating) }}
+          </div>
+          <div class="error-message" *ngIf="reviewForm.get('rating')?.touched && reviewForm.get('rating')?.invalid">
+            Por favor, selecione uma avaliação
+          </div>
+        </div>
+      </div>
+
+      <!-- Name -->
+      <div class="form-group">
+        <label for="userName" class="form-label">Seu nome *</label>
+        <input type="text" id="userName" formControlName="userName" class="form-input" placeholder="Digite seu nome">
+        <div class="error-message" *ngIf="reviewForm.get('userName')?.touched && reviewForm.get('userName')?.invalid">
+          <span *ngIf="reviewForm.get('userName')?.errors?.['required']">Nome é obrigatório</span>
+          <span *ngIf="reviewForm.get('userName')?.errors?.['minlength']">Mínimo 2 caracteres</span>
+        </div>
+      </div>
+
+      <!-- Comment -->
+      <div class="form-group">
+        <label for="comment" class="form-label">Comentário *</label>
+        <textarea id="comment" formControlName="comment" class="form-textarea"
+          placeholder="Compartilhe sua experiência com este produto..." rows="5"></textarea>
+        <div class="char-count">
+          {{ reviewForm.get('comment')?.value?.length || 0 }}/500
+        </div>
+        <div class="error-message" *ngIf="reviewForm.get('comment')?.touched && reviewForm.get('comment')?.invalid">
+          <span *ngIf="reviewForm.get('comment')?.errors?.['required']">Comentário é obrigatório</span>
+          <span *ngIf="reviewForm.get('comment')?.errors?.['minlength']">Mínimo 10 caracteres</span>
+        </div>
+      </div>
+
+      <!-- Verified Purchase -->
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="verifiedPurchase">
+          <span class="checkmark"></span>
+          Fiz a compra deste produto
+        </label>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="form-actions">
+        <button type="submit" class="btn-submit" [disabled]="reviewForm.invalid || submitting">
+          <span *ngIf="submitting" class="loading-spinner-small"></span>
+          {{ submitting ? 'Enviando...' : 'Enviar Avaliação' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Reviews List -->
+  <div class="reviews-list" *ngIf="!loading && hasReviews()">
+    <div class="reviews-header">
+      <h3>Avaliações dos Clientes ({{ totalReviews }})</h3>
+    </div>
+
+    <div class="review-item" *ngFor="let review of reviews">
+      <div class="review-header">
+        <div class="reviewer-info">
+          <span class="reviewer-name">{{ review.userName }}</span>
+          <span class="verified-badge" *ngIf="review.verifiedPurchase">
+            <i class="fas fa-check-circle"></i>
+            Compra verificada
+          </span>
+        </div>
+        <div class="review-meta">
+          <div class="review-rating">
+            <span class="stars">
+              <span *ngFor="let star of [1,2,3,4,5]" class="star" [class.filled]="star <= review.rating">
+                ★
+              </span>
+            </span>
+          </div>
+          <span class="review-date">{{ formatDate(review.date) }}</span>
+        </div>
+      </div>
+
+      <div class="review-content">
+        <p>{{ review.comment }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!loading && !hasReviews()">
+    <div class="empty-icon">⭐</div>
+    <h3>Este produto ainda não tem avaliações</h3>
+    <p>Seja o primeiro a compartilhar sua experiência!</p>
+    <button class="btn-write-review" (click)="toggleReviewForm()">
+      Escrever Primeira Avaliação
+    </button>
+  </div>
+</section>

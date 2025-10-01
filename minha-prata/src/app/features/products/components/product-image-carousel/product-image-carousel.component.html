@@ -1,0 +1,65 @@
+<div class="image-carousel">
+  <!-- Main Carousel -->
+  <div class="carousel-container">
+    <div class="carousel-track" #carouselTrack (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)"
+      (touchend)="onTouchEnd()">
+      <div class="carousel-slide" *ngFor="let image of images; let i = index">
+        <img [src]="image.url" [alt]="image.alt || productName" class="main-image" #mainImage (click)="openModal(i)"
+          (mousemove)="zoomImage($event)" (mouseleave)="resetZoom()" loading="lazy">
+      </div>
+    </div>
+
+    <!-- Navigation Arrows -->
+    <button class="carousel-nav carousel-prev" (click)="prevSlide()" *ngIf="images.length > 1"
+      aria-label="Imagem anterior">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <button class="carousel-nav carousel-next" (click)="nextSlide()" *ngIf="images.length > 1"
+      aria-label="Próxima imagem">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+
+    <!-- Indicators -->
+    <div class="carousel-indicators" *ngIf="images.length > 1">
+      <button *ngFor="let image of images; let i = index" class="indicator" [class.active]="i === currentIndex"
+        (click)="goToSlide(i)" [attr.aria-label]="'Ir para imagem ' + (i + 1)">
+      </button>
+    </div>
+  </div>
+
+  <!-- Thumbnail Gallery -->
+  <div class="thumbnail-gallery" *ngIf="images.length > 1">
+    <button *ngFor="let image of images; let i = index" class="thumbnail" [class.active]="i === currentIndex"
+      (click)="selectThumbnail(i)" [attr.aria-label]="'Ver imagem ' + (i + 1) + ' de ' + productName">
+      <img [src]="image.url" [alt]="'Miniatura ' + (i + 1)" loading="lazy">
+    </button>
+  </div>
+
+  <!-- Modal Fullscreen -->
+  <div class="image-modal" *ngIf="isModalOpen" (click)="closeModal()" [class.active]="isModalOpen">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeModal()" aria-label="Fechar visualização">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <div class="modal-image-container">
+        <img [src]="images[modalImageIndex].url" [alt]="images[modalImageIndex].alt || productName" class="modal-image">
+
+        <button class="modal-nav modal-prev" (click)="prevModalImage()" *ngIf="images.length > 1"
+          aria-label="Imagem anterior">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="modal-nav modal-next" (click)="nextModalImage()" *ngIf="images.length > 1"
+          aria-label="Próxima imagem">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+
+      <div class="modal-indicators" *ngIf="images.length > 1">
+        <span class="image-counter">
+          {{ modalImageIndex + 1 }} / {{ images.length }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

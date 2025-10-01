@@ -4,7 +4,7 @@ import { debounceTime, distinctUntilChanged, switchMap, tap, catchError } from '
 import { ProductService } from '../../../features/products/services/product.service';
 import { SearchStateService } from '../../services/search-state.service';
 import { Product } from 'src/app/features/products/models/product';
-import { Route, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-search',

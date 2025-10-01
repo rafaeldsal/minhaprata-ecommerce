@@ -1,0 +1,74 @@
+<section class="related-products-section" *ngIf="hasRelatedProducts() || loading">
+  <div class="section-header">
+    <h2 class="section-title">Produtos Relacionados</h2>
+    <p class="section-subtitle">Você também pode gostar</p>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <p>Carregando produtos relacionados...</p>
+  </div>
+
+  <!-- Products Carousel -->
+  <div class="related-products-container" *ngIf="!loading && hasRelatedProducts()">
+    <div class="carousel-wrapper">
+      <button class="carousel-nav carousel-prev" (click)="prevSlide()" [disabled]="!canGoPrev()"
+        aria-label="Produtos anteriores">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+
+      <div class="carousel-viewport">
+        <div class="carousel-track" [style.transform]="getTransform()">
+          <div class="carousel-item" *ngFor="let product of relatedProducts" (click)="viewProductDetails(product.id)">
+
+            <div class="product-card">
+              <div class="product-image">
+                <img [src]="product.imgUrl" [alt]="product.name" loading="lazy">
+                <div class="product-badge" *ngIf="!product.inStock">
+                  Esgotado
+                </div>
+              </div>
+
+              <div class="product-info">
+                <h3 class="product-name">{{ product.name }}</h3>
+                <p class="product-category">{{ product.category.name }}</p>
+                <div class="product-price">R$ {{ product.price.toFixed(2) }}</div>
+
+                <div class="product-actions">
+                  <button class="btn-view" (click)="viewProductDetails(product.id); $event.stopPropagation()"
+                    [attr.aria-label]="'Ver detalhes de ' + product.name">
+                    Ver Detalhes
+                  </button>
+
+                  <button class="btn-add-cart" (click)="addToCart(product, $event)" [disabled]="!product.inStock"
+                    [attr.aria-label]="'Adicionar ' + product.name + ' ao carrinho'">
+                    <i class="fas fa-cart-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="carousel-nav carousel-next" (click)="nextSlide()" [disabled]="!canGoNext()"
+        aria-label="Próximos produtos">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <!-- Carousel Indicators -->
+    <div class="carousel-indicators" *ngIf="relatedProducts.length > getVisibleItems()">
+      <span class="indicator" *ngFor="let dot of getIndicatorArray(); let i = index" [class.active]="i === currentSlide"
+        (click)="currentSlide = i">
+      </span>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!loading && !hasRelatedProducts()">
+    <i class="empty-icon">🔍</i>
+    <p>Nenhum produto relacionado encontrado</p>
+  </div>
+</section>
