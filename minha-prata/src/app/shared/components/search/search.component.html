@@ -1,0 +1,47 @@
+<section class="search-section" aria-label="Busca de produtos">
+  <div class="search-container">
+    <div class="search-box">
+      <input type="text" class="search-input" placeholder="Buscar produto..." [value]="searchTerm"
+        (input)="onSearchInput($event)" (focus)="onFocus()" (click)="onInputClick()" (keydown)="onKeydown($event)"
+        #searchInput aria-label="Campo de busca de produtos" aria-describedby="search-help" aria-autocomplete="list">
+
+      <!-- Loading State -->
+      <div class="search-loading" *ngIf="isLoading" role="status" aria-live="polite">
+        <div class="loading-spinner">⏳</div>
+        Buscando produtos...
+      </div>
+
+      <!-- Results Dropdown -->
+      <div class="search-results" *ngIf="showResults && filteredProducts.length > 0" role="listbox"
+        aria-label="Resultados da busca" id="search-results" [attr.aria-expanded]="showResults">
+        <div class="result-item" *ngFor="let product of filteredProducts; let i = index"
+          (mousedown)="selectProduct(product)" (click)="selectProduct(product)" (keydown.enter)="selectProduct(product)"
+          (keydown.space)="selectProduct(product)" tabindex="0" role="option" [attr.aria-selected]="i === 0"
+          [attr.aria-posinset]="i + 1" [attr.aria-setsize]="filteredProducts.length"
+          [attr.aria-label]="getProductAriaLabel(product)">
+          <div class="product-image">
+            <img [src]="product.imgUrl" [alt]="'Imagem do produto ' + product.name" loading="lazy">
+          </div>
+          <div class="product-info">
+            <h4>{{ product.name }}</h4>
+            <p class="product-category">{{ getCategoryName(product) }}</p>
+            <p class="product-price">R$ {{ getProductPrice(product).toFixed(2) }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Results -->
+      <div class="search-no-results" *ngIf="showResults && filteredProducts.length === 0 && searchTerm.length >= 3"
+        role="status" aria-live="polite">
+        <p>Nenhum produto encontrado para "{{ searchTerm }}"</p>
+        <p class="search-suggestion">Tente buscar por "anel", "pulseira" ou "brinco"</p>
+      </div>
+
+      <!-- Texto de ajuda para acessibilidade -->
+      <div id="search-help" class="visually-hidden">
+        Digite pelo menos 3 caracteres para buscar produtos por nome, categoria ou descrição. Use as setas para navegar
+        e Enter para selecionar.
+      </div>
+    </div>
+  </div>
+</section>

@@ -37,7 +37,7 @@ export class TestProductComponent implements OnInit {
       console.log('Produto ID 1: ', p);
     });
 
-    this.productService.search('anel').subscribe(result => {
+    this.productService.searchProducts('anel').subscribe(result => {
       console.log('Busca "anel":', result);
     });
   }

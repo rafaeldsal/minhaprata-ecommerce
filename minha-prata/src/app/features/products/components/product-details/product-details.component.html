@@ -1,0 +1,160 @@
+<div class="product-details-container">
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <p>Carregando produto...</p>
+  </div>
+
+  <!-- Product Details -->
+  <div class="product-details" *ngIf="!loading && product">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a routerLink="/">Home</a> &gt;
+      <a [routerLink]="['/categoria', product.category.id]">{{ product.category.name }}</a> &gt;
+      <span>{{ product.name }}</span>
+    </nav>
+
+    <div class="product-content">
+
+      <!-- Coluna da ESQUERDA: Gallery -->
+      <div class="product-gallery">
+        <div class="main-image">
+          <img [src]="product.imgUrl" [alt]="product.name" class="product-image">
+        </div>
+        <!-- Placeholder para o futuro carousel -->
+        <div class="image-placeholder">
+          <p>🎨 Em breve: Carousel de imagens</p>
+        </div>
+      </div>
+
+      <!-- Coluna da DIREITA: Product Info -->
+      <div class="product-info">
+        <h1 class="product-title">{{ product.name }}</h1>
+        <p class="product-category">{{ product.category.name }}</p>
+        <p class="product-price">R$ {{ product.price.toFixed(2) }}</p>
+
+        <div class="product-description">
+          <p>{{ product.description }}</p>
+        </div>
+
+        <!-- Opções do Produto -->
+        <div class="product-options" *ngIf="hasProductOptions()">
+
+          <!-- Loop pelas opções do produto -->
+          <div class="option-group" *ngFor="let option of product.options">
+            <label class="option-label">{{ option.name }}:</label>
+            <div class="option-values">
+              <button *ngFor="let value of option.values" class="option-value"
+                [class.selected]="isOptionSelected(option.name, value)" (click)="selectOption(option.name, value)"
+                type="button">
+                {{ value }}
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Stock Info -->
+        <div class="stock-info" [class.in-stock]="isProductInStock()" [class.out-of-stock]="!isProductInStock()">
+          <span class="stock-status">
+            {{ isProductInStock() ? '🟢 Em estoque' : '🔴 Fora de estoque' }}
+          </span>
+          <span class="stock-quantity" *ngIf="isProductInStock() && product.stockQuantity">
+            • {{ product.stockQuantity }} unidades disponíveis
+          </span>
+        </div>
+
+        <!-- Quantity Selector -->
+        <div class="quantity-selector" *ngIf="isProductInStock()">
+          <label class="quantity-label">Quantidade:</label>
+          <div class="quantity-controls">
+            <button (click)="decreaseQuantity()" class="quantity-btn" [disabled]="quantity <= 1"
+              type="button">-</button>
+            <span class="quantity-display">{{ quantity }}</span>
+            <button (click)="increaseQuantity()" class="quantity-btn" [disabled]="quantity >= product.stockQuantity"
+              type="button">+</button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="btn btn-primary add-to-cart-btn" (click)="addToCart()"
+            [disabled]="!isProductInStock() || !areAllOptionsSelected()" type="button">
+            🛒 {{ isProductInStock() ? 'Adicionar ao Carrinho' : 'Fora de Estoque' }}
+          </button>
+          <button class="btn btn-secondary back-btn" (click)="goBack()" type="button">
+            ← Voltar para Loja
+          </button>
+        </div>
+
+        <!-- Product Features -->
+        <div class="product-features">
+          <div class="feature">
+            <i class="feature-icon">🚚</i>
+            <div class="feature-text">
+              <strong>Frete Grátis</strong>
+              <span>Para compras acima de R$ 100</span>
+            </div>
+          </div>
+          <div class="feature">
+            <i class="feature-icon">🛡️</i>
+            <div class="feature-text">
+              <strong>Garantia</strong>
+              <span>1 ano contra defeitos</span>
+            </div>
+          </div>
+          <div class="feature">
+            <i class="feature-icon">💎</i>
+            <div class="feature-text">
+              <strong>Qualidade</strong>
+              <span>Prata 925 legítima</span>
+            </div>
+          </div>
+          <div class="feature">
+            <i class="feature-icon">↩️</i>
+            <div class="feature-text">
+              <strong>Troca Fácil</strong>
+              <span>30 dias para trocar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seção Features Centralizada -->
+    <section class="features-section">
+      <h2 class="features-title">Características do Produto</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⭐</div>
+          <h3>Alta Qualidade</h3>
+          <p>Joias em prata 925 com acabamento impecável e duradouro</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎁</div>
+          <h3>Embalagem Presente</h3>
+          <p>Embalagem especial para presente, perfeita para ocasiões especiais</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Compra Segura</h3>
+          <p>Site seguro e processamento de pagamento criptografado</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📞</div>
+          <h3>Suporte Dedicado</h3>
+          <p>Equipe de suporte especializada para tirar todas suas dúvidas</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Product Not Found -->
+  <div class="not-found" *ngIf="!loading && !product">
+    <i class="not-found-icon">📦</i>
+    <h2>Produto não encontrado</h2>
+    <p>O produto que você está procurando não existe ou foi removido.</p>
+    <button class="btn btn-primary" routerLink="/">Voltar para Home</button>
+  </div>
+</div>

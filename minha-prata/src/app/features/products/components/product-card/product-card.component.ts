@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product-card',
@@ -12,8 +13,16 @@ export class ProductCardComponent {
   @Output() viewDetails = new EventEmitter<string>();
   @Output() addToCart = new EventEmitter<Product>();
 
-  onViewDetails(): void {
-    this.viewDetails.emit(this.product.id);
+
+  constructor(private router: Router) { }
+
+  onViewDetails(event: Event): void {
+    event.stopPropagation(); // Evita duplicar o clique
+    this.router.navigate(['/produto', this.product.id]);
+  }
+
+  onCardClick(): void {
+    this.router.navigate(['/produto', this.product.id]);
   }
 
   onAddToCart(): void {
