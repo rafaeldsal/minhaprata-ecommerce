@@ -24,6 +24,7 @@ import { ProductGridComponent } from './features/products/components/product-gri
 import { PageContainerComponent } from './shared/components/page-container/page-container.component';
 import { SearchComponent } from './shared/components/search/search.component';
 import { ProductDetailsComponent } from './features/products/components/product-details/product-details.component';
+import { CartModule } from './features/cart/cart.module';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { ProductDetailsComponent } from './features/products/components/product-
     BrowserModule,
     AppRoutingModule,
     SharedModule,
-    ProductsModule
+    ProductsModule,
+    CartModule
   ],
   providers: [],
   bootstrap: [AppComponent]

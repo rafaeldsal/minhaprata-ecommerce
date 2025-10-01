@@ -16,7 +16,6 @@ export class HeaderComponent implements OnInit {
   categories: Category[] = [];
   activeCategory = CategorySlug.ALL;
   isMobileMenuOpen = false;
-  cartItemsCount = 0;
 
   constructor(
     private router: Router,
@@ -107,6 +106,6 @@ export class HeaderComponent implements OnInit {
   }
 
   onCartClick(): void {
-    this.modalService.openCartModal();
+    this.router.navigate(['/carrinho']);
   }
 }

@@ -1,5 +1,4 @@
 <div class="product-grid-container">
-
   <!-- Header com informações da busca -->
   <div class="search-results-header" *ngIf="isSearching || searchTerm">
     <div class="search-info">
@@ -28,8 +27,8 @@
     <p *ngIf="!searchTerm">Tente buscar por outro termo ou categoria</p>
   </div>
 
+  <!-- ATUALIZADO: Removeu (addToCart) do product-card -->
   <div class="product-grid" *ngIf="!loading && displayedProducts.length > 0">
-    <app-product-card *ngFor="let product of displayedProducts" [product]="product"
-      (viewDetails)="onViewDetails($event)" (addToCart)="onAddToCart($event)"></app-product-card>
+    <app-product-card *ngFor="let product of displayedProducts" [product]="product"></app-product-card>
   </div>
 </div>

@@ -159,8 +159,4 @@ export class ProductGridComponent implements OnInit, OnChanges, OnDestroy {
   onProductClick(product: Product): void {
     this.router.navigate(['/produto', product.id]);
   }
-
-  onAddToCart(product: Product): void {
-    console.log('Adicionar ao carrinho:', product);
-  }
 }
