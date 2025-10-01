@@ -277,15 +277,16 @@ export class ProductService {
     return of(product);
   }
 
-  search(term: string): Observable<Product[]> {
-    const lowerTerm = term.toLowerCase();
-    if (!lowerTerm.trim()) {
+  searchProducts(searchTerm: string): Observable<Product[]> {
+    if (!searchTerm.trim()) {
       return this.getAll();
     }
-    const filtered = this.mockProducts
-      .filter(p => p.name.toLowerCase().includes(lowerTerm) ||
-        p.description.toLowerCase().includes(lowerTerm))
-      .map(p => this.enhanceProductWithOptions(p));
+
+    const filtered = this.mockProducts.filter(product =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return of(filtered);
   }

@@ -1,6 +1,45 @@
 @import '../../../../../styles/variables';
 @import '../../../../../styles/mixins';
 
+.search-results-header {
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius-lg);
+  border-left: 4px solid var(--color-primary);
+}
+
+.search-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+
+  h3 {
+    margin: 0;
+    color: var(--color-primary);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+.clear-search-btn {
+  background: var(--color-gray-200);
+  border: none;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--border-radius-md);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--color-gray-300);
+    color: var(--text-primary);
+  }
+}
+
 .product-grid-container {
   min-height: 400px;
 }
@@ -87,6 +126,7 @@
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }

@@ -22,6 +22,8 @@ import { CategoryComponent } from './features/category/category/category.compone
 import { PageNotFoundComponent } from './shared/components/page-not-found/page-not-found.component';
 import { ProductGridComponent } from './features/products/components/product-grid/product-grid.component';
 import { PageContainerComponent } from './shared/components/page-container/page-container.component';
+import { SearchComponent } from './shared/components/search/search.component';
+import { ProductDetailsComponent } from './features/products/components/product-details/product-details.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +42,9 @@ import { PageContainerComponent } from './shared/components/page-container/page-
     CategoryComponent,
     PageNotFoundComponent,
     ProductGridComponent,
-    PageContainerComponent
+    PageContainerComponent,
+    SearchComponent,
+    ProductDetailsComponent
   ],
   imports: [
     BrowserModule,

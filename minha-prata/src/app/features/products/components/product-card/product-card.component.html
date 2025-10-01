@@ -17,7 +17,7 @@
     <div class="product-price">R$ {{ product.price.toFixed(2) }}</div>
 
     <div class="product-actions">
-      <button class="btn-view-details" (click)="onViewDetails()" [attr.arial.label]="'Ver detalhes de ' + product.name">
+      <button class="btn-view-details" (click)="onViewDetails($event)" [attr.arial.label]="'Ver detalhes de ' + product.name">
         Ver Detalhes
       </button>
 
