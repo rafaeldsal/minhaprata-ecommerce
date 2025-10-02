@@ -1,6 +1,6 @@
 <div class="toast-container">
-  <div *ngFor="let notification of notifications" class="toast" [class]="'toast-' + notification.type" role="alert"
-    aria-live="polite">
+  <div *ngFor="let notification of notifications" class="toast" [class]="'toast-' + notification.type"
+    [class.toast-exit]="isExiting(notification.id)" (animationend)="onAnimationEnd(notification.id)" role="alert" aria-live="polite">
 
     <div class="toast-icon">
       <i class="fas" [class]="getNotificationIcon(notification.type)"></i>

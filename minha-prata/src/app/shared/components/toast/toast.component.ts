@@ -9,6 +9,7 @@ import { NotificationService, ToastNotification } from '../../../core/services/n
 export class ToastComponent implements OnInit {
 
   notifications: ToastNotification[] = [];
+  exitingNotifications: Set<number> = new Set();
 
   constructor(
     private notificationService: NotificationService
@@ -16,12 +17,23 @@ export class ToastComponent implements OnInit {
 
   ngOnInit(): void {
     this.notificationService.notifications$.subscribe(
-      notifications => this.notifications = this.notifications
+      notifications => this.notifications = notifications
     );
   }
 
   closeNotification(id: number): void {
-    this.notificationService.removeNotification(id);
+    this.exitingNotifications.add(id);
+  }
+
+  onAnimationEnd(id: number): void {
+    if (this.isExiting(id)) {
+      this.notificationService.removeNotification(id);
+      this.exitingNotifications.delete(id);
+    }
+  }
+
+  isExiting(id: number): boolean {
+    return this.exitingNotifications.has(id);
   }
 
   getNotificationIcon(type: string): string {

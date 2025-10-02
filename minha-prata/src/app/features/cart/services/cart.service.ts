@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { CartItem, CartState } from '../models/cart-item';
 import { Product } from '../../products/models/product';
+import { NotificationService } from 'src/app/core/services/notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,9 @@ export class CartService {
   private cartSubject = new BehaviorSubject<CartState>(this.getInitialState());
   public cart$: Observable<CartState> = this.cartSubject.asObservable();
 
-  constructor() {
+  constructor(
+    private notificationService: NotificationService
+  ) {
     this.loadFromStorage();
   }
 
@@ -49,6 +52,7 @@ export class CartService {
     );
 
     this.updateCartState(newItems);
+    this.notificationService.showInfo('Item removido do carrinho 🗑️');
   }
 
   updateQuantity(productId: string, quantity: number, selectedOptions?: { [key: string]: string }): void {
@@ -73,6 +77,7 @@ export class CartService {
 
   clearCart(): void {
     this.updateCartState([]);
+    this.notificationService.showInfo('Item(ns) removido(s) do carrinho 🗑️');
   }
 
   getItemsCount(): number {

@@ -43,11 +43,15 @@
 
           <!-- Loop pelas opções do produto -->
           <div class="option-group" *ngFor="let option of product.options">
-            <label class="option-label">{{ option.name }}:</label>
+            <label class="option-label" [for]="'option-' + option.name">
+              {{ option.name }}:
+            </label>
             <div class="option-values">
               <button *ngFor="let value of option.values" class="option-value"
                 [class.selected]="isOptionSelected(option.name, value)" (click)="selectOption(option.name, value)"
-                type="button">
+                type="button" [id]="'option-' + option.name + '-' + value"
+                [attr.aria-label]="'Selecionar ' + option.name + ' ' + value"
+                [attr.aria-pressed]="isOptionSelected(option.name, value)">
                 {{ value }}
               </button>
             </div>
@@ -67,7 +71,7 @@
 
         <!-- Quantity Selector -->
         <div class="quantity-selector" *ngIf="isProductInStock()">
-          <label class="quantity-label">Quantidade:</label>
+          <label class="quantity-label" [for]="quantity">Quantidade:</label>
           <div class="quantity-controls">
             <button (click)="decreaseQuantity()" class="quantity-btn" [disabled]="quantity <= 1"
               type="button">-</button>

@@ -118,7 +118,10 @@ export class ProductDetailsComponent implements OnInit {
 
   // Adicionar ao carrinho
   addToCart(): void {
+    console.log('🎯 Add to Cart clicked');
+
     if (this.product && this.isProductInStock() && this.areAllOptionsSelected()) {
+      console.log('✅ Conditions met - adding to cart');
       this.cartService.addToCart(
         this.product,
         this.quantity,
@@ -126,9 +129,16 @@ export class ProductDetailsComponent implements OnInit {
       );
 
       this.notificationService.showSuccess(
-        `${this.product.name} adicionado ao carrinho!`
+        `${this.product.name} adicionado ao carrinho! 🛒`
       );
+      console.log('📢 Notification should be shown');
+
     } else if (!this.areAllOptionsSelected()) {
+      console.log('❌ Conditions not met:');
+      console.log('   - Product:', !!this.product);
+      console.log('   - In stock:', this.isProductInStock());
+      console.log('   - All options selected:', this.areAllOptionsSelected());
+
       this.notificationService.showWarning(
         'Por favor, selecione todas as opções antes de adicionar ao carrinho.'
       );

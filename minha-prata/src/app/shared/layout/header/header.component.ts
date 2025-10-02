@@ -4,6 +4,7 @@ import { Category, CategorySlug } from '../../models/category';
 import { ModalService } from '../../../core/services/modal.service';
 import { CategoryService } from 'src/app/features/products/services/category.service';
 import { SearchStateService } from 'src/app/core/services/search-state.service';
+import { NotificationService } from 'src/app/core/services/notification.service';
 
 @Component({
   selector: 'app-header',
@@ -22,6 +23,7 @@ export class HeaderComponent implements OnInit {
     private router: Router,
     private categoryService: CategoryService,
     private modalService: ModalService,
+    private notificationService: NotificationService,
     private searchStateService: SearchStateService
   ) { }
 
@@ -100,6 +102,7 @@ export class HeaderComponent implements OnInit {
     } else {
       this.router.navigate(['/categoria', category.slug]);
     }
+    this.notificationService.showInfo(`Mostrando ${category.name} 📦`);
   }
 
   trackByCategory(index: number, category: Category): string {

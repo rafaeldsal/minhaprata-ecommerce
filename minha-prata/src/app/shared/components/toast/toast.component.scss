@@ -19,8 +19,14 @@
   padding: 16px;
   border-radius: 8px;
   box-shadow: var(--shadow-lg);
-  animation: slideIn 0.3s ease-out;
   border-left: 4px solid transparent;
+
+  // Animação de entrada padrão
+  animation: toastSlideIn 0.4s cubic-bezier(0.21, 1.02, 0.73, 1) forwards;
+
+  // Estado inicial antes da entrada
+  transform: translateX(100%) scale(0.8);
+  opacity: 0;
 
   .toast-icon {
     font-size: 1.25rem;
@@ -56,6 +62,11 @@
   }
 }
 
+// Classe para animação de saída
+.toast-exit {
+  animation: toastSlideOut 0.4s ease-in forwards;
+}
+
 .toast-success {
   background: var(--color-success);
   color: white;
@@ -80,15 +91,50 @@
   border-left-color: darken(#3b82f6, 10%);
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
+// Animação de entrada
+@keyframes toastSlideIn {
+  0% {
+    transform: translateX(100%) scale(0.8);
     opacity: 0;
   }
-  to {
-    transform: translateX(0);
+  70% {
+    transform: translateX(-10%) scale(1.02);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateX(0) scale(1);
     opacity: 1;
   }
+}
+
+// Animação de saída
+@keyframes toastSlideOut {
+  0% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%) scale(0.9);
+    opacity: 0;
+  }
+}
+
+// Pulse sutil para destacar a primeira notificação exibida
+@keyframes toastPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+// Aplica o pulse apenas na primeira aparição (não em todo :first-child dinâmico)
+.toast.pulse {
+  animation:
+    toastSlideIn 0.4s cubic-bezier(0.21, 1.02, 0.73, 1) forwards,
+    toastPulse 0.6s ease-in-out 0.5s;
 }
 
 // Responsividade

@@ -274,7 +274,11 @@ export class ProductService {
 
   getById(id: string): Observable<Product | undefined> {
     const product = this.mockProducts.find(p => p.id === id);
-    return of(product);
+
+    if (product) {
+      return of(this.enhanceProductWithOptions(product));
+    }
+    return of(undefined);
   }
 
   searchProducts(searchTerm: string): Observable<Product[]> {

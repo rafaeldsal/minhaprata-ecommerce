@@ -5,6 +5,7 @@ import { ProductService } from '../../../features/products/services/product.serv
 import { SearchStateService } from '../../../core/services/search-state.service';
 import { Product } from 'src/app/features/products/models/product';
 import { Route, Router } from '@angular/router';
+import { NotificationService } from 'src/app/core/services/notification.service';
 
 @Component({
   selector: 'app-search',
@@ -30,6 +31,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   constructor(
     private productService: ProductService,
     private searchStateService: SearchStateService,
+    private notificationService: NotificationService,
     private router: Router
   ) { }
 
@@ -160,6 +162,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.searchChange.emit('');
     this.searchStateService.clearSearch();
     this.searchInput.nativeElement.focus();
+    this.notificationService.showInfo('Busca limpa 🔍');
   }
 
   onKeydown(event: KeyboardEvent): void {
