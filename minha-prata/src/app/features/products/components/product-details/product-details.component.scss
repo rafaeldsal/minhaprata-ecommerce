@@ -39,42 +39,16 @@
     gap: var(--space-6);
   }
 }
-
-// Coluna da Esquerda - Gallery (SEMPRE 50% em desktop)
 .product-gallery {
-  // Garantir que a gallery ocupe metade do espaço
-  width: 100%;
+  flex: 1;
+  min-width: 0; // Permite que o carousel se ajuste responsivamente
 
-  .main-image {
-    margin-bottom: var(--space-4);
-
-    .product-image {
-      width: 100%;
-      height: 500px;
-      object-fit: cover;
-      border-radius: var(--border-radius-lg);
-      box-shadow: var(--shadow-md);
-
-      @include respond-to-max('md') {
-        height: 300px;
-      }
-    }
-  }
-
-  .image-placeholder {
-    text-align: center;
-    padding: var(--space-6);
-    background: var(--color-gray-50);
-    border-radius: var(--border-radius-lg);
-    color: var(--text-tertiary);
-
-    p {
-      margin: 0;
-      font-size: var(--font-size-lg);
-    }
+  // Garantir que o carousel ocupe o espaço correto
+  app-product-image-carousel {
+    display: block;
+    width: 100%;
   }
 }
-
 // Coluna da Direita - Product Info (SEMPRE 50% em desktop)
 .product-info {
   width: 100%;

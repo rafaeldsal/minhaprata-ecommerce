@@ -5,6 +5,7 @@ import { ProductCardComponent } from '../components/product-card/product-card.co
 import { ProductDetailsComponent } from '../components/product-details/product-details.component';
 import { ProductListComponent } from '../components/product-list/product-list.component';
 import { RouterModule } from '@angular/router';
+import { ProductImageCarouselComponent } from '../components/product-image-carousel/product-image-carousel.component';
 
 
 @NgModule({
@@ -12,7 +13,8 @@ import { RouterModule } from '@angular/router';
     ProductGridComponent,
     ProductCardComponent,
     ProductDetailsComponent,
-    ProductListComponent
+    ProductListComponent,
+    ProductImageCarouselComponent
   ],
   imports: [
     CommonModule,
