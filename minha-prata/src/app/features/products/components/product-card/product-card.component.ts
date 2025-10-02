@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product';
 import { Router } from '@angular/router';
-import { NotificationService } from 'src/app/shared/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 import { CartService } from 'src/app/features/cart/services/cart.service';
 
 @Component({

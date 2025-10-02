@@ -1,8 +1,9 @@
 import { Component, EventEmitter, OnInit, Output, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Category, CategorySlug } from '../../models/category';
-import { ModalService } from '../../services/modal.service';
+import { ModalService } from '../../../core/services/modal.service';
 import { CategoryService } from 'src/app/features/products/services/category.service';
+import { SearchStateService } from 'src/app/core/services/search-state.service';
 
 @Component({
   selector: 'app-header',
@@ -20,10 +21,12 @@ export class HeaderComponent implements OnInit {
   constructor(
     private router: Router,
     private categoryService: CategoryService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private searchStateService: SearchStateService
   ) { }
 
   ngOnInit(): void {
+    this.searchStateService.clearSearch();
     this.loadCategories();
   }
 
@@ -83,12 +86,14 @@ export class HeaderComponent implements OnInit {
     this.router.navigate(['/']);
     this.activeCategory = CategorySlug.ALL;
     this.categorySelected.emit(CategorySlug.ALL);
+    this.searchStateService.clearSearch();
     this.closeMobileMenu();
   }
 
   onCategorySelect(category: Category): void {
     this.activeCategory = category.slug;
     this.categorySelected.emit(category.slug);
+    this.searchStateService.clearSearch();
 
     if (category.slug === CategorySlug.ALL) {
       this.router.navigate(['/']);

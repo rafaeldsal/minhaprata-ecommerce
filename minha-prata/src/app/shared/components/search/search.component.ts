@@ -2,7 +2,7 @@ import { Component, Output, EventEmitter, ElementRef, ViewChild, OnInit, OnDestr
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap, catchError } from 'rxjs/operators';
 import { ProductService } from '../../../features/products/services/product.service';
-import { SearchStateService } from '../../services/search-state.service';
+import { SearchStateService } from '../../../core/services/search-state.service';
 import { Product } from 'src/app/features/products/models/product';
 import { Route, Router } from '@angular/router';
 
