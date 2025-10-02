@@ -1,0 +1,81 @@
+<div class="product-carousel">
+  <!-- Imagem Principal (modo normal) -->
+  <div class="main-image-container">
+    <div class="image-wrapper">
+      <img [src]="currentImage" [alt]="product.name + ' - imagem ' + (currentImageIndex + 1)" class="main-image"
+        (click)="openZoom($event)" tabindex="0" role="button" [attr.aria-label]="'Ampliar imagem de ' + product.name"
+        [attr.aria-expanded]="isZoomed">
+
+      <!-- Botões de Navegação -->
+      <div class="carousel-controls" *ngIf="hasMultipleImages && !isZoomed">
+        <button class="carousel-btn prev-btn" (click)="previousImage($event)" type="button"
+          aria-label="Imagem anterior">
+          ‹
+        </button>
+        <button class="carousel-btn next-btn" (click)="nextImage($event)" type="button" aria-label="Próxima imagem">
+          ›
+        </button>
+      </div>
+
+      <!-- Indicador de Zoom -->
+      <div class="zoom-indicator" *ngIf="!isZoomed">
+        <button class="zoom-btn" (click)="openZoom($event)" type="button" aria-label="Ampliar imagem">
+          🔍 Zoom
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thumbnails -->
+  <div class="thumbnails" *ngIf="hasMultipleImages && !isZoomed">
+    <div *ngFor="let image of images; let i = index" class="thumbnail-container"
+      [class.active]="i === currentImageIndex">
+      <img [src]="image" [alt]="product.name + ' - miniatura ' + (i + 1)" class="thumbnail"
+        (click)="goToImage(i, $event)" tabindex="0" role="button"
+        [attr.aria-label]="'Ver imagem ' + (i + 1) + ' de ' + product.name"
+        [attr.aria-current]="i === currentImageIndex ? 'true' : 'false'">
+    </div>
+  </div>
+
+  <!-- Contador de Imagens -->
+  <div class="image-counter" *ngIf="hasMultipleImages && !isZoomed" aria-live="polite" aria-atomic="true">
+    Imagem {{ currentImageIndex + 1 }} de {{ images.length }}
+  </div>
+
+  <!-- Overlay de Zoom -->
+  <div class="zoom-overlay" *ngIf="isZoomed" role="dialog" aria-modal="true"
+    aria-label="Visualização ampliada da imagem" aria-describedby="zoom-image-description">
+
+    <div class="zoom-container">
+      <!-- Botão Fechar -->
+      <button class="close-zoom-btn" (click)="closeZoom($event)" type="button"
+        aria-label="Fechar visualização ampliada">
+        ✕
+      </button>
+
+      <!-- Imagem Ampliada -->
+      <div class="zoomed-image-wrapper">
+        <img [src]="currentImage" [alt]="product.name + ' - imagem ampliada ' + (currentImageIndex + 1)"
+          class="zoomed-image" (click)="closeZoom($event)" (keydown.enter)="closeZoom($event)"
+          (keydown.space)="closeZoom($event)" tabindex="0" id="zoom-image-description">
+
+        <!-- Navegação no Zoom -->
+        <div class="zoom-controls" *ngIf="hasMultipleImages">
+          <button class="zoom-carousel-btn prev-btn" (click)="previousImage($event)" type="button"
+            aria-label="Imagem anterior">
+            ‹
+          </button>
+          <button class="zoom-carousel-btn next-btn" (click)="nextImage($event)" type="button"
+            aria-label="Próxima imagem">
+            ›
+          </button>
+        </div>
+      </div>
+
+      <!-- Contador no Zoom -->
+      <div class="zoom-counter" *ngIf="hasMultipleImages" aria-live="polite" aria-atomic="true">
+        {{ currentImageIndex + 1 }} / {{ images.length }}
+      </div>
+    </div>
+  </div>
+</div>

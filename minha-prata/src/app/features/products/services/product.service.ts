@@ -12,7 +12,8 @@ export class ProductService {
     return {
       ...product,
       inStock: product.stockQuantity > 0,
-      options: PRODUCT_OPTIONS_BY_CATEGORY[product.category.name] || []
+      options: PRODUCT_OPTIONS_BY_CATEGORY[product.category.name] || [],
+      images: product.images || []
     };
   }
 
@@ -23,6 +24,11 @@ export class ProductService {
       description: 'Anel em prata 925 com pedra solitária.',
       price: 199.0,
       imgUrl: 'https://picsum.photos/300/300?random=1',
+      images: [
+        'https://picsum.photos/600/600?random=1',
+        'https://picsum.photos/600/600?random=11',
+        'https://picsum.photos/600/600?random=12'
+      ],
       stockQuantity: 10,
       dtCreated: '2024-01-01T00:00:00',
       dtUpdated: '2024-01-01T00:00:00',
@@ -38,6 +44,12 @@ export class ProductService {
       description: 'Anel delicado em prata 925 com formato de coração.',
       price: 149.0,
       imgUrl: 'https://picsum.photos/300/300?random=2',
+      images: [
+        'https://picsum.photos/600/600?random=2',
+        'https://picsum.photos/600/600?random=21',
+        'https://picsum.photos/600/600?random=22',
+        'https://picsum.photos/600/600?random=23'
+      ],
       stockQuantity: 15,
       dtCreated: '2024-01-05T00:00:00',
       dtUpdated: '2024-01-05T00:00:00',
@@ -53,6 +65,10 @@ export class ProductService {
       description: 'Anel em prata 925 com design trançado.',
       price: 179.0,
       imgUrl: 'https://picsum.photos/300/300?random=3',
+      images: [
+        'https://picsum.photos/600/600?random=3',
+        'https://picsum.photos/600/600?random=31'
+      ],
       stockQuantity: 8,
       dtCreated: '2024-01-10T00:00:00',
       dtUpdated: '2024-01-10T00:00:00',
@@ -68,6 +84,12 @@ export class ProductService {
       description: 'Bracelete em prata 925 estilo minimalista.',
       price: 220.0,
       imgUrl: 'https://picsum.photos/300/300?random=4',
+      images: [
+        'https://picsum.photos/600/600?random=4',
+        'https://picsum.photos/600/600?random=41',
+        'https://picsum.photos/600/600?random=42',
+        'https://picsum.photos/600/600?random=43'
+      ],
       stockQuantity: 12,
       dtCreated: '2024-01-12T00:00:00',
       dtUpdated: '2024-01-12T00:00:00',
@@ -83,6 +105,10 @@ export class ProductService {
       description: 'Bracelete ajustável em prata 925.',
       price: 250.0,
       imgUrl: 'https://picsum.photos/300/300?random=5',
+      images: [
+        'https://picsum.photos/600/600?random=5',
+        'https://picsum.photos/600/600?random=51'
+      ],
       stockQuantity: 9,
       dtCreated: '2024-01-15T00:00:00',
       dtUpdated: '2024-01-15T00:00:00',
@@ -113,6 +139,11 @@ export class ProductService {
       description: 'Colar em prata 925 com pedra central brilhante.',
       price: 199.0,
       imgUrl: 'https://picsum.photos/300/300?random=7',
+      images: [
+        'https://picsum.photos/600/600?random=7',
+        'https://picsum.photos/600/600?random=71',
+        'https://picsum.photos/600/600?random=72'
+      ],
       stockQuantity: 20,
       dtCreated: '2024-01-22T00:00:00',
       dtUpdated: '2024-01-22T00:00:00',

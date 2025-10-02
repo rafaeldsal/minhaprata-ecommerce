@@ -19,13 +19,7 @@
 
       <!-- Coluna da ESQUERDA: Gallery -->
       <div class="product-gallery">
-        <div class="main-image">
-          <img [src]="product.imgUrl" [alt]="product.name" class="product-image">
-        </div>
-        <!-- Placeholder para o futuro carousel -->
-        <div class="image-placeholder">
-          <p>🎨 Em breve: Carousel de imagens</p>
-        </div>
+        <app-product-image-carousel [product]="product"></app-product-image-carousel>
       </div>
 
       <!-- Coluna da DIREITA: Product Info -->
