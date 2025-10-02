@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NotificationService, ToastNotification } from '../../services/notification.service';
+import { NotificationService, ToastNotification } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-toast',

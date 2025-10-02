@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { Product } from '../../models/product';
 import { ProductService } from '../../services/product.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SearchStateService } from '../../../../shared/services/search-state.service';
+import { SearchStateService } from '../../../../core/services/search-state.service';
 
 @Component({
   selector: 'app-product-grid',
@@ -26,20 +26,25 @@ export class ProductGridComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private productService: ProductService,
-    private activatedRoute: ActivatedRoute,
+    // private activatedRoute: ActivatedRoute,
     private searchStateService: SearchStateService,
     private router: Router
   ) { }
 
   ngOnInit() {
-    this.activatedRoute.params.subscribe(params => {
-      const categorySlug = params['categoryId'];
-      if (categorySlug) {
-        this.loadProductsByCategory(categorySlug);
-      } else {
-        this.loadAllProducts();
-      }
-    });
+    // this.activatedRoute.params.subscribe(params => {
+    //   const categorySlug = params['categoryId'];
+    //   if (categorySlug) {
+    //     this.loadProductsByCategory(categorySlug);
+    //   } else {
+    //     this.loadAllProducts();
+    //   }
+    // });
+    if (this.categoryFilter && this.categoryFilter !== 'all') {
+      this.loadProductsByCategory(this.categoryFilter);
+    } else {
+      this.loadAllProducts();
+    }
 
     // Escutar o estado da busca
     this.subscribeToSearchState();
@@ -47,7 +52,11 @@ export class ProductGridComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['categoryFilter']) {
-      this.loadProductsByCategory(this.categoryFilter);
+      if (this.categoryFilter && this.categoryFilter !== 'all') {
+        this.loadProductsByCategory(this.categoryFilter);
+      } else {
+        this.loadAllProducts();
+      }
     }
   }
 

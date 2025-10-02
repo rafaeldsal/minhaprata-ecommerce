@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Product, ProductOption } from '../../models/product';
 import { ProductService } from '../../services/product.service';
 import { CartService } from '../../../cart/services/cart.service';
-import { NotificationService } from 'src/app/shared/services/notification.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-product-details',
