@@ -4,20 +4,25 @@ import { LoginComponent } from './components/login/login.component';
 import { UserSettingsComponent } from './components/user-settings/user-settings.component';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { ReactiveFormsModule } from '@angular/forms';
+import { UserProfileComponent } from './components/user-profile/user-profile.component';
 
 const routes: Routes = [
-  { path: 'configuracoes', component: UserSettingsComponent },
-  { path: 'login', component: LoginComponent }
+  { path: '', redirectTo: 'profile', pathMatch: 'full' }, // ← Rota padrão
+  { path: 'settings', component: UserSettingsComponent },
+  { path: 'profile', component: UserProfileComponent }
 ];
 
 @NgModule({
   declarations: [
     LoginComponent,
-    UserSettingsComponent
+    UserSettingsComponent,
+    UserProfileComponent
   ],
   imports: [
     CommonModule,
     SharedModule,
+    ReactiveFormsModule,
     RouterModule.forChild(routes)
   ]
 })

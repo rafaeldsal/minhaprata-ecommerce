@@ -5,6 +5,8 @@ import { ModalService } from '../../../core/services/modal.service';
 import { CategoryService } from 'src/app/features/products/services/category.service';
 import { SearchStateService } from 'src/app/core/services/search-state.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
+import { User } from 'src/app/core/models/user';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -22,8 +24,8 @@ export class HeaderComponent implements OnInit {
   constructor(
     private router: Router,
     private categoryService: CategoryService,
-    private modalService: ModalService,
     private notificationService: NotificationService,
+    private authService: AuthService,
     private searchStateService: SearchStateService
   ) { }
 
@@ -107,10 +109,6 @@ export class HeaderComponent implements OnInit {
 
   trackByCategory(index: number, category: Category): string {
     return category.slug;
-  }
-
-  onUserClick(): void {
-    this.modalService.openLoginModal();
   }
 
   onCartClick(): void {

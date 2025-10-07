@@ -1,0 +1,28 @@
+<div class="profile-container">
+  <h1>Meu Perfil</h1>
+
+  <div *ngIf="currentUser" class="profile-card">
+    <div class="profile-header">
+      <img [src]="currentUser.avatar || 'https://via.placeholder.com/150'" [alt]="currentUser.name" class="avatar">
+      <h2>{{ currentUser.name }}</h2>
+    </div>
+
+    <div class="profile-info">
+      <div class="info-item">
+        <strong>Email:</strong> {{ currentUser.email }}
+      </div>
+      <div class="info-item">
+        <strong>CPF:</strong> {{ currentUser.cpf }}
+      </div>
+      <div class="info-item">
+        <strong>Telefone:</strong> {{ currentUser.phone_number }}
+      </div>
+      <div class="info-item">
+        <strong>Data de Nascimento:</strong> {{ currentUser.dt_birth | date:'dd/MM/yyyy' }}
+      </div>
+      <div class="info-item">
+        <strong>Tipo de Conta:</strong> {{ currentUser.role === 'customer' ? 'Cliente' : 'Administrador' }}
+      </div>
+    </div>
+  </div>
+</div>

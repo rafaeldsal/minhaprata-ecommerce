@@ -8,6 +8,9 @@ import { ToastComponent } from '../shared/components/toast/toast.component';
 import { PageContainerComponent } from '../shared/components/page-container/page-container.component';
 import { SearchComponent } from '../shared/components/search/search.component';
 import { PageNotFoundComponent } from '../shared/components/page-not-found/page-not-found.component';
+import { UserModule } from '../features/user/user.module';
+import { UserAuthIconComponent } from './components/user-auth-icon/user-auth-icon.component';
+import { CartIconComponent } from '../features/cart/components/cart-icon/cart-icon.component';
 
 @NgModule({
   declarations: [
@@ -16,12 +19,13 @@ import { PageNotFoundComponent } from '../shared/components/page-not-found/page-
     ToastComponent,
     PageContainerComponent,
     SearchComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    UserAuthIconComponent,
+    CartIconComponent
   ],
   imports: [
     CommonModule,
-    RouterModule,
-    CartModule
+    RouterModule
   ],
   exports: [
     HeaderComponent,
@@ -29,7 +33,9 @@ import { PageNotFoundComponent } from '../shared/components/page-not-found/page-
     ToastComponent,
     PageContainerComponent,
     SearchComponent,
-    PageNotFoundComponent
+    UserAuthIconComponent,
+    PageNotFoundComponent,
+    CartIconComponent
   ]
 })
 export class SharedModule { }

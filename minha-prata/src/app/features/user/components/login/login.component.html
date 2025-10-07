@@ -1,1 +1,81 @@
-<p>login works!</p>
+<!-- components/login/login.component.html -->
+<div class="login-container">
+  <div class="login-card">
+    <!-- ETAPA 4.14 - Cabeçalho -->
+    <div class="login-header">
+      <h2>Bem-vindo de volta</h2>
+      <p>Faça login na sua conta MinhaPrata</p>
+    </div>
+
+    <!-- ETAPA 4.15 - Formulário -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+
+      <!-- Campo Email -->
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" formControlName="email" placeholder="seu@email.com" (input)="clearError()"
+          [class.error]="email?.invalid && email?.touched">
+        <!-- Mensagens de erro email -->
+        <div class="error-message" *ngIf="email?.invalid && email?.touched">
+          <span *ngIf="email?.errors?.['required']">E-mail é obrigatório</span>
+          <span *ngIf="email?.errors?.['email']">Digite um e-mail válido</span>
+        </div>
+      </div>
+
+      <!-- Campo Senha -->
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <input type="password" id="password" formControlName="password" placeholder="Sua senha" (input)="clearError()"
+          [class.error]="password?.invalid && password?.touched">
+        <!-- Mensagens de erro senha -->
+        <div class="error-message" *ngIf="password?.invalid && password?.touched">
+          <span *ngIf="password?.errors?.['required']">Senha é obrigatória</span>
+          <span *ngIf="password?.errors?.['minlength']">
+            Senha deve ter pelo menos 6 caracteres
+          </span>
+        </div>
+      </div>
+
+      <!-- Remember Me e Forgot Password -->
+      <div class="form-options">
+        <label class="remember-me">
+          <input type="checkbox" formControlName="rememberMe">
+          <span>Lembrar de mim</span>
+        </label>
+
+        <a href="/forgot-password" class="forgot-password">
+          Esqueceu a senha?
+        </a>
+      </div>
+
+      <!-- ETAPA 4.16 - Mensagem de erro geral -->
+      <div class="error-message general-error" *ngIf="error">
+        {{ error }}
+      </div>
+
+      <!-- ETAPA 4.17 - Botão de submit -->
+      <button type="submit" class="login-button" [disabled]="loading || loginForm.invalid">
+        <span *ngIf="!loading">Entrar</span>
+        <span *ngIf="loading" class="loading-spinner">
+          <i class="spinner"></i> Entrando...
+        </span>
+      </button>
+    </form>
+
+    <!-- ETAPA 4.18 - Informações de demo -->
+    <div class="demo-info">
+      <h4>Demo Information</h4>
+      <p>Use qualquer e-mail válido e senha com pelo menos 6 caracteres</p>
+      <div class="demo-credentials">
+        <strong>Exemplo:</strong><br>
+        E-mail: demo@minhaprata.com<br>
+        Senha: 123456
+      </div>
+    </div>
+
+    <!-- ETAPA 4.19 - Link para registro -->
+    <div class="register-link">
+      <p>Não tem uma conta? <a routerLink="/register">Cadastre-se</a></p>
+    </div>
+  </div>
+</div>
