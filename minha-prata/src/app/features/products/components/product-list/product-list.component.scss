@@ -1,0 +1,223 @@
+@import '../../../../../styles/variables';
+@import '../../../../../styles/mixins';
+
+.product-list-container {
+  min-height: 400px;
+  padding: var(--space-4) 0;
+}
+
+// Header de resultados da busca
+.search-results-header {
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius-lg);
+  border-left: 4px solid var(--color-primary);
+
+  @include respond-to('xs') {
+    margin-bottom: var(--space-4);
+    padding: var(--space-3);
+  }
+}
+
+.search-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+
+  h3 {
+    margin: 0;
+    color: var(--color-primary);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+
+    @include respond-to('xs') {
+      font-size: var(--font-size-base);
+    }
+  }
+}
+
+.clear-search-btn {
+  background: var(--color-gray-200);
+  border: none;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--border-radius-md);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--color-gray-300);
+    color: var(--text-primary);
+  }
+}
+
+// Informações de paginação
+.pagination-info {
+  text-align: center;
+  margin-bottom: var(--space-6);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+
+  @include respond-to('xs') {
+    margin-bottom: var(--space-4);
+    font-size: var(--font-size-xs);
+  }
+}
+
+// Estados de loading
+.loading-state {
+  @include flex-center;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-16) var(--space-4);
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border-primary);
+    border-top: 3px solid var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  p {
+    color: var(--text-secondary);
+    font-size: var(--font-size-lg);
+  }
+}
+
+// Estado vazio
+.empty-state {
+  @include flex-center;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-16) var(--space-4);
+  text-align: center;
+
+  i {
+    font-size: 3rem;
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-2);
+  }
+
+  h3 {
+    color: var(--text-primary);
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--space-2);
+  }
+
+  p {
+    color: var(--text-secondary);
+    font-size: var(--font-size-base);
+  }
+}
+
+// Grid de produtos
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-6);
+  padding: var(--space-6) 0;
+
+  @include respond-to('xs') {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    padding: var(--space-4) 0;
+  }
+
+  @include respond-to('sm') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to('md') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to('lg') {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include respond-to('xl') {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// Paginação simples
+.simple-pagination {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  margin: var(--space-8) 0;
+
+  @include respond-to('xs') {
+    margin: var(--space-6) 0;
+    gap: var(--space-3);
+  }
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  @include respond-to('xs') {
+    gap: var(--space-4);
+  }
+}
+
+.pagination-btn {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--border-primary);
+  background: var(--color-white);
+  color: var(--text-primary);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.active {
+    background: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
+  }
+
+  @include respond-to('xs') {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--font-size-base);
+  }
+}
+
+.page-numbers {
+  display: flex;
+  gap: var(--space-1);
+
+  @include respond-to('xs') {
+    display: none;
+  }
+}
+
+// Animações
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

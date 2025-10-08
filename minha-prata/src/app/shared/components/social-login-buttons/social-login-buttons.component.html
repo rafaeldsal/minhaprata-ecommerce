@@ -1,21 +1,17 @@
+<!-- social-login-buttons.component.html -->
 <div class="social-login-buttons">
-  <div class="divider">
-    <span>ou continue com</span>
-  </div>
+  <!-- Botão Google simplificado -->
+  <button (click)="signInWithGoogle()" class="social-btn google-btn" [disabled]="isLoading" type="button">
 
-  <div class="buttons-container">
-    <!-- Google Button -->
-    <button class="social-button google-button" (click)="signInWithGoogle()" [disabled]="isLoading" type="button">
-      <div class="button-content">
-        <i class="fab fa-google" [class.hidden]="isLoading && currentProvider === 'google'"></i>
-        <div class="spinner-small" *ngIf="isLoading && currentProvider === 'google'"></div>
-        <span *ngIf="!isLoading || currentProvider !== 'google'">
-          Continuar com Google
-        </span>
-        <span *ngIf="isLoading && currentProvider === 'google'" class="loading-text">
-          Conectando...
-        </span>
-      </div>
-    </button>
-  </div>
+    <div class="btn-content">
+      <i class="fab fa-google"></i>
+      <span *ngIf="!isLoading">Continuar com Google</span>
+      <span *ngIf="isLoading">Conectando...</span>
+    </div>
+
+    <div *ngIf="isLoading && currentProvider === 'google'" class="spinner"></div>
+  </button>
+
+  <!-- Container para o botão do Google (método alternativo) -->
+  <div #googleButtonContainer class="google-button-container" style="display: none;"></div>
 </div>

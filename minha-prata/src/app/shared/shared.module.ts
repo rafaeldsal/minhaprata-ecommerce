@@ -11,6 +11,7 @@ import { UserAuthIconComponent } from './components/user-auth-icon/user-auth-ico
 import { CartIconComponent } from '../features/cart/components/cart-icon/cart-icon.component';
 import { SocialLoginButtonsComponent } from './components/social-login-buttons/social-login-buttons.component';
 import { HasPermissionDirective } from './directives/has-permission.directive';
+import { PaginationComponent } from './components/pagination/pagination.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { HasPermissionDirective } from './directives/has-permission.directive';
     UserAuthIconComponent,
     CartIconComponent,
     SocialLoginButtonsComponent,
-    HasPermissionDirective
+    HasPermissionDirective,
+    PaginationComponent
   ],
   imports: [
     CommonModule,
@@ -39,7 +41,8 @@ import { HasPermissionDirective } from './directives/has-permission.directive';
     PageNotFoundComponent,
     CartIconComponent,
     SocialLoginButtonsComponent,
-    HasPermissionDirective
+    HasPermissionDirective,
+    PaginationComponent
   ]
 })
 export class SharedModule { }

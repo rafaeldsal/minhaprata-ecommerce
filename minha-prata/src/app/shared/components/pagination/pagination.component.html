@@ -1,0 +1,25 @@
+<div class="pagination-container">
+  <div class="pagination-info" *ngIf="totalItems > 0">
+    <span>Mostrando página {{ currentPage }} de {{ totalPages }}</span>
+  </div>
+
+  <nav class="pagination-nav" aria-label="Paginação">
+    <button class="pagination-btn pagination-prev" (click)="previousPage()" [disabled]="currentPage === 1"
+      aria-label="Página anterior">
+      ‹ Anterior
+    </button>
+
+    <div class="pagination-pages">
+      <button *ngFor="let page of pages" class="pagination-btn pagination-page" [class.active]="page === currentPage"
+        (click)="goToPage(page)" [attr.aria-label]="'Ir para página ' + page"
+        [attr.aria-current]="page === currentPage ? 'page' : null">
+        {{ page }}
+      </button>
+    </div>
+
+    <button class="pagination-btn pagination-next" (click)="nextPage()" [disabled]="currentPage === totalPages"
+      aria-label="Próxima página">
+      Próxima ›
+    </button>
+  </nav>
+</div>

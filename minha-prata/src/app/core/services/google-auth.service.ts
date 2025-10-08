@@ -11,6 +11,7 @@ declare var google: any;
 export class GoogleAuthService {
   private isInitialized = false;
   private currentUserSubject = new BehaviorSubject<SocialUser | null>(null);
+  private scriptLoaded = false;
 
   constructor() { }
 
@@ -22,44 +23,180 @@ export class GoogleAuthService {
         return;
       }
 
-      // Carrega o script do Google
+      this.loadGoogleScript().subscribe({
+        next: () => {
+          this.initializeGoogleAuth();
+          observer.next();
+          observer.complete();
+        },
+        error: (error) => observer.error(error)
+      });
+    });
+  }
+
+  private loadGoogleScript(): Observable<void> {
+    return new Observable(observer => {
+      if (this.scriptLoaded) {
+        observer.next();
+        observer.complete();
+        return;
+      }
+
+      if (document.querySelector('script[src*="accounts.google.com/gsi/client"]')) {
+        this.scriptLoaded = true;
+        observer.next();
+        observer.complete();
+        return;
+      }
+
       const script = document.createElement('script');
       script.src = 'https://accounts.google.com/gsi/client';
       script.async = true;
       script.defer = true;
       script.onload = () => {
-        // Inicializa o Google Identity Services
-        google.accounts.id.initialize({
-          client_id: environment.googleClientId,
-          callback: this.handleCredentialResponse.bind(this)
-        });
-
-        this.isInitialized = true;
-        console.log('✅ Google Auth inicializado');
+        this.scriptLoaded = true;
+        console.log('✅ Script Google carregado');
         observer.next();
         observer.complete();
       };
       script.onerror = (error) => {
-        console.error('❌ Erro ao carregar Google Auth:', error);
+        console.error('❌ Erro ao carregar script Google:', error);
         observer.error(error);
       };
+
       document.head.appendChild(script);
     });
   }
 
+  private initializeGoogleAuth(): void {
+    try {
+      google.accounts.id.initialize({
+        client_id: environment.googleClientId,
+        callback: this.handleCredentialResponse.bind(this),
+        auto_select: false,
+        cancel_on_tap_outside: false, // Mudado para false
+        use_fedcm_for_prompt: false // Desabilitado para evitar warnings
+      });
+
+      this.isInitialized = true;
+      console.log('✅ Google Auth inicializado com sucesso');
+    } catch (error) {
+      console.error('❌ Erro na inicialização do Google Auth:', error);
+    }
+  }
+
   private handleCredentialResponse(response: any): void {
-    console.log('🔐 Resposta do Google:', response);
+    console.log('🔐 Resposta do Google recebida');
 
     if (response.credential) {
       try {
         const payload = this.decodeJWT(response.credential);
         const user = this.mapToSocialUser(payload, response.credential);
         this.currentUserSubject.next(user);
-        console.log('✅ Usuário Google autenticado:', user);
+        console.log('✅ Usuário Google autenticado:', user.name);
       } catch (error) {
         console.error('❌ Erro ao processar resposta do Google:', error);
       }
     }
+  }
+
+  // NOVO MÉTODO: Abordagem direta sem container complexo
+  signIn(): Observable<SocialUser> {
+    return new Observable(observer => {
+      if (!this.isInitialized) {
+        observer.error('Google Auth não inicializado');
+        return;
+      }
+
+      console.log('🚀 Iniciando login Google...');
+
+      // Método mais direto - usa o prompt do Google
+      try {
+        google.accounts.id.prompt((notification: any) => {
+          if (notification.isNotDisplayed()) {
+            console.warn('⚠️ Prompt não exibido');
+          }
+          if (notification.isSkippedMoment()) {
+            console.warn('⚠️ Prompt ignorado momentaneamente');
+          }
+          if (notification.isDismissedMoment()) {
+            console.warn('⚠️ Prompt dispensado momentaneamente');
+          }
+        });
+      } catch (error) {
+        console.error('❌ Erro ao abrir prompt:', error);
+      }
+
+      // Polling para verificar autenticação
+      const maxAttempts = 90; // Reduzido para 9 segundos
+      let attempts = 0;
+
+      const checkUser = () => {
+        attempts++;
+        const currentUser = this.currentUserSubject.value;
+
+        if (currentUser) {
+          console.log('✅ Usuário autenticado encontrado');
+          observer.next(currentUser);
+          observer.complete();
+        } else if (attempts >= maxAttempts) {
+          console.warn('⚠️ Tempo limite excedido');
+          observer.error('Tempo limite excedido. Tente novamente.');
+        } else {
+          setTimeout(checkUser, 100);
+        }
+      };
+
+      checkUser();
+    });
+  }
+
+  // Método ALTERNATIVO: Usando renderButton em elemento existente
+  signInWithButton(element: HTMLElement): Observable<SocialUser> {
+    return new Observable(observer => {
+      if (!this.isInitialized) {
+        observer.error('Google Auth não inicializado');
+        return;
+      }
+
+      console.log('🚀 Iniciando login via botão...');
+
+      // Limpa qualquer botão anterior
+      element.innerHTML = '';
+
+      try {
+        google.accounts.id.renderButton(element, {
+          theme: 'filled_blue',
+          size: 'large',
+          type: 'standard',
+          width: 250
+        });
+      } catch (error) {
+        console.error('❌ Erro ao renderizar botão:', error);
+        observer.error(error);
+        return;
+      }
+
+      // Polling para verificar autenticação
+      const maxAttempts = 120;
+      let attempts = 0;
+
+      const checkUser = () => {
+        attempts++;
+        const currentUser = this.currentUserSubject.value;
+
+        if (currentUser) {
+          observer.next(currentUser);
+          observer.complete();
+        } else if (attempts >= maxAttempts) {
+          observer.error('Tempo limite excedido.');
+        } else {
+          setTimeout(checkUser, 100);
+        }
+      };
+
+      checkUser();
+    });
   }
 
   private decodeJWT(token: string): any {
@@ -92,52 +229,16 @@ export class GoogleAuthService {
     };
   }
 
-  signIn(): Observable<SocialUser> {
-    return new Observable(observer => {
-      if (!this.isInitialized) {
-        observer.error('Google Auth não inicializado');
-        return;
-      }
-
-      console.log('🚀 Iniciando login Google...');
-
-      // Abre o popup de login do Google
-      google.accounts.id.prompt();
-
-      // Usamos um listener para capturar a resposta
-      // O callback handleCredentialResponse será chamado automaticamente
-      // quando o usuário completar o login
-
-      // Polling para verificar se o usuário foi autenticado
-      const maxAttempts = 60; // 6 segundos
-      let attempts = 0;
-
-      const checkUser = () => {
-        attempts++;
-        const currentUser = this.currentUserSubject.value;
-
-        if (currentUser) {
-          console.log('✅ Usuário autenticado encontrado:', currentUser);
-          observer.next(currentUser);
-          observer.complete();
-        } else if (attempts >= maxAttempts) {
-          observer.error('Tempo limite excedido. Login não concluído.');
-        } else {
-          setTimeout(checkUser, 100);
-        }
-      };
-
-      checkUser();
-    });
-  }
-
   signOut(): Observable<void> {
     this.currentUserSubject.next(null);
 
-    // Limpa qualquer estado do Google
     if (typeof google !== 'undefined' && google.accounts) {
+      google.accounts.id.cancel();
       google.accounts.id.disableAutoSelect();
     }
+
+    // Limpa cookies do Google
+    document.cookie = 'g_state=;path=/;expires=Thu, 01 Jan 1970 00:00:01 GMT';
 
     return new Observable(observer => {
       observer.next();
