@@ -6,6 +6,7 @@ import { ProductDetailsComponent } from '../components/product-details/product-d
 import { ProductListComponent } from '../components/product-list/product-list.component';
 import { RouterModule } from '@angular/router';
 import { ProductImageCarouselComponent } from '../components/product-image-carousel/product-image-carousel.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -18,11 +19,12 @@ import { ProductImageCarouselComponent } from '../components/product-image-carou
   ],
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    SharedModule
   ],
   exports: [
     ProductCardComponent,
-    ProductGridComponent
+    ProductListComponent
   ]
 })
 export class ProductsModule { }

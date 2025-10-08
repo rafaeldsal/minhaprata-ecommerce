@@ -1,0 +1,69 @@
+@import '../../../../styles/variables';
+@import '../../../../styles/mixins';
+
+.pagination-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  margin: var(--space-8) 0;
+}
+
+.pagination-info {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.pagination-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.pagination-btn {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--border-primary);
+  background: var(--color-white);
+  color: var(--text-primary);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.active {
+    background: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
+  }
+}
+
+.pagination-pages {
+  display: flex;
+  gap: var(--space-1);
+}
+
+// Responsividade
+@include respond-to('xs') {
+  .pagination-pages {
+    display: none;
+  }
+
+  .pagination-nav {
+    gap: var(--space-4);
+  }
+
+  .pagination-btn {
+    padding: var(--space-3) var(--space-4);
+  }
+}

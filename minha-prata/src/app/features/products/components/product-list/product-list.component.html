@@ -1,1 +1,65 @@
-<p>product-list works!</p>
+<div class="product-list-container">
+  <!-- Header de resultados da busca -->
+  <div class="search-results-header" *ngIf="isSearching || searchTerm">
+    <div class="search-info">
+      <h3 *ngIf="searchResultsCount > 0">
+        🔍 {{ searchResultsCount }} produto(s) encontrado(s) para "{{ searchTerm }}"
+      </h3>
+      <h3 *ngIf="searchResultsCount === 0 && searchTerm">
+        🔍 Nenhum produto encontrado para "{{ searchTerm }}"
+      </h3>
+      <button class="clear-search-btn" (click)="clearSearch()" *ngIf="searchTerm">
+        ✕ Limpar busca
+      </button>
+    </div>
+  </div>
+
+  <!-- Informações de paginação -->
+  <div class="pagination-info" *ngIf="!loading && displayedProducts.length > 0">
+    <p>Mostrando {{ showingStart }} - {{ showingEnd }} de {{ totalItems }} produtos</p>
+  </div>
+
+  <!-- Estados de loading -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <p>Carregando produtos...</p>
+  </div>
+
+  <!-- Estado vazio -->
+  <div class="empty-state" *ngIf="!loading && displayedProducts.length === 0">
+    <i class="fa-solid fa-box-open"></i>
+    <h3>Nenhum produto encontrado</h3>
+    <p *ngIf="searchTerm">Tente buscar por outro termo</p>
+    <p *ngIf="!searchTerm">Tente buscar por outro termo ou categoria</p>
+  </div>
+
+  <!-- Grid de produtos - ESTA É A PARTE IMPORTANTE -->
+  <div class="product-grid" *ngIf="!loading && displayedProducts.length > 0">
+    <app-product-card *ngFor="let product of displayedProducts" [product]="product" (click)="onProductClick(product)">
+    </app-product-card>
+  </div>
+
+  <!-- Paginação simples -->
+  <div class="simple-pagination" *ngIf="!loading && displayedProducts.length > 0 && totalPages > 1">
+    <div class="pagination-info">
+      <span>Página {{ currentPage }} de {{ totalPages }} ({{ totalItems }} produtos)</span>
+    </div>
+
+    <div class="pagination-controls">
+      <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1" class="pagination-btn">
+        ‹ Anterior
+      </button>
+
+      <div class="page-numbers">
+        <button *ngFor="let page of [].constructor(totalPages); let i = index" (click)="onPageChange(i + 1)"
+          [class.active]="currentPage === i + 1" class="pagination-btn page-btn">
+          {{ i + 1 }}
+        </button>
+      </div>
+
+      <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages" class="pagination-btn">
+        Próxima ›
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,6 @@
 <main>
   <app-search (searchChange)="onSearchChange($event)" (productSelected)="onProductSelect($event)"></app-search>
   <app-page-container>
-    <app-product-grid [categoryFilter]="selectedCategory"></app-product-grid>
+    <app-product-list [categoryFilter]="selectedCategory"></app-product-list>
   </app-page-container>
 </main>
