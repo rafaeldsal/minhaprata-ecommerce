@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, delay, Observable, of, tap } from 'rxjs';
+import { BehaviorSubject, catchError, delay, Observable, of, tap } from 'rxjs';
 import { AuthState, LoginCredentials, RegisterData, User } from '../models/user';
+import { SocialUser } from '../models/social-user';
 
 @Injectable({
   providedIn: 'root'
@@ -81,7 +82,7 @@ export class AuthService {
 
   private handleLoginSuccess(rememberMe: boolean = false): void {
     const mockUser = this.createMockUser();
-    const mockToken = 'mock-jwt-token'+ Date.now();
+    const mockToken = 'mock-jwt-token' + Date.now();
 
     if (rememberMe) {
       localStorage.setItem(this.TOKEN_KEY, mockToken);
@@ -148,6 +149,51 @@ export class AuthService {
           isLoading: false,
           error: null
         });
+      })
+    );
+  }
+
+  loginWithSocial(socialUser: SocialUser): Observable<boolean> {
+    this.updateAuthState({ isLoading: true, error: null });
+
+    return of(true).pipe(
+      delay(800),
+      tap(() => {
+        // Cria usuário a partir dos dados sociais
+        const user: User = {
+          id: socialUser.id,
+          name: socialUser.name,
+          email: socialUser.email,
+          cpf: '', // Será preenchido depois no perfil
+          phone_number: '', // Será preenchido depois  
+          dt_birth: '', // Será preenchido depois
+          role: 'customer',
+          avatar: socialUser.photoUrl
+        };
+
+        // Gera token mock para usuário social
+        const mockToken = `social-${socialUser.provider}-token-${Date.now()}`;
+
+        // Salva no localStorage
+        localStorage.setItem(this.TOKEN_KEY, mockToken);
+        localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+
+        // Atualiza estado
+        this.updateAuthState({
+          user: user,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null
+        });
+
+        console.log(`Usuário ${socialUser.name} logado via ${socialUser.provider}`);
+      }),
+      catchError(error => {
+        this.updateAuthState({
+          isLoading: false,
+          error: 'Erro no login social'
+        });
+        return of(false);
       })
     );
   }

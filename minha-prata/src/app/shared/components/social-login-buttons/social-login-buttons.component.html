@@ -1,0 +1,21 @@
+<div class="social-login-buttons">
+  <div class="divider">
+    <span>ou continue com</span>
+  </div>
+
+  <div class="buttons-container">
+    <!-- Google Button -->
+    <button class="social-button google-button" (click)="signInWithGoogle()" [disabled]="isLoading" type="button">
+      <div class="button-content">
+        <i class="fab fa-google" [class.hidden]="isLoading && currentProvider === 'google'"></i>
+        <div class="spinner-small" *ngIf="isLoading && currentProvider === 'google'"></div>
+        <span *ngIf="!isLoading || currentProvider !== 'google'">
+          Continuar com Google
+        </span>
+        <span *ngIf="isLoading && currentProvider === 'google'" class="loading-text">
+          Conectando...
+        </span>
+      </div>
+    </button>
+  </div>
+</div>
