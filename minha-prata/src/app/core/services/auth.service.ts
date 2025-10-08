@@ -17,6 +17,8 @@ export class AuthService {
 
   private authState = new BehaviorSubject<AuthState>(this.authStateSubject);
   public authState$: Observable<AuthState> = this.authState.asObservable();
+  private readonly REFRESH_TOKEN_KEY = 'refresh_token';
+  private readonly TOKEN_EXPIRY_KEY = 'token_expiry';
 
   private readonly TOKEN_KEY = 'auth_token';
   private readonly USER_KEY = 'user_data';
@@ -78,24 +80,6 @@ export class AuthService {
 
   private mockLoginValidation(credentials: LoginCredentials): boolean {
     return !!(credentials.email && credentials.password);
-  }
-
-  private handleLoginSuccess(rememberMe: boolean = false): void {
-    const mockUser = this.createMockUser();
-    const mockToken = 'mock-jwt-token' + Date.now();
-
-    if (rememberMe) {
-      localStorage.setItem(this.TOKEN_KEY, mockToken);
-      localStorage.setItem(this.USER_KEY, JSON.stringify(mockUser));
-      localStorage.setItem(this.REMEMBER_ME_KEY, 'true');
-    }
-
-    this.updateAuthState({
-      user: mockUser,
-      isAuthenticated: true,
-      isLoading: false,
-      error: null
-    });
   }
 
   private handleLoginFailure(): void {
@@ -196,5 +180,64 @@ export class AuthService {
         return of(false);
       })
     );
+  }
+
+  getRefreshToken(): string | null {
+    return localStorage.getItem(this.REFRESH_TOKEN_KEY);
+  }
+
+  refreshToken(): Observable<string | null> {
+    const refreshToken = this.getRefreshToken();
+
+    if (!refreshToken) {
+      return of(null);
+    }
+
+    // Simulação de refresh token - substitua pela sua API real
+    return of(`refreshed-token-${Date.now()}`).pipe(
+      delay(1000),
+      tap(newToken => {
+        if (newToken) {
+          localStorage.setItem(this.TOKEN_KEY, newToken);
+          // Atualiza o expiry (1 hora a partir de agora)
+          const expiry = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+          localStorage.setItem(this.TOKEN_EXPIRY_KEY, expiry);
+        }
+      }),
+      catchError(error => {
+        this.logout();
+        return of(null);
+      })
+    );
+  }
+
+  isTokenExpired(): boolean {
+    const expiry = localStorage.getItem(this.TOKEN_EXPIRY_KEY);
+    if (!expiry) return true;
+
+    return new Date() > new Date(expiry);
+  }
+
+  // Atualize o método de login para salvar refresh token
+  private handleLoginSuccess(rememberMe: boolean = false): void {
+    const mockUser = this.createMockUser();
+    const mockToken = 'mock-jwt-token-' + Date.now();
+    const mockRefreshToken = 'mock-refresh-token-' + Date.now();
+    const expiry = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hora
+
+    if (rememberMe) {
+      localStorage.setItem(this.TOKEN_KEY, mockToken);
+      localStorage.setItem(this.REFRESH_TOKEN_KEY, mockRefreshToken);
+      localStorage.setItem(this.TOKEN_EXPIRY_KEY, expiry);
+      localStorage.setItem(this.USER_KEY, JSON.stringify(mockUser));
+      localStorage.setItem(this.REMEMBER_ME_KEY, 'true');
+    }
+
+    this.updateAuthState({
+      user: mockUser,
+      isAuthenticated: true,
+      isLoading: false,
+      error: null
+    });
   }
 }
