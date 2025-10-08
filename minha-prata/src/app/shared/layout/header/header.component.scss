@@ -155,8 +155,10 @@
   // User Cart
   .user-cart {
     display: flex;
+    align-items: center;
     gap: var(--space-3);
     order: 4;
+    height: 44px;
 
     @include respond-to('md') {
       gap: var(--space-4);
@@ -166,39 +168,12 @@
       order: 3;
     }
 
-    // REMOVER: estilos específicos do botão do carrinho
-    // O app-cart-icon terá seus próprios estilos
-
-    button {
-      border: none;
-      background: transparent;
-      padding: var(--space-2);
-      border-radius: var(--border-radius-full);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: var(--font-size-lg);
-      color: var(--text-secondary);
-      @include flex-center;
-      position: relative;
-
-      @include respond-to('md') {
-        font-size: var(--font-size-xl);
-      }
-
-      &:hover {
-        color: var(--color-primary);
-        background-color: var(--bg-secondary);
-        transform: scale(1.05);
-      }
-
-      &:focus-visible {
-        outline: 2px solid var(--color-primary);
-        outline-offset: 2px;
-      }
+    app-user-auth-icon,
+    app-cart-icon {
+      display: flex;
+      align-items: center;
+      height: 100%;
     }
-
-    // REMOVER: estilos do cart-badge
-    // O badge agora está no componente app-cart-icon
   }
 
   // Mobile Navigation Overlay

@@ -9,7 +9,6 @@ import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
-    CartIconComponent,
     CartItemComponent,
     CartPageComponent
   ],
@@ -18,7 +17,6 @@ import { RouterModule } from '@angular/router';
     RouterModule
   ],
   exports: [
-    CartIconComponent
   ]
 })
 export class CartModule { }

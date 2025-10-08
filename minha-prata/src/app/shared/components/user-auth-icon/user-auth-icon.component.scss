@@ -1,0 +1,401 @@
+@import '../../../../styles/variables';
+@import '../../../../styles/mixins';
+
+.user-auth-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+/* Botão de login (estilo igual ao cart) */
+.auth-button {
+  position: relative;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-2);
+  border-radius: var(--border-radius-full);
+  transition: all 0.3s ease;
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
+  @include flex-center;
+  width: 44px;
+  height: 44px;
+  // ← ADICIONE estas propriedades para alinhamento
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @include respond-to('md') {
+    font-size: var(--font-size-xl);
+  }
+
+  &:hover {
+    color: var(--color-primary);
+    background-color: var(--bg-secondary);
+    transform: scale(1.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* Usuário autenticado */
+.authenticated {
+  .user-menu {
+    position: relative;
+    height: 100%; // ← Importante
+    display: flex;
+    align-items: center;
+  }
+
+  .user-button {
+    position: relative;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-1);
+    border-radius: var(--border-radius-full);
+    transition: all 0.3s ease;
+    font-size: var(--font-size-lg);
+    color: var(--text-secondary);
+    @include flex-center;
+    gap: var(--space-2);
+    width: auto;
+    height: 44px;
+    padding-right: var(--space-3);
+    display: flex;
+    align-items: center;
+
+    @include respond-to('md') {
+      font-size: var(--font-size-xl);
+    }
+
+    &:hover {
+      color: var(--color-primary);
+      background-color: var(--bg-secondary);
+      transform: scale(1.05);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--bg-secondary);
+    transition: border-color 0.3s ease;
+  }
+
+  .user-button:hover .user-avatar {
+    border-color: var(--color-primary);
+  }
+
+  .user-name {
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-sm);
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    @include respond-to('md') {
+      font-size: var(--font-size-base);
+    }
+  }
+
+  .dropdown-arrow {
+    font-size: var(--font-size-xs);
+    color: var(--text-tertiary);
+    transition: transform 0.3s ease;
+  }
+
+  .user-dropdown.show + .user-button .dropdown-arrow {
+    transform: rotate(180deg);
+  }
+}
+
+/* Dropdown menu */
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--color-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  min-width: 200px;
+  z-index: var(--z-index-dropdown);
+  margin-top: var(--space-3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+
+  &.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  color: var(--text-primary);
+  text-decoration: none;
+  border: none;
+  background: none;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: var(--font-size-sm);
+
+  &:hover {
+    background: var(--bg-secondary);
+  }
+
+  &:first-child {
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+  }
+
+  &:last-child {
+    border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+  }
+
+  i {
+    width: 16px;
+    text-align: center;
+    font-size: var(--font-size-sm);
+    color: var(--text-tertiary);
+  }
+
+  &.logout {
+    color: var(--color-error);
+
+    i {
+      color: var(--color-error);
+    }
+
+    &:hover {
+      background: var(--color-error-light);
+    }
+  }
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: var(--space-2) 0;
+}
+
+/* Loading state */
+.loading-spinner {
+  padding: var(--space-2);
+  @include flex-center;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Badge de notificação (opcional - se quiser adicionar) */
+.user-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  @include flex-center;
+  line-height: 1;
+  border: 2px solid var(--header-bg);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .user-name {
+    display: none;
+  }
+
+  .user-button {
+    padding-right: var(--space-2) !important;
+    gap: var(--space-1) !important;
+  }
+
+  .auth-button,
+  .user-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Badges de notificação nos itens do dropdown */
+.notification-badge {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-radius: var(--border-radius-full);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  margin-left: auto;
+}
+
+/* Badge no ícone do usuário */
+.user-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: var(--color-error);
+  color: var(--color-white);
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  @include flex-center;
+  line-height: 1;
+  border: 2px solid var(--header-bg);
+  animation: pulse 2s infinite;
+}
+
+// Badge de admin no botão do usuário
+.admin-badge {
+  background: linear-gradient(135deg, var(--color-warning), #f59e0b);
+  color: var(--color-white);
+  border-radius: var(--border-radius-full);
+  width: 18px;
+  height: 18px;
+  @include flex-center;
+  font-size: var(--font-size-xs);
+  animation: glow 2s ease-in-out infinite alternate;
+
+  i {
+    font-size: 0.6rem;
+  }
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 5px var(--color-warning);
+  }
+  to {
+    box-shadow:
+      0 0 10px var(--color-warning),
+      0 0 15px var(--color-warning);
+  }
+}
+
+// Item do dropdown para admin
+.admin-item {
+  position: relative;
+  background: linear-gradient(135deg, var(--bg-secondary), var(--color-gray-100));
+  border-left: 3px solid var(--color-warning);
+  font-weight: var(--font-weight-semibold);
+
+  &:hover {
+    background: linear-gradient(135deg, var(--color-warning), #f59e0b);
+    color: var(--color-white);
+
+    i {
+      color: var(--color-white) !important;
+    }
+
+    .admin-tag {
+      background: var(--color-white);
+      color: var(--color-warning);
+    }
+  }
+
+  i {
+    color: var(--color-warning) !important;
+  }
+}
+
+// Tag "ADM" no item do dropdown
+.admin-tag {
+  background: var(--color-warning);
+  color: var(--color-white);
+  border-radius: var(--border-radius-sm);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  margin-left: auto;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// Divisor especial quando tem item admin
+.dropdown-divider:has(+ .admin-item) {
+  display: none;
+}
+
+// Se o primeiro item for admin, ajusta o border-radius
+.admin-item:first-child {
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+}
+
+// Responsive para o badge de admin
+@include respond-to-max('md') {
+  .admin-badge {
+    position: absolute;
+    top: -2px;
+    right: 20px;
+    width: 16px;
+    height: 16px;
+
+    i {
+      font-size: 0.5rem;
+    }
+  }
+
+  .user-name {
+    display: none;
+  }
+}

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Product } from '../models/product';
 import { delay, Observable, of } from 'rxjs';
 import { PRODUCT_OPTIONS_BY_CATEGORY } from '../models/product-options';
+import { NotificationService } from 'src/app/core/services/notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -276,12 +277,16 @@ export class ProductService {
   ];
 
 
-  constructor() { }
+  constructor(
+    private notificationService: NotificationService
+  ) { }
 
   getAll(): Observable<Product[]> {
     const enhancedProducts = this.mockProducts.map(p =>
       this.enhanceProductWithOptions(p)
     );
+
+    console.log('📦 Buscando todos os produtos...');
 
     return of(enhancedProducts).pipe(
       delay(1000)
@@ -297,6 +302,8 @@ export class ProductService {
       .filter(p => p.category.name === category)
       .map(p => this.enhanceProductWithOptions(p));
 
+    console.log(`📦 Buscando produtos da categoria: ${category}`);
+
     return of(filtered).pipe(
       delay(800)
     );
@@ -307,8 +314,10 @@ export class ProductService {
     const product = this.mockProducts.find(p => p.id === id);
 
     if (product) {
+      console.log(`📦 Buscando produto: ${product.name}`);
       return of(this.enhanceProductWithOptions(product));
     }
+    this.notificationService.showWarning(`Produto com ID ${id} não encontrado`);
     return of(undefined);
   }
 
@@ -322,6 +331,12 @@ export class ProductService {
       product.category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description?.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    if (filtered.length === 0) {
+      this.notificationService.showInfo(`Nenhum produto encontrado para "${searchTerm}"`);
+    } else {
+      console.log(`🔍 Encontrados ${filtered.length} produtos para "${searchTerm}"`);
+    }
 
     return of(filtered);
   }

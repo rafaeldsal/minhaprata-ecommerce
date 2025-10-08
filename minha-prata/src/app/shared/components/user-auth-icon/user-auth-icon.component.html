@@ -1,0 +1,63 @@
+<div class="user-auth-icon">
+  <!-- Estado: Não autenticado -->
+  <div *ngIf="!authState.isAuthenticated" class="auth-state">
+    <button (click)="handleClick()" class="auth-button" aria-label="Fazer login">
+      <i class="fas fa-user"></i>
+    </button>
+  </div>
+
+  <!-- Estado: Autenticado -->
+  <div *ngIf="authState.isAuthenticated && authState.user" class="auth-state authenticated">
+    <div class="user-menu">
+      <button (click)="toggleDropdown()" class="user-button" aria-label="Menu do usuário">
+        <img [src]="authState.user.avatar || 'https://via.placeholder.com/32'" [alt]="authState.user.name"
+          class="user-avatar">
+        <span class="user-name">{{ getFirstName() }}</span>
+
+        <!-- Badge de admin -->
+        <span *ngIf="isAdmin()" class="admin-badge" title="Administrador">
+          <i class="fas fa-crown"></i>
+        </span>
+
+        <i class="fas fa-chevron-down dropdown-arrow"></i>
+      </button>
+
+      <!-- Menu dropdown -->
+      <div class="user-dropdown" [class.show]="isDropdownOpen">
+        <!-- Item Dashboard Admin (apenas para admins) -->
+        <a *ngIf="isAdmin()" routerLink="/admin" class="dropdown-item admin-item" (click)="closeDropdown()">
+          <i class="fas fa-tachometer-alt"></i>
+          Dashboard Admin
+          <span class="admin-tag">ADM</span>
+        </a>
+
+        <a routerLink="/user/profile" class="dropdown-item" (click)="closeDropdown()">
+          <i class="fas fa-user"></i>
+          Meu Perfil
+        </a>
+        <a routerLink="/user/orders" class="dropdown-item" (click)="closeDropdown()">
+          <i class="fas fa-shopping-bag"></i>
+          Meus Pedidos
+        </a>
+        <a routerLink="/user/settings" class="dropdown-item" (click)="closeDropdown()">
+          <i class="fas fa-cog"></i>
+          Configurações
+        </a>
+
+        <div class="dropdown-divider"></div>
+
+        <button (click)="logout()" class="dropdown-item logout">
+          <i class="fas fa-sign-out-alt"></i>
+          Sair
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado: Carregando -->
+  <div *ngIf="authState.isLoading" class="auth-state loading">
+    <div class="loading-spinner">
+      <i class="spinner"></i>
+    </div>
+  </div>
+</div>

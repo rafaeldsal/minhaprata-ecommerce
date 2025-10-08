@@ -3,11 +3,14 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../shared/layout/header/header.component';
 import { FooterComponent } from '../shared/layout/footer/footer.component';
 import { RouterModule } from '@angular/router';
-import { CartModule } from 'src/app/features/cart/cart.module';
 import { ToastComponent } from '../shared/components/toast/toast.component';
 import { PageContainerComponent } from '../shared/components/page-container/page-container.component';
 import { SearchComponent } from '../shared/components/search/search.component';
 import { PageNotFoundComponent } from '../shared/components/page-not-found/page-not-found.component';
+import { UserAuthIconComponent } from './components/user-auth-icon/user-auth-icon.component';
+import { CartIconComponent } from '../features/cart/components/cart-icon/cart-icon.component';
+import { SocialLoginButtonsComponent } from './components/social-login-buttons/social-login-buttons.component';
+import { HasPermissionDirective } from './directives/has-permission.directive';
 
 @NgModule({
   declarations: [
@@ -16,12 +19,15 @@ import { PageNotFoundComponent } from '../shared/components/page-not-found/page-
     ToastComponent,
     PageContainerComponent,
     SearchComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    UserAuthIconComponent,
+    CartIconComponent,
+    SocialLoginButtonsComponent,
+    HasPermissionDirective
   ],
   imports: [
     CommonModule,
-    RouterModule,
-    CartModule
+    RouterModule
   ],
   exports: [
     HeaderComponent,
@@ -29,7 +35,11 @@ import { PageNotFoundComponent } from '../shared/components/page-not-found/page-
     ToastComponent,
     PageContainerComponent,
     SearchComponent,
-    PageNotFoundComponent
+    UserAuthIconComponent,
+    PageNotFoundComponent,
+    CartIconComponent,
+    SocialLoginButtonsComponent,
+    HasPermissionDirective
   ]
 })
 export class SharedModule { }

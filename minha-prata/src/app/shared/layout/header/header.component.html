@@ -30,11 +30,7 @@
 
     <!-- User Actions -->
     <div class="user-cart" aria-label="Ações do usuário">
-      <button id="userBtn" (click)="onUserClick()" (keyup.enter)="onUserClick()" (keyup.space)="onUserClick()"
-        aria-label="Minha conta" type="button">
-        <i class="fa-regular fa-user" aria-hidden="true"></i>
-        <span class="visually-hidden">Minha conta</span>
-      </button>
+      <app-user-auth-icon></app-user-auth-icon>
       <app-cart-icon></app-cart-icon>
     </div>
 
