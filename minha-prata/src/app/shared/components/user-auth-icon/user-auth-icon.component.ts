@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AuthState, User } from 'src/app/core/models/user';
+import { AuthState, initialAuthState, User, UserRole } from 'src/app/core/models/user';
 import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
@@ -10,12 +10,7 @@ import { AuthService } from 'src/app/core/services/auth.service';
   styleUrls: ['./user-auth-icon.component.scss']
 })
 export class UserAuthIconComponent implements OnInit, OnDestroy {
-  authState: AuthState = {
-    user: null,
-    isAuthenticated: false,
-    isLoading: false,
-    error: null
-  };
+  authState: AuthState = initialAuthState;
 
   isDropdownOpen = false;
   private authSubscription: Subscription | null = null;
@@ -71,6 +66,11 @@ export class UserAuthIconComponent implements OnInit, OnDestroy {
   getFirstName(): string {
     if (!this.authState.user?.name) return 'Usuário';
     return this.authState.user.name.split(' ')[0];
+  }
+
+  // Novo método: Verifica se o usuário é admin
+  isAdmin(): boolean {
+    return this.authState.user?.role === UserRole.ADMIN;
   }
 
   logout(): void {

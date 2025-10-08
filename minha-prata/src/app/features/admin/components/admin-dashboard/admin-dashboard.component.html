@@ -1,0 +1,109 @@
+<div class="admin-dashboard">
+  <div class="dashboard-header">
+    <h1>Painel Administrativo</h1>
+    <div class="user-info">
+      <span>Bem-vindo, {{ authService.getCurrentUser()?.name }}</span>
+      <span class="role-badge" [class.admin]="userRole === 'admin'">
+        {{ userRole === 'admin' ? 'Administrador' : 'Cliente' }}
+      </span>
+      <button *ngIf="isDevelopment" class="btn btn-outline-secondary btn-sm" (click)="simulateRoleChange()"
+        title="Apenas para testes de desenvolvimento">
+        Simular Troca de Role
+      </button>
+    </div>
+  </div>
+
+  <!-- Cards de Estatísticas -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">📦</div>
+      <div class="stat-info">
+        <h3>{{ stats.totalProducts }}</h3>
+        <p>Produtos</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">📁</div>
+      <div class="stat-info">
+        <h3>{{ stats.totalCategories }}</h3>
+        <p>Categorias</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">👥</div>
+      <div class="stat-info">
+        <h3>{{ stats.totalUsers }}</h3>
+        <p>Usuários</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">🛒</div>
+      <div class="stat-info">
+        <h3>{{ stats.totalOrders }}</h3>
+        <p>Pedidos</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Módulos Administrativos -->
+  <div class="admin-modules">
+    <h2>Módulos Administrativos</h2>
+
+    <div class="modules-grid">
+      <!-- Gerenciar Produtos -->
+      <div class="module-card" *appHasPermission="'canManageProducts'">
+        <div class="module-icon">📦</div>
+        <div class="module-content">
+          <h3>Gerenciar Produtos</h3>
+          <p>Adicione, edite ou remova produtos do catálogo</p>
+          <a routerLink="/admin/products" class="btn btn-primary">Acessar</a>
+        </div>
+      </div>
+
+      <!-- Gerenciar Categorias -->
+      <div class="module-card" *appHasPermission="'canManageCategories'">
+        <div class="module-icon">📁</div>
+        <div class="module-content">
+          <h3>Gerenciar Categorias</h3>
+          <p>Organize as categorias de produtos</p>
+          <a routerLink="/admin/categories" class="btn btn-primary">Acessar</a>
+        </div>
+      </div>
+
+      <!-- Gerenciar Usuários -->
+      <div class="module-card" *appHasPermission="'canManageUsers'">
+        <div class="module-icon">👥</div>
+        <div class="module-content">
+          <h3>Gerenciar Usuários</h3>
+          <p>Visualize e gerencie usuários do sistema</p>
+          <a routerLink="/admin/users" class="btn btn-primary">Acessar</a>
+        </div>
+      </div>
+
+      <!-- Analytics -->
+      <div class="module-card" *appHasPermission="'canViewAnalytics'">
+        <div class="module-icon">📊</div>
+        <div class="module-content">
+          <h3>Analytics</h3>
+          <p>Relatórios e estatísticas de vendas</p>
+          <button class="btn btn-primary" disabled>Em Breve</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mensagem para usuários sem permissões -->
+    <div *ngIf="!permissions.canAccessAdminPanel" class="alert alert-warning">
+      <h4>⚠️ Acesso Limitado</h4>
+      <p>Você não tem permissões completas para acessar todos os módulos administrativos.</p>
+    </div>
+  </div>
+
+  <!-- Debug: Mostrar permissões atuais -->
+  <div class="debug-section" *ngIf="userRole === 'admin'">
+    <h4>Debug - Permissões Atuais:</h4>
+    <pre>{{ permissions | json }}</pre>
+  </div>
+</div>

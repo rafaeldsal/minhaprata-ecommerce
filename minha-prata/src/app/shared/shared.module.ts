@@ -10,6 +10,7 @@ import { PageNotFoundComponent } from '../shared/components/page-not-found/page-
 import { UserAuthIconComponent } from './components/user-auth-icon/user-auth-icon.component';
 import { CartIconComponent } from '../features/cart/components/cart-icon/cart-icon.component';
 import { SocialLoginButtonsComponent } from './components/social-login-buttons/social-login-buttons.component';
+import { HasPermissionDirective } from './directives/has-permission.directive';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { SocialLoginButtonsComponent } from './components/social-login-buttons/s
     PageNotFoundComponent,
     UserAuthIconComponent,
     CartIconComponent,
-    SocialLoginButtonsComponent
+    SocialLoginButtonsComponent,
+    HasPermissionDirective
   ],
   imports: [
     CommonModule,
@@ -36,7 +38,8 @@ import { SocialLoginButtonsComponent } from './components/social-login-buttons/s
     UserAuthIconComponent,
     PageNotFoundComponent,
     CartIconComponent,
-    SocialLoginButtonsComponent
+    SocialLoginButtonsComponent,
+    HasPermissionDirective
   ]
 })
 export class SharedModule { }

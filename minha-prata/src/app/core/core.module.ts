@@ -8,14 +8,12 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { LoadingService } from './services/loading.service';
 import { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner.component';
-import { HasPermissionDirective } from './directives/has-permission.directive';
 
 
 
 @NgModule({
   declarations: [
-    LoadingSpinnerComponent,
-    HasPermissionDirective
+    LoadingSpinnerComponent
   ],
   imports: [
     CommonModule
@@ -37,14 +35,15 @@ import { HasPermissionDirective } from './directives/has-permission.directive';
     SearchStateService
   ],
   exports: [
-    LoadingSpinnerComponent,
-    HasPermissionDirective
+    LoadingSpinnerComponent
   ]
 })
 export class CoreModule {
-  constructor(@Optional() @SkipSelf() parentModule: CoreModule) {
+  constructor(@Optional() @SkipSelf() parentModule?: CoreModule) {
     if (parentModule) {
-      throw new Error('CoreModule is already loaded. Import it in the AppModule only');
+      throw new Error(
+        'CoreModule is already loaded. Import it in the AppModule only'
+      );
     }
   }
 }

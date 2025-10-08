@@ -1,0 +1,26 @@
+@import '../../../../../styles/variables';
+@import '../../../../../styles/mixins';
+
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+}
+
+.admin-content {
+  flex: 1;
+  background-color: var(--bg-primary);
+  overflow-y: auto;
+}
+
+// Responsividade
+@include respond-to-max('md') {
+  .admin-layout {
+    flex-direction: column;
+    padding-top: 80px; // Altura do sidebar fixo no mobile
+  }
+
+  .admin-content {
+    padding-top: var(--space-4);
+  }
+}

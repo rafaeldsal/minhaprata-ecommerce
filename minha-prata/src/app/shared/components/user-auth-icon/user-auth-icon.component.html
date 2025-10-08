@@ -13,14 +13,24 @@
         <img [src]="authState.user.avatar || 'https://via.placeholder.com/32'" [alt]="authState.user.name"
           class="user-avatar">
         <span class="user-name">{{ getFirstName() }}</span>
-        <i class="fas fa-chevron-down dropdown-arrow"></i>
 
-        <!-- Badge de notificação (opcional) -->
-        <!-- <span class="user-badge" *ngIf="hasNotifications">3</span> -->
+        <!-- Badge de admin -->
+        <span *ngIf="isAdmin()" class="admin-badge" title="Administrador">
+          <i class="fas fa-crown"></i>
+        </span>
+
+        <i class="fas fa-chevron-down dropdown-arrow"></i>
       </button>
 
       <!-- Menu dropdown -->
       <div class="user-dropdown" [class.show]="isDropdownOpen">
+        <!-- Item Dashboard Admin (apenas para admins) -->
+        <a *ngIf="isAdmin()" routerLink="/admin" class="dropdown-item admin-item" (click)="closeDropdown()">
+          <i class="fas fa-tachometer-alt"></i>
+          Dashboard Admin
+          <span class="admin-tag">ADM</span>
+        </a>
+
         <a routerLink="/user/profile" class="dropdown-item" (click)="closeDropdown()">
           <i class="fas fa-user"></i>
           Meu Perfil
@@ -28,13 +38,14 @@
         <a routerLink="/user/orders" class="dropdown-item" (click)="closeDropdown()">
           <i class="fas fa-shopping-bag"></i>
           Meus Pedidos
-          <!-- <span class="notification-badge">3</span> -->
         </a>
         <a routerLink="/user/settings" class="dropdown-item" (click)="closeDropdown()">
           <i class="fas fa-cog"></i>
           Configurações
         </a>
+
         <div class="dropdown-divider"></div>
+
         <button (click)="logout()" class="dropdown-item logout">
           <i class="fas fa-sign-out-alt"></i>
           Sair

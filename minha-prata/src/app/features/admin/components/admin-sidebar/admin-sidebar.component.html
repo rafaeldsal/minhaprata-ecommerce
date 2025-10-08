@@ -1,0 +1,49 @@
+<nav class="admin-sidebar">
+  <div class="sidebar-header">
+    <h3>MinhaPrata Admin</h3>
+  </div>
+
+  <ul class="sidebar-menu">
+    <li>
+      <a routerLink="/admin" routerLinkActive="active">
+        <span class="icon">📊</span>
+        Dashboard
+      </a>
+    </li>
+
+    <li *appHasPermission="'canManageProducts'">
+      <a routerLink="/admin/products" routerLinkActive="active">
+        <span class="icon">📦</span>
+        Produtos
+      </a>
+    </li>
+
+    <li *appHasPermission="'canManageCategories'">
+      <a routerLink="/admin/categories" routerLinkActive="active">
+        <span class="icon">📁</span>
+        Categorias
+      </a>
+    </li>
+
+    <li *appHasPermission="'canManageUsers'">
+      <a routerLink="/admin/users" routerLinkActive="active">
+        <span class="icon">👥</span>
+        Usuários
+      </a>
+    </li>
+
+    <li *appHasPermission="'canViewAnalytics'">
+      <a href="#" class="disabled">
+        <span class="icon">📈</span>
+        Analytics
+        <span class="badge">Em breve</span>
+      </a>
+    </li>
+  </ul>
+
+  <div class="sidebar-footer">
+    <button class="btn btn-outline-danger btn-sm" (click)="logout()">
+      Sair
+    </button>
+  </div>
+</nav>

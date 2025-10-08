@@ -8,11 +8,17 @@ export const adminGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   const notificationService = inject(NotificationService);
 
-  if (authService.isAuthenticated() && authService.isAdmin()) {
-    return true;
+  if (!authService.isAuthenticated()) {
+    notificationService.showError('Você precisa fazer login para acessar esta página.');
+    router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+    return false;
   }
 
-  notificationService.showError('Acesso negado. Permissões de administrador necessárias.');
-  router.navigate(['/']);
-  return false;
+  if (!authService.isAdmin()) {
+    notificationService.showError('Acesso negado. Permissões de administrador necessárias.');
+    router.navigate(['/']);
+    return false;
+  }
+
+  return true;
 };

@@ -90,3 +90,11 @@ export class PermissionManager {
     }
   }
 }
+
+export const initialAuthState: AuthState = {
+  user: null,
+  isAuthenticated: false,
+  isLoading: false,
+  error: null,
+  permissions: PermissionManager.getPermissionsByRole(UserRole.CUSTOMER)
+};

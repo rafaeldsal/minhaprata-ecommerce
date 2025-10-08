@@ -6,6 +6,7 @@ import { CartPageComponent } from './features/cart/components/cart-page/cart-pag
 import { authGuard } from './core/guards/auth.guard';
 import { LoginComponent } from './features/user/components/login/login.component';
 import { permissionGuard } from './core/guards/permission.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 const routes: Routes = [
 
@@ -19,11 +20,11 @@ const routes: Routes = [
   { path: 'checkout', canActivate: [authGuard, permissionGuard], loadChildren: () => import('./features/checkout/checkout.module').then(m => m.CheckoutModule) },
 
   // Rotas de Administrador
-  // {
-  //   path: 'admin',
-  //   canActivate: [authGuard, adminGuard],
-  //   loadChildren: () => import('./features/admin/admin.module').then(m => m.AdminModule)
-  // },
+  {
+    path: 'admin',
+    canActivate: [authGuard, adminGuard],
+    loadChildren: () => import('./features/admin/admin.module').then(m => m.AdminModule)
+  },
   // {
   //   path: 'admin/products',
   //   canActivate: [authGuard, permissionGuard],
