@@ -8,12 +8,14 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { LoadingService } from './services/loading.service';
 import { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner.component';
+import { HasPermissionDirective } from './directives/has-permission.directive';
 
 
 
 @NgModule({
   declarations: [
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    HasPermissionDirective
   ],
   imports: [
     CommonModule
@@ -35,7 +37,8 @@ import { LoadingSpinnerComponent } from './components/loading-spinner/loading-sp
     SearchStateService
   ],
   exports: [
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    HasPermissionDirective
   ]
 })
 export class CoreModule {

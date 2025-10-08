@@ -7,6 +7,7 @@ export interface User {
   dt_birth: string;
   role: string;
   avatar?: string;
+  permissions?: UserPermissions;
 }
 
 export interface LoginCredentials {
@@ -29,10 +30,63 @@ export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  error: string | null
+  error: string | null;
+  permissions: UserPermissions;
 }
 
 export enum UserRole {
   CUSTOMER = 'customer',
   ADMIN = 'admin',
+}
+
+export interface UserPermissions {
+  // Permissões de administração
+  canManageProducts: boolean;
+  canManageCategories: boolean;
+  canManageUsers: boolean;
+  canViewAnalytics: boolean;
+
+  // Permissões de usuário
+  canMakePurchases: boolean;
+  canManageOwnAddress: boolean;
+  canViewOrderHistory: boolean;
+
+  // Permissões gerais
+  canAccessAdminPanel: boolean;
+}
+
+export class PermissionManager {
+  static getPermissionsByRole(role: UserRole): UserPermissions {
+    const basePermissions: UserPermissions = {
+      canManageProducts: false,
+      canManageCategories: false,
+      canManageUsers: false,
+      canViewAnalytics: false,
+      canMakePurchases: true,
+      canManageOwnAddress: true,
+      canViewOrderHistory: true,
+      canAccessAdminPanel: false
+    };
+
+    switch (role) {
+      case UserRole.ADMIN:
+        return {
+          ...basePermissions,
+          canManageProducts: true,
+          canManageCategories: true,
+          canManageUsers: true,
+          canViewAnalytics: true,
+          canAccessAdminPanel: true
+        };
+
+      case UserRole.CUSTOMER:
+        return {
+          ...basePermissions,
+          // Customer tem apenas permissões básicas
+        };
+
+      default:
+        return basePermissions;
+    }
+  }
 }

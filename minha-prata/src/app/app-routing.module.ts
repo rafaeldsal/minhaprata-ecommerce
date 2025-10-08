@@ -5,6 +5,7 @@ import { ProductDetailsComponent } from './features/products/components/product-
 import { CartPageComponent } from './features/cart/components/cart-page/cart-page.component';
 import { authGuard } from './core/guards/auth.guard';
 import { LoginComponent } from './features/user/components/login/login.component';
+import { permissionGuard } from './core/guards/permission.guard';
 
 const routes: Routes = [
 
@@ -15,8 +16,32 @@ const routes: Routes = [
   // Rotas protegidas
   { path: 'user', canActivate: [authGuard], loadChildren: () => import('./features/user/user.module').then(m => m.UserModule) },
   { path: 'address', canActivate: [authGuard], loadChildren: () => import('./features/address/address.module').then(m => m.AddressModule) },
-  { path: 'checkout', canActivate: [authGuard], loadChildren: () => import('./features/checkout/checkout.module').then(m => m.CheckoutModule) },
+  { path: 'checkout', canActivate: [authGuard, permissionGuard], loadChildren: () => import('./features/checkout/checkout.module').then(m => m.CheckoutModule) },
 
+  // Rotas de Administrador
+  // {
+  //   path: 'admin',
+  //   canActivate: [authGuard, adminGuard],
+  //   loadChildren: () => import('./features/admin/admin.module').then(m => m.AdminModule)
+  // },
+  // {
+  //   path: 'admin/products',
+  //   canActivate: [authGuard, permissionGuard],
+  //   data: { permissions: ['canManageProducts'] },
+  //   loadChildren: () => import('./features/admin/admin-products/admin-products.module').then(m => m.AdminProductsModule)
+  // },
+  // {
+  //   path: 'admin/categories',
+  //   canActivate: [authGuard, permissionGuard],
+  //   data: { permissions: ['canManageCategories'] },
+  //   loadChildren: () => import('./features/admin/admin-categories/admin-categories.module').then(m => m.AdminCategoriesModule)
+  // },
+  // {
+  //   path: 'admin/users',
+  //   canActivate: [authGuard, permissionGuard],
+  //   data: { permissions: ['canManageUsers'] },
+  //   loadChildren: () => import('./features/admin/admin-users/admin-users.module').then(m => m.AdminUsersModule)
+  // },
 
   { path: 'login', component: LoginComponent },
   { path: 'produto/:id', component: ProductDetailsComponent },
