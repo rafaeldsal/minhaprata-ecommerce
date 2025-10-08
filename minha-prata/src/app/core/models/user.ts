@@ -8,6 +8,8 @@ export interface User {
   role: string;
   avatar?: string;
   permissions?: UserPermissions;
+  address?: UserAddress[];
+  notifications_enabled?: boolean;
 }
 
 export interface LoginCredentials {
@@ -37,6 +39,34 @@ export interface AuthState {
 export enum UserRole {
   CUSTOMER = 'customer',
   ADMIN = 'admin',
+}
+
+export interface UserAddress {
+  id: string;
+  title: string; // 'Casa', 'Trabalho', etc
+  zip_code: string;
+  street: string;
+  number: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  is_default: boolean;
+}
+
+export interface UpdateProfileData {
+  name?: string;
+  email?: string;
+  phone_number?: string;
+  dt_birth?: string;
+  avatar?: string;
+  notifications_enabled?: boolean;
+}
+
+export interface ChangePasswordData {
+  current_password: string;
+  new_password: string;
+  confirm_password: string;
 }
 
 export interface UserPermissions {

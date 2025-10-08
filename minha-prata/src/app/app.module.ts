@@ -8,6 +8,7 @@ import { ProductsModule } from './features/products/products/products.module';
 import { CartModule } from './features/cart/cart.module';
 import { CoreModule } from './core/core.module';
 import { CategoryModule } from './features/category/category.module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { CategoryModule } from './features/category/category.module';
     SharedModule,
     ProductsModule,
     CategoryModule,
+    HttpClientModule,
     CartModule,
     CoreModule
   ],
