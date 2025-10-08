@@ -358,4 +358,12 @@ export class AuthService {
       this.notificationService.showInfo(`Função alterada para: ${newRole}`);
     }
   }
+
+  updateUserProfile(updatedUser: User): void {
+    const currentState = this.authState.value;
+    this.updateAuthState({
+      user: { ...currentState.user, ...updatedUser }
+    });
+    localStorage.setItem(this.USER_KEY, JSON.stringify(updatedUser));
+  }
 }

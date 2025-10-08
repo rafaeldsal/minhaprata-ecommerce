@@ -6,6 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
+import { HttpClientModule } from '@angular/common/http';
 
 const routes: Routes = [
   { path: '', redirectTo: 'profile', pathMatch: 'full' }, // ← Rota padrão
@@ -22,6 +23,7 @@ const routes: Routes = [
   imports: [
     CommonModule,
     SharedModule,
+    HttpClientModule,
     ReactiveFormsModule,
     RouterModule.forChild(routes)
   ]

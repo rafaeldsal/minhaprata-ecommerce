@@ -1,27 +1,424 @@
 <div class="profile-container">
-  <h1>Meu Perfil</h1>
+  <div class="profile-header">
+    <h1>Meu Perfil</h1>
+    <p>Gerencie suas informações pessoais e preferências</p>
+  </div>
 
-  <div *ngIf="currentUser" class="profile-card">
-    <div class="profile-header">
-      <img [src]="currentUser.avatar || 'https://via.placeholder.com/150'" [alt]="currentUser.name" class="avatar">
-      <h2>{{ currentUser.name }}</h2>
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Carregando...</p>
+  </div>
+
+  <div *ngIf="currentUser" class="profile-content">
+
+    <!-- === MODO VISUALIZAÇÃO === -->
+    <div *ngIf="!isEditing && !isEditingAddress" class="profile-card view-mode">
+
+      <!-- Header com Avatar -->
+      <div class="profile-header-section">
+        <div class="avatar-section">
+          <div class="avatar-container">
+            <img [src]="currentUser.avatar || '/assets/images/avatar-placeholder.png'" [alt]="currentUser.name"
+              class="avatar">
+            <button (click)="triggerFileInput()" class="btn-edit-avatar" title="Alterar foto">
+              <i class="fas fa-camera"></i>
+            </button>
+            <input #fileInput type="file" (change)="onAvatarChange($event)" accept="image/*" hidden>
+          </div>
+          <h2>{{ currentUser.name }}</h2>
+          <span class="user-role">{{ currentUser.role === 'customer' ? 'Cliente' : 'Administrador' }}</span>
+        </div>
+
+        <div class="action-buttons">
+          <button (click)="startEditing()" class="btn-primary">
+            <i class="fas fa-edit"></i> Editar Perfil
+          </button>
+          <button (click)="startPasswordChange()" class="btn-secondary" [disabled]="isGoogleUser()"
+            [title]="isGoogleUser() ? 'Usuários Google não podem alterar senha aqui' : 'Alterar senha'">
+            <i class="fas fa-key"></i>
+            {{ isGoogleUser() ? 'Alterar Senha (Google)' : 'Alterar Senha' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Informações Pessoais -->
+      <div class="info-section">
+        <h3><i class="fas fa-user"></i> Informações Pessoais</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Nome completo</label>
+            <p>{{ currentUser.name }}</p>
+          </div>
+          <div class="info-item">
+            <label>Email</label>
+            <p>{{ currentUser.email }}</p>
+          </div>
+          <div class="info-item">
+            <label>CPF</label>
+            <p>{{ getMaskedCpf(currentUser.cpf) }}</p>
+          </div>
+          <div class="info-item">
+            <label>Telefone</label>
+            <p>{{ getMaskedPhone(currentUser.phone_number) }}</p>
+          </div>
+          <div class="info-item">
+            <label>Data de Nascimento</label>
+            <p>{{ formatBirthDate(currentUser.dt_birth) }}</p>
+          </div>
+          <div class="info-item">
+            <label>Notificações</label>
+            <p>
+              <i class="fas" [class.fa-bell]="currentUser.notifications_enabled"
+                [class.fa-bell-slash]="!currentUser.notifications_enabled"></i>
+              {{ currentUser.notifications_enabled ? 'Ativadas' : 'Desativadas' }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seção de Endereços -->
+      <div class="addresses-section">
+        <div class="section-header">
+          <h3><i class="fas fa-map-marker-alt"></i> Meus Endereços</h3>
+          <button (click)="addNewAddress()" class="btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Novo Endereço
+          </button>
+        </div>
+
+        <div *ngIf="userAddresses.length === 0" class="empty-state">
+          <i class="fas fa-map-marker-alt"></i>
+          <p>Nenhum endereço cadastrado</p>
+          <button (click)="addNewAddress()" class="btn-primary">Adicionar Primeiro Endereço</button>
+        </div>
+
+        <div class="addresses-grid">
+          <div *ngFor="let address of userAddresses" class="address-card" [class.default]="address.is_default">
+
+            <div class="address-header">
+              <h4>{{ address.title }}</h4>
+              <div class="address-actions">
+                <button (click)="editAddress(address)" class="btn-icon" title="Editar">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button (click)="deleteAddress(address)" class="btn-icon btn-danger" title="Excluir">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="address-content">
+              <p>{{ address.street }}, {{ address.number }}</p>
+              <p *ngIf="address.complement">{{ address.complement }}</p>
+              <p>{{ address.neighborhood }}</p>
+              <p>{{ address.city }} - {{ address.state }}</p>
+              <p>CEP: {{ getMaskedCep(address.zip_code) }}</p>
+            </div>
+
+            <div class="address-footer">
+              <button *ngIf="!address.is_default" (click)="setDefaultAddress(address)" class="btn-default">
+                <i class="fas fa-star"></i> Tornar Padrão
+              </button>
+              <span *ngIf="address.is_default" class="default-badge">
+                <i class="fas fa-star"></i> Endereço Principal
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="profile-info">
-      <div class="info-item">
-        <strong>Email:</strong> {{ currentUser.email }}
+    <!-- === MODO EDIÇÃO DE PERFIL === -->
+    <div *ngIf="isEditing && !isEditingAddress" class="profile-card edit-mode">
+      <div class="edit-header">
+        <h2><i class="fas fa-edit"></i> Editar Perfil</h2>
+        <button (click)="cancelEditing()" class="btn-text">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
       </div>
-      <div class="info-item">
-        <strong>CPF:</strong> {{ currentUser.cpf }}
+
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name">Nome completo *</label>
+            <input type="text" id="name" formControlName="name" class="form-control">
+            <div class="error-message" *ngIf="getFieldError(profileForm, 'name')">
+              {{ getFieldError(profileForm, 'name') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" formControlName="email" class="form-control">
+            <div class="error-message" *ngIf="getFieldError(profileForm, 'email')">
+              {{ getFieldError(profileForm, 'email') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="phone_number">Telefone *</label>
+            <input type="tel" id="phone_number" formControlName="phone_number" class="form-control"
+              (input)="onPhoneInput($event)" placeholder="(11) 99999-9999">
+            <div class="error-message" *ngIf="getFieldError(profileForm, 'phone_number')">
+              {{ getFieldError(profileForm, 'phone_number') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="dt_birth">Data de Nascimento *</label>
+            <input type="date" id="dt_birth" formControlName="dt_birth" class="form-control">
+            <div class="error-message" *ngIf="getFieldError(profileForm, 'dt_birth')">
+              {{ getFieldError(profileForm, 'dt_birth') }}
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="notifications_enabled">
+              <span class="checkmark"></span>
+              Receber notificações por email
+            </label>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" (click)="cancelEditing()" class="btn-secondary">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="profileForm.invalid || isLoading" class="btn-primary">
+            <i class="fas fa-save"></i>
+            {{ isLoading ? 'Salvando...' : 'Salvar Alterações' }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- === MODO EDIÇÃO DE ENDEREÇO === -->
+    <div *ngIf="isEditingAddress" class="profile-card address-mode">
+      <div class="edit-header">
+        <h2>
+          <i class="fas fa-map-marker-alt"></i>
+          {{ selectedAddress ? 'Editar Endereço' : 'Novo Endereço' }}
+        </h2>
+        <button (click)="cancelAddressEdit()" class="btn-text">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
       </div>
-      <div class="info-item">
-        <strong>Telefone:</strong> {{ currentUser.phone_number }}
-      </div>
-      <div class="info-item">
-        <strong>Data de Nascimento:</strong> {{ currentUser.dt_birth | date:'dd/MM/yyyy' }}
-      </div>
-      <div class="info-item">
-        <strong>Tipo de Conta:</strong> {{ currentUser.role === 'customer' ? 'Cliente' : 'Administrador' }}
+
+      <form [formGroup]="addressForm" (ngSubmit)="onSaveAddress()" class="address-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="title">Apelido do Endereço *</label>
+            <input type="text" id="title" formControlName="title" placeholder="Ex: Casa, Trabalho..."
+              class="form-control">
+            <div class="error-message" *ngIf="getFieldError(addressForm, 'title')">
+              {{ getFieldError(addressForm, 'title') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="zip_code">CEP *</label>
+            <input type="text" id="zip_code" formControlName="zip_code" class="form-control"
+              (input)="onCepInput($event)" placeholder="00000-000">
+            <div class="error-message" *ngIf="getFieldError(addressForm, 'zip_code')">
+              {{ getFieldError(addressForm, 'zip_code') }}
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="street">Rua *</label>
+            <input type="text" id="street" formControlName="street" class="form-control">
+            <div class="error-message" *ngIf="getFieldError(addressForm, 'street')">
+              {{ getFieldError(addressForm, 'street') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="number">Número *</label>
+            <input type="text" id="number" formControlName="number" class="form-control">
+            <div class="error-message" *ngIf="getFieldError(addressForm, 'number')">
+              {{ getFieldError(addressForm, 'number') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="complement">Complemento</label>
+            <input type="text" id="complement" formControlName="complement" placeholder="Apto, Bloco, etc."
+              class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="neighborhood">Bairro *</label>
+            <input type="text" id="neighborhood" formControlName="neighborhood" class="form-control">
+            <div class="error-message" *ngIf="getFieldError(addressForm, 'neighborhood')">
+              {{ getFieldError(addressForm, 'neighborhood') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="city">Cidade *</label>
+            <input type="text" id="city" formControlName="city" class="form-control">
+            <div class="error-message" *ngIf="getFieldError(addressForm, 'city')">
+              {{ getFieldError(addressForm, 'city') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="state">Estado *</label>
+            <select id="state" formControlName="state" class="form-control">
+              <option value="">Selecione</option>
+              <option value="AC">Acre</option>
+              <option value="AL">Alagoas</option>
+              <option value="AP">Amapá</option>
+              <option value="AM">Amazonas</option>
+              <option value="BA">Bahia</option>
+              <option value="CE">Ceará</option>
+              <option value="DF">Distrito Federal</option>
+              <option value="ES">Espírito Santo</option>
+              <option value="GO">Goiás</option>
+              <option value="MA">Maranhão</option>
+              <option value="MT">Mato Grosso</option>
+              <option value="MS">Mato Grosso do Sul</option>
+              <option value="MG">Minas Gerais</option>
+              <option value="PA">Pará</option>
+              <option value="PB">Paraíba</option>
+              <option value="PR">Paraná</option>
+              <option value="PE">Pernambuco</option>
+              <option value="PI">Piauí</option>
+              <option value="RJ">Rio de Janeiro</option>
+              <option value="RN">Rio Grande do Norte</option>
+              <option value="RS">Rio Grande do Sul</option>
+              <option value="RO">Rondônia</option>
+              <option value="RR">Roraima</option>
+              <option value="SC">Santa Catarina</option>
+              <option value="SP">São Paulo</option>
+              <option value="SE">Sergipe</option>
+              <option value="TO">Tocantins</option>
+            </select>
+            <div class="error-message" *ngIf="getFieldError(addressForm, 'state')">
+              {{ getFieldError(addressForm, 'state') }}
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="is_default">
+              <span class="checkmark"></span>
+              Definir como endereço principal
+            </label>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" (click)="cancelAddressEdit()" class="btn-secondary">
+            Cancelar
+          </button>
+          <button type="submit" [disabled]="addressForm.invalid || isLoading" class="btn-primary">
+            <i class="fas fa-save"></i>
+            {{ isLoading ? 'Salvando...' : 'Salvar Endereço' }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- Estado vazio quando não há usuário -->
+  <div *ngIf="!currentUser" class="empty-state">
+    <i class="fas fa-user-slash"></i>
+    <h3>Nenhum usuário logado</h3>
+    <p>Faça login para acessar seu perfil</p>
+    <a routerLink="/login" class="btn-primary">Fazer Login</a>
+  </div>
+
+  <!-- === OVERLAY DE ALTERAÇÃO DE SENHA === -->
+  <!-- === OVERLAY DE ALTERAÇÃO DE SENHA === -->
+  <div *ngIf="isChangingPassword" class="password-overlay">
+    <div class="password-overlay-backdrop" (click)="cancelPasswordChange()"></div>
+    <div class="password-overlay-content">
+      <div class="profile-card password-mode">
+        <div class="edit-header">
+          <h2><i class="fas fa-key"></i> Alterar Senha</h2>
+          <button (click)="cancelPasswordChange()" class="btn-text">
+            <i class="fas fa-times"></i> Cancelar
+          </button>
+        </div>
+
+        <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" class="password-form">
+          <div class="form-group">
+            <label for="current_password">Senha Atual *</label>
+            <div class="password-input-container">
+              <input [type]="showCurrentPassword ? 'text' : 'password'" id="current_password"
+                formControlName="current_password" class="form-control">
+              <button type="button" class="password-toggle" (click)="togglePasswordVisibility('current')">
+                <i class="fas" [class.fa-eye]="!showCurrentPassword" [class.fa-eye-slash]="showCurrentPassword"></i>
+              </button>
+            </div>
+            <div class="error-message" *ngIf="getFieldError(passwordForm, 'current_password')">
+              {{ getFieldError(passwordForm, 'current_password') }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="new_password">Nova Senha *</label>
+            <div class="password-input-container">
+              <input [type]="showNewPassword ? 'text' : 'password'" id="new_password" formControlName="new_password"
+                class="form-control"
+                [class.is-valid]="passwordForm.get('new_password')?.valid && passwordForm.get('new_password')?.touched"
+                [class.is-invalid]="passwordForm.get('new_password')?.invalid && passwordForm.get('new_password')?.touched">
+              <button type="button" class="password-toggle" (click)="togglePasswordVisibility('new')">
+                <i class="fas" [class.fa-eye]="!showNewPassword" [class.fa-eye-slash]="showNewPassword"></i>
+              </button>
+            </div>
+
+            <!-- Indicador de força da senha -->
+            <div *ngIf="passwordForm.get('new_password')?.value && passwordForm.get('new_password')?.touched"
+              class="password-strength">
+              <div class="strength-bar">
+                <div class="strength-segment" [class.weak]="getPasswordStrength() === 'weak'"></div>
+                <div class="strength-segment" [class.medium]="getPasswordStrength() === 'medium'"></div>
+                <div class="strength-segment" [class.strong]="getPasswordStrength() === 'strong'"></div>
+              </div>
+              <small class="strength-text">{{ getPasswordStrengthText() }}</small>
+            </div>
+
+            <div class="error-message" *ngIf="getFieldError(passwordForm, 'new_password')">
+              {{ getFieldError(passwordForm, 'new_password') }}
+            </div>
+
+            <!-- Dicas de senha -->
+            <div *ngIf="passwordForm.get('new_password')?.touched" class="password-tips">
+              <small [class.text-success]="hasUpperCase()">✓ Pelo menos uma letra maiúscula</small><br>
+              <small [class.text-success]="hasLowerCase()">✓ Pelo menos uma letra minúscula</small><br>
+              <small [class.text-success]="hasNumbers()">✓ Pelo menos um número</small><br>
+              <small [class.text-success]="hasMinLength()">✓ Mínimo 6 caracteres</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirm_password">Confirmar Nova Senha *</label>
+            <div class="password-input-container">
+              <input [type]="showConfirmPassword ? 'text' : 'password'" id="confirm_password"
+                formControlName="confirm_password" class="form-control">
+              <button type="button" class="password-toggle" (click)="togglePasswordVisibility('confirm')">
+                <i class="fas" [class.fa-eye]="!showConfirmPassword" [class.fa-eye-slash]="showConfirmPassword"></i>
+              </button>
+            </div>
+            <div class="error-message" *ngIf="getFieldError(passwordForm, 'confirm_password')">
+              {{ getFieldError(passwordForm, 'confirm_password') }}
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" (click)="cancelPasswordChange()" class="btn-secondary">
+              Cancelar
+            </button>
+            <button type="submit" [disabled]="passwordForm.invalid || isLoading" class="btn-primary">
+              <i class="fas fa-key"></i>
+              {{ isLoading ? 'Alterando...' : 'Alterar Senha' }}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
