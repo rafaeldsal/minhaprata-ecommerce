@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, delay, Observable, of, tap } from 'rxjs';
 import { AuthState, LoginCredentials, RegisterData, User } from '../models/user';
 import { SocialUser } from '../models/social-user';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +38,9 @@ export class AuthService {
     };
   }
 
-  constructor() {
+  constructor(
+    private notificationService: NotificationService
+  ) {
     this.initializeAuthState();
   }
 
@@ -89,6 +92,8 @@ export class AuthService {
       isLoading: false,
       error: 'Email ou senha inválidos'
     });
+
+    this.notificationService.showError('Email ou senha inválidos');
   }
 
   logout(): void {
@@ -97,6 +102,8 @@ export class AuthService {
     localStorage.removeItem(this.REMEMBER_ME_KEY);
 
     this.updateAuthState(this.authStateSubject);
+
+    this.notificationService.showInfo('Logout realizado com sucesso');
   }
 
   getToken(): string | null {
@@ -133,6 +140,15 @@ export class AuthService {
           isLoading: false,
           error: null
         });
+        this.notificationService.showSuccess('Cadastro realizado com sucesso!');
+      }),
+      catchError(error => {
+        this.notificationService.showError('Erro no cadastro');
+        this.updateAuthState({
+          isLoading: false,
+          error: 'Erro no cadastro'
+        });
+        return of(false);
       })
     );
   }
@@ -239,5 +255,7 @@ export class AuthService {
       isLoading: false,
       error: null
     });
+
+    this.notificationService.showSuccess('Login realizado com sucesso!');
   }
 }

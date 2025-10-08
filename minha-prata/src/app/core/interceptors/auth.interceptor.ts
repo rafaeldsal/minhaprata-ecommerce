@@ -4,6 +4,7 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, switchMap, filter, take, finalize } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { NotificationService } from '../services/notification.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -12,27 +13,49 @@ export class AuthInterceptor implements HttpInterceptor {
 
   constructor(
     private authService: AuthService,
+    private notificationService: NotificationService,
     private router: Router
   ) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Adiciona o token de autenticação se disponível
+    console.log('🔄 Interceptor: Processando requisição para', req.url);
+
     const authReq = this.addAuthHeader(req);
 
     return next.handle(authReq).pipe(
       catchError((error: HttpErrorResponse) => {
-        // Trata erros de autenticação (401 Unauthorized)
+        console.error('❌ Interceptor: Erro HTTP', error.status, error.url);
+
+        // ADICIONE NOTIFICAÇÕES ESPECÍFICAS PARA CADA ERRO ↓
+
         if (error.status === 401 && !req.url.includes('/auth/refresh')) {
+          this.notificationService.showWarning('Sessão expirada. Renovando autenticação...');
           return this.handle401Error(authReq, next);
         }
 
-        // Trata erros de permissão (403 Forbidden)
         if (error.status === 403) {
+          this.notificationService.showError('Acesso negado. Você não tem permissão para esta ação.');
           this.handle403Error();
           return throwError(() => error);
         }
 
-        // Propaga outros erros
+        if (error.status === 404) {
+          this.notificationService.showWarning('Recurso não encontrado.');
+          return throwError(() => error);
+        }
+
+        if (error.status >= 500) {
+          this.notificationService.showError('Erro interno do servidor. Tente novamente mais tarde.');
+          return throwError(() => error);
+        }
+
+        // Erro genérico de rede/outros
+        if (error.status === 0) {
+          this.notificationService.showError('Erro de conexão. Verifique sua internet.');
+        } else {
+          this.notificationService.showError(`Erro: ${error.message || 'Erro desconhecido'}`);
+        }
+
         return throwError(() => error);
       })
     );
@@ -74,18 +97,22 @@ export class AuthInterceptor implements HttpInterceptor {
         switchMap((token: string | null) => {
           if (token) {
             this.refreshTokenSubject.next(token);
+            this.notificationService.showSuccess('Sessão renovada com sucesso!');
             return next.handle(this.addAuthHeader(request));
           }
 
           // Se não conseguiu renovar, faz logout
           this.authService.logout();
           this.router.navigate(['/login']);
+          this.notificationService.showError('Sessão expirada. Faça login novamente.');
           return throwError(() => new Error('Session expired'));
         }),
         catchError((error) => {
           // Erro ao renovar token, faz logout
           this.authService.logout();
           this.router.navigate(['/login']);
+          this.notificationService.showError('Falha na renovação da sessão. Faça login novamente.');
+
           return throwError(() => error);
         }),
         finalize(() => {

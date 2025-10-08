@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { environment } from '../../../../environments/environment';
 import { SocialAuthService } from 'src/app/core/services/social-auth.service';
+import { NotificationService } from 'src/app/core/services/notification.service';
 
 declare var google: any;
 
@@ -18,6 +19,7 @@ export class SocialLoginButtonsComponent implements OnInit {
 
   constructor(
     private socialAuthService: SocialAuthService,
+    private notificationService: NotificationService,
     private authService: AuthService
   ) { }
 
@@ -91,7 +93,7 @@ export class SocialLoginButtonsComponent implements OnInit {
     this.authService.loginWithSocial(socialUser).subscribe({
       next: (success) => {
         if (success) {
-          console.log('🎉 Login social integrado com sucesso!');
+          this.notificationService.showSuccess('Login com Google realizado com sucesso!');
         } else {
           this.handleSocialLoginError('Falha na integração com o sistema');
         }
@@ -110,6 +112,6 @@ export class SocialLoginButtonsComponent implements OnInit {
     const errorMessage = typeof error === 'string' ? error :
       error?.error?.message || 'Erro no login social';
 
-    alert(`Erro: ${errorMessage}`);
+    this.notificationService.showError(`Erro no login: ${errorMessage}`);
   }
 }
