@@ -1,0 +1,87 @@
+<div class="settings-section">
+  <div class="settings-section__header">
+    <h2 class="settings-section__title">Configurações da Conta</h2>
+    <button *ngIf="!isEditing()" class="btn btn--outline" (click)="enableEditing()">
+      Editar
+    </button>
+
+    <div *ngIf="isEditing()" class="settings-section__actions">
+      <button class="btn btn--secondary" (click)="cancelEditing()" [disabled]="isLoading()">
+        Cancelar
+      </button>
+      <button class="btn btn--primary" (click)="saveChanges()" [disabled]="isLoading() || accountForm.invalid">
+        {{ isLoading() ? 'Salvando...' : 'Salvar' }}
+      </button>
+    </div>
+  </div>
+
+  <form [formGroup]="accountForm" class="settings-form">
+    <!-- Email -->
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input type="email" formControlName="email" class="form-input" placeholder="seu@email.com">
+
+      <div class="form-validation">
+        <span *ngIf="settings?.account?.emailVerified" class="status-badge status-badge--success">
+          ✓ Verificado
+        </span>
+        <span *ngIf="!settings?.account?.emailVerified" class="status-badge status-badge--warning">
+          ⚠ Não verificado
+        </span>
+
+        <button type="button" class="btn btn--text" (click)="requestVerification('email')">
+          {{ settings?.account?.emailVerified ? 'Reenviar verificação' : 'Verificar email' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Telefone -->
+    <div class="form-group">
+      <label class="form-label">Telefone</label>
+      <input type="tel" formControlName="phone" class="form-input" placeholder="(11) 99999-9999">
+
+      <div class="form-validation">
+        <span *ngIf="settings?.account?.phoneVerified" class="status-badge status-badge--success">
+          ✓ Verificado
+        </span>
+        <span *ngIf="settings?.account?.phone && !settings?.account?.phoneVerified"
+          class="status-badge status-badge--warning">
+          ⚠ Não verificado
+        </span>
+
+        <button *ngIf="settings?.account?.phone" type="button" class="btn btn--text"
+          (click)="requestVerification('phone')">
+          Verificar telefone
+        </button>
+      </div>
+    </div>
+
+    <!-- 2FA -->
+    <div class="form-group">
+      <label class="form-label">Autenticação de Dois Fatores</label>
+      <div class="toggle-group">
+        <span class="toggle-label">
+          {{ accountForm.get('twoFactorEnabled')?.value ? 'Ativado' : 'Desativado' }}
+        </span>
+        <label class="toggle-switch">
+          <input type="checkbox" formControlName="twoFactorEnabled" (change)="toggleTwoFactor()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <p class="form-help">
+        Aumente a segurança da sua conta com verificação em duas etapas
+      </p>
+    </div>
+  </form>
+
+  <!-- Modal de Verificação -->
+  <div *ngIf="showVerificationModal()" class="modal-overlay">
+    <div class="modal">
+      <h3>Verificar {{ verificationType() === 'email' ? 'Email' : 'Telefone' }}</h3>
+      <p>Enviamos um código de verificação para o seu {{ verificationType() === 'email' ? 'email' : 'telefone' }}</p>
+      <div class="modal-actions">
+        <button class="btn btn--primary" (click)="showVerificationModal.set(false)">OK</button>
+      </div>
+    </div>
+  </div>
+</div>

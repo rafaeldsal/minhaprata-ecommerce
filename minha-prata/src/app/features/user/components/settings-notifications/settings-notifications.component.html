@@ -1,0 +1,357 @@
+<div class="settings-section">
+  <div class="settings-section__header">
+    <h2 class="settings-section__title">Notificações e Alertas</h2>
+    <button class="btn btn--outline" (click)="resetToDefaults()">
+      <span class="btn__icon">🔄</span>
+      Restaurar Padrões
+    </button>
+  </div>
+
+  <p class="settings-description">
+    Escolha quais notificações você deseja receber sobre seus pedidos, promoções e atividades na loja.
+  </p>
+
+  <form [formGroup]="notificationsForm" class="settings-form">
+
+    <!-- Categorias de Notificação -->
+    <div *ngFor="let category of notificationCategories" class="notification-category">
+      <div class="notification-category__header">
+        <div class="category-info">
+          <h3 class="category-title">{{ category.title }}</h3>
+          <p class="category-description">{{ category.description }}</p>
+        </div>
+        <div class="category-toggle">
+          <label class="toggle-switch">
+            <input type="checkbox" [checked]="isCategoryEnabled(category.id)"
+              (change)="toggleCategory(category.id, $any($event.target).checked)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 📦 Pedidos e Entregas -->
+      <div *ngIf="category.id === 'orders'" class="notification-channels">
+
+        <!-- Email -->
+        <div class="channel-group">
+          <h4 class="channel-title">📧 Email</h4>
+          <div class="channel-options" formGroupName="email">
+            <label class="option-toggle">
+              <span class="option-text">Confirmação de pedido</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="orderConfirmation">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Pedido enviado</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="orderShipped">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Saiu para entrega</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="outForDelivery">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Atualização de entrega</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="deliveryUpdate">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Pedido entregue</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="orderDelivered">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+          </div>
+        </div>
+
+        <!-- Push -->
+        <div class="channel-group">
+          <h4 class="channel-title">📱 Notificações no App</h4>
+          <div class="channel-options" formGroupName="push">
+            <label class="option-toggle">
+              <span class="option-text">Pedido enviado</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="orderShipped">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Saiu para entrega</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="outForDelivery">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Atualização de entrega</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="deliveryUpdate">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+          </div>
+        </div>
+
+        <!-- SMS -->
+        <div class="channel-group">
+          <h4 class="channel-title">💬 SMS</h4>
+          <div class="channel-options" formGroupName="sms">
+            <label class="option-toggle">
+              <span class="option-text">Pedido entregue</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="orderDelivered">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Problemas na entrega</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="deliveryProblem">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🎯 Promoções e Ofertas -->
+      <div *ngIf="category.id === 'promotions'" class="notification-channels">
+        <div class="channel-group" formGroupName="promotions">
+          <h4 class="channel-title">📧 Email</h4>
+          <div class="channel-options" formGroupName="email">
+            <label class="option-toggle">
+              <span class="option-text">Ofertas da semana</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="weeklyOffers">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Promoções relâmpago</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="flashSales">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Quedas de preço</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="priceDrops">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Promoções sazonais</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="seasonalPromotions">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Lembretes de carrinho abandonado</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="abandonedCart">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+          </div>
+        </div>
+
+        <div class="channel-group">
+          <h4 class="channel-title">📱 Notificações no App</h4>
+          <div class="channel-options" formGroupName="push">
+            <label class="option-toggle">
+              <span class="option-text">Promoções relâmpago</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="flashSales">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Quedas de preço</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="priceDrops">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Lembretes de carrinho abandonado</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="abandonedCart">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🔐 Segurança da Conta -->
+      <div *ngIf="category.id === 'account'" class="notification-channels">
+        <div class="channel-group" formGroupName="security">
+          <h4 class="channel-title">📧 Email</h4>
+          <div class="channel-options" formGroupName="email">
+            <label class="option-toggle">
+              <span class="option-text">Alertas de login</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="loginAlerts">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Alterações de senha</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="passwordChanges">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Atualizações de pagamento</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="paymentUpdates">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Atividade suspeita</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="suspiciousActivity">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+          </div>
+        </div>
+
+        <div class="channel-group">
+          <h4 class="channel-title">💬 SMS</h4>
+          <div class="channel-options" formGroupName="sms">
+            <label class="option-toggle">
+              <span class="option-text">Alertas de login</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="loginAlerts">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Atividade suspeita</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="suspiciousActivity">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ❤️ Produtos e Listas -->
+      <div *ngIf="category.id === 'products'" class="notification-channels">
+        <div class="channel-group" formGroupName="products">
+          <h4 class="channel-title">📧 Email</h4>
+          <div class="channel-options" formGroupName="email">
+            <label class="option-toggle">
+              <span class="option-text">Produto de volta ao estoque</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="backInStock">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Lembretes da lista de desejos</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="wishlistReminders">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Solicitações de avaliação</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="productReviews">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Novos lançamentos</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="newArrivals">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+          </div>
+        </div>
+
+        <div class="channel-group">
+          <h4 class="channel-title">📱 Notificações no App</h4>
+          <div class="channel-options" formGroupName="push">
+            <label class="option-toggle">
+              <span class="option-text">Produto de volta ao estoque</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="backInStock">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+
+            <label class="option-toggle">
+              <span class="option-text">Lembretes da lista de desejos</span>
+              <label class="toggle-switch small">
+                <input type="checkbox" formControlName="wishlistReminders">
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </form>
+
+  <div class="settings-footer">
+    <div class="save-indicator" *ngIf="isLoading() || lastSaved()">
+      <span *ngIf="isLoading()" class="save-status saving">
+        <span class="spinner"></span>
+        Salvando configurações...
+      </span>
+      <span *ngIf="lastSaved() && !isLoading()" class="save-status saved">
+        ✓ Configurações salvas {{ lastSaved() | date:'HH:mm:ss' }}
+      </span>
+    </div>
+
+    <div class="notification-tips">
+      <h4>💡 Dicas de Notificações</h4>
+      <ul>
+        <li><strong>Notificações de entrega</strong> ajudam a acompanhar seus pedidos em tempo real</li>
+        <li><strong>Alertas de segurança</strong> são recomendados para proteger sua conta</li>
+        <li><strong>Promoções personalizadas</strong> podem ajudar a economizar em produtos do seu interesse</li>
+        <li>Você pode ajustar essas configurações a qualquer momento</li>
+      </ul>
+    </div>
+  </div>
+</div>

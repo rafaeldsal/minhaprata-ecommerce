@@ -1,0 +1,125 @@
+<div class="settings-section">
+  <div class="settings-section__header">
+    <h2 class="settings-section__title">Dispositivos Conectados</h2>
+    <div class="header-actions">
+      <button class="btn btn--text" (click)="refreshDevices()" [disabled]="isLoading()">
+        <span class="btn__icon">🔄</span>
+        Atualizar
+      </button>
+    </div>
+  </div>
+
+  <p class="settings-description">
+    Gerencie os dispositivos que estão atualmente conectados à sua conta.
+    Encerre sessões que você não reconhece para manter sua conta segura.
+  </p>
+
+  <!-- Estatísticas -->
+  <div class="devices-stats">
+    <div class="stat-card">
+      <div class="stat-icon">📊</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats().total }}</div>
+        <div class="stat-label">Total de Sessões</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">✅</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats().current }}</div>
+        <div class="stat-label">Sessão Atual</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">📱</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats().other }}</div>
+        <div class="stat-label">Outros Dispositivos</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ação em Lote -->
+  <div *ngIf="stats().other > 0" class="bulk-action">
+    <div class="bulk-action__info">
+      <h3 class="bulk-action__title">Encerrar Todas as Outras Sessões</h3>
+      <p class="bulk-action__description">
+        Desconecte de todos os outros dispositivos. Você permanecerá logado apenas neste dispositivo.
+      </p>
+    </div>
+    <button class="btn btn--danger" (click)="terminateAllSessions()" [disabled]="terminatingAll()">
+      <span *ngIf="terminatingAll()" class="btn__spinner"></span>
+      {{ terminatingAll() ? 'Encerrando...' : 'Encerrar Todas' }}
+    </button>
+  </div>
+
+  <!-- Lista de Dispositivos -->
+  <div class="devices-list">
+    <div *ngFor="let device of devices()" class="device-card">
+      <div class="device-header">
+        <div class="device-icon">
+          {{ getDeviceIcon(device.device) }}
+        </div>
+        <div class="device-info">
+          <h4 class="device-name">{{ device.device }}</h4>
+          <div class="device-meta">
+            <span class="meta-item">
+              {{ getBrowserIcon(device.browser) }} {{ device.browser }}
+            </span>
+            <span class="meta-item">
+              {{ getLocationFlag(device.location) }} {{ device.location }}
+            </span>
+            <span class="meta-item">
+              ⏱️ {{ formatDate(device.lastActive) }}
+            </span>
+            <span class="meta-item">
+              🌐 {{ device.ipAddress }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="device-actions">
+        <div class="device-status">
+          <span *ngIf="device.isCurrent" class="status-badge status-badge--success">
+            ✅ Sessão Atual
+          </span>
+          <span *ngIf="!device.isCurrent" class="status-badge status-badge--warning">
+            📍 Ativo
+          </span>
+        </div>
+
+        <button *ngIf="!device.isCurrent" class="btn btn--text btn--danger" (click)="terminateSession(device.id)"
+          [disabled]="terminatingSession() === device.id">
+          <span *ngIf="terminatingSession() === device.id" class="btn__spinner"></span>
+          {{ terminatingSession() === device.id ? 'Encerrando...' : 'Encerrar Sessão' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estados Vazios/Carregamento -->
+  <div *ngIf="isLoading()" class="loading-state">
+    <div class="loading-spinner"></div>
+    <p>Carregando sessões ativas...</p>
+  </div>
+
+  <div *ngIf="!isLoading() && devices().length === 0" class="empty-state">
+    <div class="empty-icon">📱</div>
+    <h3>Nenhuma Sessão Ativa</h3>
+    <p>Não foram encontradas sessões ativas em outros dispositivos.</p>
+  </div>
+
+  <!-- Dicas de Segurança -->
+  <div class="security-tips">
+    <h4>🔒 Dicas de Segurança</h4>
+    <ul>
+      <li><strong>Verifique sessões desconhecidas</strong> - Encerre qualquer sessão que você não reconhece</li>
+      <li><strong>Localizações suspeitas</strong> - Atenção a sessões de países onde você não esteve</li>
+      <li><strong>Logout em dispositivos públicos</strong> - Sempre faça logout em computadores compartilhados</li>
+      <li><strong>Altere sua senha</strong> - Se suspeitar de acesso não autorizado</li>
+    </ul>
+  </div>
+</div>

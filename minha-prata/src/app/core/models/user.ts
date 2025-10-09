@@ -85,6 +85,79 @@ export interface UserPermissions {
   canAccessAdminPanel: boolean;
 }
 
+// src/app/types/user.types.ts
+export interface UserSettings {
+  account: AccountSettings;
+  privacy: PrivacySettings;
+  notifications: NotificationSettings;
+  devices: DeviceSession[];
+}
+
+export interface AccountSettings {
+  email: string;
+  phone?: string;
+  emailVerified: boolean;
+  phoneVerified: boolean;
+  twoFactorEnabled: boolean;
+}
+
+export interface PrivacySettings {
+  // Dados de Compras e Perfil
+  showPurchaseHistory: boolean;
+  showWishlist: boolean;
+  hideOrderPrices: boolean;
+
+  // Marketing e Recomendações
+  personalizedRecommendations: boolean;
+  priceDropNotifications: boolean;
+  abandonedCartReminders: boolean;
+  productReviewReminders: boolean;
+
+  // Compartilhamento de Dados
+  dataSharing: boolean;
+  thirdPartyMarketing: boolean;
+  browserTracking: boolean;
+
+  // Segurança e Pagamentos
+  savePaymentMethods: boolean;
+  quickCheckout: boolean;
+  orderTrackingAlerts: boolean;
+}
+
+export interface NotificationSettings {
+  email: EmailNotifications;
+  push: PushNotifications;
+  sms: SMSNotifications;
+}
+
+export interface EmailNotifications {
+  promotions: boolean;
+  security: boolean;
+  orderUpdates: boolean;
+  newsletter: boolean;
+}
+
+export interface PushNotifications {
+  orderUpdates: boolean;
+  priceDrops: boolean;
+  newFeatures: boolean;
+}
+
+export interface SMSNotifications {
+  orderUpdates: boolean;
+  securityAlerts: boolean;
+}
+
+export interface DeviceSession {
+  id: string;
+  device: string;
+  browser: string;
+  location: string;
+  lastActive: Date;
+  isCurrent: boolean;
+  ipAddress: string;
+}
+
 export class PermissionManager {
   static getPermissionsByRole(role: UserRole): UserPermissions {
     const basePermissions: UserPermissions = {

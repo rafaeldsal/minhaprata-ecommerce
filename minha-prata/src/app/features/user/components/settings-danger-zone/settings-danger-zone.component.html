@@ -1,0 +1,205 @@
+<div class="settings-section">
+  <div class="settings-section__header">
+    <h2 class="settings-section__title">Zona de Risco</h2>
+  </div>
+
+  <div class="danger-warning">
+    <div class="danger-warning__icon">⚠️</div>
+    <div class="danger-warning__content">
+      <h3 class="danger-warning__title">Atenção: Ações Irreversíveis</h3>
+      <p class="danger-warning__description">
+        As ações nesta seção são permanentes e não podem ser desfeitas.
+        Proceda com extrema cautela.
+      </p>
+    </div>
+  </div>
+
+  <!-- Estatísticas da Conta -->
+  <div class="account-stats">
+    <h4 class="stats-title">📊 Resumo da Sua Conta</h4>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-number">{{ getAccountStats().totalOrders }}</span>
+        <span class="stat-label">Pedidos Realizados</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">{{ getAccountStats().accountAge }}</span>
+        <span class="stat-label">Tempo de Conta</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">{{ getAccountStats().wishlistItems }}</span>
+        <span class="stat-label">Itens na Lista</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">{{ getAccountStats().addresses }}</span>
+        <span class="stat-label">Endereços</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔹 Exportação de Dados -->
+  <div class="danger-action">
+    <div class="danger-action__info">
+      <h3 class="danger-action__title">📥 Exportar Seus Dados</h3>
+      <p class="danger-action__description">
+        Baixe uma cópia completa de todos os seus dados pessoais armazenados em nossa plataforma.
+        Inclui pedidos, perfil, configurações, histórico de atividades e muito mais.
+      </p>
+      <ul class="danger-action__list">
+        <li>Perfil e informações pessoais</li>
+        <li>Histórico completo de pedidos</li>
+        <li>Endereços cadastrados</li>
+        <li>Métodos de pagamento salvos</li>
+        <li>Preferências e configurações</li>
+        <li>Histórico de atividades</li>
+      </ul>
+    </div>
+    <button class="btn btn--outline" (click)="exportData()" [disabled]="isExporting()">
+      <span *ngIf="isExporting()" class="btn__spinner"></span>
+      {{ isExporting() ? 'Preparando Dados...' : 'Exportar Dados' }}
+    </button>
+  </div>
+
+  <!-- 🔹 Exclusão de Conta -->
+  <div class="danger-action danger-action--critical">
+    <div class="danger-action__info">
+      <h3 class="danger-action__title">🗑️ Excluir Conta Permanentemente</h3>
+      <p class="danger-action__description">
+        <strong>Esta ação não pode ser desfeita.</strong> Todos os seus dados serão permanentemente
+        removidos de nossos sistemas. Você perderá acesso a:
+      </p>
+      <ul class="danger-action__list danger-action__list--critical">
+        <li>Todo o histórico de pedidos e compras</li>
+        <li>Endereços e informações de entrega</li>
+        <li>Métodos de pagamento salvos</li>
+        <li>Listas de desejos e favoritos</li>
+        <li>Configurações e preferências pessoais</li>
+        <li>Dados de uso e estatísticas</li>
+      </ul>
+      <p class="danger-action__warning">
+        ⚠️ <strong>Atenção:</strong> Esta ação é irreversível. Após a exclusão, não será possível
+        recuperar nenhum dado.
+      </p>
+    </div>
+    <button class="btn btn--danger" (click)="openDeleteConfirmation()" [disabled]="isDeleting()">
+      Excluir Minha Conta
+    </button>
+  </div>
+
+  <!-- 🔹 Alternativas -->
+  <div class="danger-alternatives">
+    <h4 class="alternatives-title">💡 Antes de Excluir, Considere:</h4>
+    <div class="alternatives-grid">
+      <div class="alternative-item">
+        <span class="alternative-icon">📧</span>
+        <div class="alternative-content">
+          <h5>Alterar Preferências</h5>
+          <p>Ajuste configurações de privacidade e notificações</p>
+        </div>
+      </div>
+      <div class="alternative-item">
+        <span class="alternative-icon">🔕</span>
+        <div class="alternative-content">
+          <h5>Pausar Notificações</h5>
+          <p>Desative comunicações sem excluir a conta</p>
+        </div>
+      </div>
+      <div class="alternative-item">
+        <span class="alternative-icon">👤</span>
+        <div class="alternative-content">
+          <h5>Exportar Dados Primeiro</h5>
+          <p>Faça backup das suas informações antes de qualquer ação</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 🔹 Modal de Exportação Concluída -->
+<div *ngIf="showExportModal()" class="modal-overlay">
+  <div class="modal modal--success">
+    <div class="modal__header">
+      <h3>✅ Exportação Concluída!</h3>
+      <button class="modal__close" (click)="closeExportModal()">×</button>
+    </div>
+
+    <div class="modal__content">
+      <div class="export-success">
+        <div class="success-icon">📥</div>
+        <p><strong>Seus dados foram preparados com sucesso!</strong></p>
+        <p>O arquivo contém todas as suas informações em formato JSON.</p>
+
+        <div class="export-details">
+          <h4>O que está incluído:</h4>
+          <ul>
+            <li>Perfil e informações pessoais</li>
+            <li>Histórico completo de pedidos</li>
+            <li>Endereços e métodos de pagamento</li>
+            <li>Configurações e preferências</li>
+            <li>Atividades e histórico de uso</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__actions">
+      <button class="btn btn--secondary" (click)="closeExportModal()">
+        Fechar
+      </button>
+      <button class="btn btn--primary" (click)="simulateDownload()">
+        📥 Baixar Arquivo
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 🔹 Modal de Confirmação de Exclusão -->
+<div *ngIf="showDeleteModal()" class="modal-overlay">
+  <div class="modal modal--danger">
+    <div class="modal__header">
+      <h3>⚠️ Confirmar Exclusão de Conta</h3>
+      <button class="modal__close" (click)="closeDeleteModal()">×</button>
+    </div>
+
+    <div class="modal__content">
+      <div class="delete-warning">
+        <div class="warning-icon">🚨</div>
+        <p><strong>Esta ação é permanente e não pode ser desfeita!</strong></p>
+
+        <div class="consequences-list">
+          <h4>Você perderá permanentemente:</h4>
+          <ul>
+            <li>Todo o histórico de pedidos e compras</li>
+            <li>Endereços cadastrados e preferências de entrega</li>
+            <li>Métodos de pagamento salvos</li>
+            <li>Listas de desejos e produtos favoritados</li>
+            <li>Configurações pessoais e preferências</li>
+            <li>Dados de uso, estatísticas e histórico</li>
+          </ul>
+        </div>
+
+        <div class="confirmation-step">
+          <p>Para confirmar, digite exatamente: <strong>"{{ requiredText }}"</strong></p>
+          <input #confirmInput type="text" [value]="confirmationText()"
+            (input)="confirmationText.set($any($event.target).value)" placeholder='Digite "EXCLUIR MINHA CONTA"'
+            class="confirmation-input"
+            [class.confirmation-input--error]="confirmationText() && confirmationText() !== requiredText">
+
+          <p *ngIf="confirmationText() && confirmationText() !== requiredText" class="confirmation-error">
+            ❌ O texto não corresponde. Digite exatamente como mostrado.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__actions">
+      <button class="btn btn--secondary" (click)="closeDeleteModal()">
+        Cancelar
+      </button>
+      <button class="btn btn--danger" (click)="deleteAccount()" [disabled]="!canDeleteAccount()">
+        <span *ngIf="isDeleting()" class="btn__spinner"></span>
+        {{ isDeleting() ? 'Excluindo...' : 'Sim, Excluir Minha Conta Permanentemente' }}
+      </button>
+    </div>
+  </div>
+</div>

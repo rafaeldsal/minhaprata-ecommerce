@@ -10,6 +10,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { UserOrdersComponent } from './components/user-orders/user-orders.component';
 import { OrderCardComponent } from './components/order-card/order-card.component';
 import { OrderDetailsComponent } from './components/order-details/order-details.component';
+import { SettingsAccountComponent } from './components/settings-account/settings-account.component';
+import { SettingsPrivacyComponent } from './components/settings-privacy/settings-privacy.component';
+import { SettingsNotificationsComponent } from './components/settings-notifications/settings-notifications.component';
+import { SettingsDevicesComponent } from './components/settings-devices/settings-devices.component';
+import { SettingsDangerZoneComponent } from './components/settings-danger-zone/settings-danger-zone.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'profile', pathMatch: 'full' }, // ← Rota padrão
@@ -26,7 +31,12 @@ const routes: Routes = [
     UserProfileComponent,
     UserOrdersComponent,
     OrderCardComponent,
-    OrderDetailsComponent
+    OrderDetailsComponent,
+    SettingsAccountComponent,
+    SettingsPrivacyComponent,
+    SettingsNotificationsComponent,
+    SettingsDevicesComponent,
+    SettingsDangerZoneComponent
   ],
   imports: [
     CommonModule,
