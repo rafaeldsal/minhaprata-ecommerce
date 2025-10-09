@@ -102,6 +102,37 @@ export class CartService {
     );
   }
 
+  addMultipleToCart(items: { product: Product, quantity: number, selectedOptions?: { [key: string]: string } }[]): void {
+    const currentState = this.cartSubject.value;
+    let newItems = [...currentState.items];
+
+    items.forEach(newItem => {
+      const existingItemIndex = this.findCartItemIndex(newItems, newItem.product, newItem.selectedOptions);
+
+      if (existingItemIndex > -1) {
+        // Atualiza quantidade se item já existe
+        newItems[existingItemIndex] = {
+          ...newItems[existingItemIndex],
+          quantity: newItems[existingItemIndex].quantity + newItem.quantity
+        };
+      } else {
+        // Adiciona novo item
+        const cartItem: CartItem = {
+          product: newItem.product,
+          quantity: newItem.quantity,
+          selectedOptions: newItem.selectedOptions,
+          addedAt: new Date()
+        };
+        newItems.push(cartItem);
+      }
+    });
+
+    this.updateCartState(newItems);
+
+    // Notificação de sucesso
+    this.notificationService.showSuccess(`${items.length} item(ns) adicionado(s) ao carrinho! 🛒`);
+  }
+
   // Métodos privados
   private updateCartState(items: CartItem[]): void {
     const total = this.calculateTotal(items);

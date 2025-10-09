@@ -46,7 +46,7 @@ const routes: Routes = [
 
   { path: 'login', component: LoginComponent },
   { path: 'produto/:id', component: ProductDetailsComponent },
-  { path: 'carrinho', component: CartPageComponent },
+  { path: 'cart', component: CartPageComponent },
   { path: '**', component: PageNotFoundComponent }
 ];
 

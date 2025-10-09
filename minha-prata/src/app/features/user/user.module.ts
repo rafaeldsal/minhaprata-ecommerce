@@ -4,25 +4,34 @@ import { LoginComponent } from './components/login/login.component';
 import { UserSettingsComponent } from './components/user-settings/user-settings.component';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { HttpClientModule } from '@angular/common/http';
+import { UserOrdersComponent } from './components/user-orders/user-orders.component';
+import { OrderCardComponent } from './components/order-card/order-card.component';
+import { OrderDetailsComponent } from './components/order-details/order-details.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'profile', pathMatch: 'full' }, // ← Rota padrão
   { path: 'settings', component: UserSettingsComponent },
-  { path: 'profile', component: UserProfileComponent }
+  { path: 'profile', component: UserProfileComponent },
+  { path: 'orders', component: UserOrdersComponent },
+  { path: 'orders/:id', component: OrderDetailsComponent }
 ];
 
 @NgModule({
   declarations: [
     LoginComponent,
     UserSettingsComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    UserOrdersComponent,
+    OrderCardComponent,
+    OrderDetailsComponent
   ],
   imports: [
     CommonModule,
     SharedModule,
+    FormsModule,
     HttpClientModule,
     ReactiveFormsModule,
     RouterModule.forChild(routes)
