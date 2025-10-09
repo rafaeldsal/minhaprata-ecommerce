@@ -1,4 +1,4 @@
-<button class="cart-icon" [routerLink]="['/carrinho']">
+<button class="cart-icon" [routerLink]="['/cart']">
   <i class="fas fa-shopping-cart"></i>
   <ng-container *ngIf="cartState$ | async as cartState">
     <span class="cart-badge" *ngIf="cartState.itemsCount > 0">

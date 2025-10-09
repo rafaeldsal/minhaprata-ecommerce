@@ -1,0 +1,210 @@
+<div class="order-details">
+  <!-- Header -->
+  <div class="order-details__header">
+    <button class="btn-modern-back" (click)="goBack()">
+      <span class="btn-icon">←</span>
+      <span class="btn-text">Voltar para Meus Pedidos</span>
+    </button>
+    <h1 class="order-details__title">Detalhes do Pedido</h1>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="order-details__loading">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Carregando detalhes do pedido...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="order-details__error">
+    <div class="alert alert--error">
+      <span class="alert__icon">⚠️</span>
+      <span class="alert__message">{{ error }}</span>
+    </div>
+    <button class="btn-modern-back" (click)="goBack()">
+      <span class="btn-icon">←</span>
+      <span class="btn-text">Voltar para Pedidos</span>
+    </button>
+  </div>
+
+  <!-- Order Content -->
+  <div *ngIf="!loading && order" class="order-details__content">
+
+    <!-- Order Header -->
+    <div class="order-header">
+      <div class="order-header__info">
+        <h2 class="order-header__number">Pedido {{ order.orderNumber }}</h2>
+        <p class="order-header__date">Realizado em {{ formatDate(order.date) }}</p>
+      </div>
+      <div class="order-header__status">
+        <span class="status-badge" [class]="getStatusBadgeClass(order.status)">
+          {{ getStatusText(order.status) }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Status Tracking -->
+    <div *ngIf="order.status !== 'cancelled'" class="status-tracking">
+      <h3 class="status-tracking__title">Acompanhamento do Pedido</h3>
+      <div class="status-steps">
+        <div *ngFor="let step of statusSteps; let i = index" class="status-step"
+          [class.status-step--completed]="isStepCompleted(i)" [class.status-step--active]="isStepActive(i)">
+
+          <div class="status-step__circle">
+            <span class="status-step__number">{{ i + 1 }}</span>
+            <span class="status-step__check">✓</span>
+          </div>
+
+          <div class="status-step__content">
+            <h4 class="status-step__label">{{ step.label }}</h4>
+            <p class="status-step__description">{{ step.description }}</p>
+          </div>
+
+          <div *ngIf="i < statusSteps.length - 1" class="status-step__connector"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tracking Info -->
+    <div *ngIf="order.trackingCode" class="tracking-info-card">
+      <h3 class="tracking-info-card__title">Informações de Rastreio</h3>
+      <div class="tracking-info-card__content">
+        <div class="tracking-item">
+          <strong>Código de rastreio:</strong>
+          <span class="tracking-code">{{ order.trackingCode }}</span>
+        </div>
+        <div *ngIf="order.estimatedDelivery" class="tracking-item">
+          <strong>Previsão de entrega:</strong>
+          <span>{{ formatDate(order.estimatedDelivery) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Items -->
+    <div class="order-items-card">
+      <h3 class="order-items-card__title">Itens do Pedido</h3>
+      <div class="order-items-list">
+        <div *ngFor="let item of order.items" class="order-item-detail">
+          <img [src]="item.productImage" [alt]="item.productName" class="order-item-detail__image">
+
+          <div class="order-item-detail__info">
+            <h4 class="order-item-detail__name">{{ item.productName }}</h4>
+
+            <div class="order-item-detail__variants" *ngIf="item.size || item.color">
+              <span *ngIf="item.size" class="variant">Tamanho: {{ item.size }}</span>
+              <span *ngIf="item.color" class="variant">Cor: {{ item.color }}</span>
+            </div>
+
+            <p class="order-item-detail__quantity">Quantidade: {{ item.quantity }}</p>
+          </div>
+
+          <div class="order-item-detail__price">
+            {{ formatCurrency(item.price * item.quantity) }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shipping Address -->
+    <div class="shipping-card">
+      <h3 class="shipping-card__title">Endereço de Entrega</h3>
+      <div class="shipping-address">
+        <p class="shipping-address__recipient">
+          <strong>{{ order.shippingAddress.recipientName }}</strong>
+        </p>
+        <p class="shipping-address__street">
+          {{ order.shippingAddress.street }}, {{ order.shippingAddress.number }}
+          <span *ngIf="order.shippingAddress.complement"> - {{ order.shippingAddress.complement }}</span>
+        </p>
+        <p class="shipping-address__neighborhood">
+          {{ order.shippingAddress.neighborhood }}
+        </p>
+        <p class="shipping-address__city">
+          {{ order.shippingAddress.city }} - {{ order.shippingAddress.state }}
+        </p>
+        <p class="shipping-address__zipcode">
+          CEP: {{ order.shippingAddress.zipCode }}
+        </p>
+        <p class="shipping-address__phone">
+          Telefone: {{ order.shippingAddress.phone }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="order-summary-card">
+      <h3 class="order-summary-card__title">Resumo do Pedido</h3>
+      <div class="order-summary">
+        <div class="order-summary__row">
+          <span>Subtotal:</span>
+          <span>{{ formatCurrency(getSubtotal()) }}</span>
+        </div>
+
+        <div *ngIf="hasShippingCost()" class="order-summary__row">
+          <span>Frete:</span>
+          <span>{{ formatCurrency(getShippingCost()) }}</span>
+        </div>
+
+        <div *ngIf="order.status === 'cancelled'" class="order-summary__row order-summary__row--cancelled">
+          <span>Pedido Cancelado</span>
+          <span>-{{ formatCurrency(order.total) }}</span>
+        </div>
+
+        <div class="order-summary__divider"></div>
+
+        <div class="order-summary__row order-summary__row--total">
+          <strong>Total:</strong>
+          <strong>{{ formatCurrency(order.total) }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="order-actions">
+
+      <!-- Estado de Sucesso -->
+      <div *ngIf="reorderSuccess" class="reorder-success">
+        <div class="success-message">
+          <span class="success-icon">✅</span>
+          <div class="success-content">
+            <h4>Itens adicionados ao carrinho!</h4>
+            <p>Os produtos deste pedido foram adicionados ao seu carrinho de compras.</p>
+          </div>
+        </div>
+        <div class="success-actions">
+          <button class="btn-modern-primary" (click)="goToCart()">
+            <span class="btn-icon">🛒</span>
+            <span class="btn-text">Ver Carrinho</span>
+          </button>
+          <button class="btn-modern-back" (click)="continueShopping()">
+            <span class="btn-icon">🛍️</span>
+            <span class="btn-text">Continuar Comprando</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Estado Normal -->
+      <div *ngIf="!reorderSuccess" class="normal-actions">
+        <button *ngIf="order?.status !== 'cancelled'" class="btn-modern-primary" (click)="onReorder()"
+          [disabled]="reordering || loading">
+
+          <span *ngIf="!reordering" class="btn-text">
+            <span class="btn-icon">🛒</span>
+            Comprar Novamente
+          </span>
+
+          <span *ngIf="reordering" class="btn-text">
+            <span class="loading-spinner-small"></span>
+            Adicionando...
+          </span>
+        </button>
+
+        <button class="btn-modern-back" (click)="goBack()" [disabled]="reordering">
+          <span class="btn-icon">←</span>
+          <span class="btn-text">Voltar para Pedidos</span>
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+</div>

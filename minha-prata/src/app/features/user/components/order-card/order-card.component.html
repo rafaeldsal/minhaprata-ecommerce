@@ -1,0 +1,73 @@
+<div class="order-card">
+  <!-- Header -->
+  <div class="order-card__header">
+    <div class="order-card__info">
+      <h3 class="order-card__number">Pedido {{ order.orderNumber }}</h3>
+      <p class="order-card__date">Realizado em {{ formatDate(order.date) }}</p>
+    </div>
+    <div class="order-card__status">
+      <span class="status-badge" [class]="getStatusBadgeClass(order.status)">
+        {{ getStatusText(order.status) }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Items -->
+  <div class="order-card__items">
+    <div *ngFor="let item of order.items" class="order-item">
+      <img [src]="item.productImage" [alt]="item.productName" class="order-item__image">
+      <div class="order-item__details">
+        <h4 class="order-item__name">{{ item.productName }}</h4>
+        <div class="order-item__variants" *ngIf="item.size || item.color">
+          <span *ngIf="item.size" class="order-item__variant">Tamanho: {{ item.size }}</span>
+          <span *ngIf="item.color" class="order-item__variant">Cor: {{ item.color }}</span>
+        </div>
+        <p class="order-item__quantity">Quantidade: {{ item.quantity }}</p>
+      </div>
+      <div class="order-item__price">
+        {{ formatCurrency(item.price * item.quantity) }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="order-card__footer">
+    <div class="order-card__total">
+      <strong>Total: {{ formatCurrency(order.total) }}</strong>
+    </div>
+
+    <!-- Estado de Sucesso -->
+    <div *ngIf="reorderSuccess" class="order-card__success">
+      <span class="success-icon">✅</span>
+      <span class="success-text">Itens adicionados ao carrinho!</span>
+    </div>
+
+    <div class="order-card__actions">
+      <button class="btn btn--outline" [routerLink]="['/user/orders', order.id]">
+        Ver Detalhes
+      </button>
+
+      <button *ngIf="order.status !== 'cancelled'" class="btn btn--primary btn--reorder" (click)="onReorder()"
+        [disabled]="reordering">
+
+        <span *ngIf="!reordering">🛒 Comprar Novamente</span>
+        <span *ngIf="reordering" class="loading-text">
+          <span class="loading-spinner-small"></span>
+          Adicionando...
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tracking Info -->
+  <div *ngIf="order.trackingCode" class="order-card__tracking">
+    <p class="tracking-info">
+      <strong>Código de rastreio:</strong>
+      {{ order.trackingCode }}
+    </p>
+    <p *ngIf="order.estimatedDelivery" class="tracking-info">
+      <strong>Previsão de entrega:</strong>
+      {{ formatDate(order.estimatedDelivery) }}
+    </p>
+  </div>
+</div>

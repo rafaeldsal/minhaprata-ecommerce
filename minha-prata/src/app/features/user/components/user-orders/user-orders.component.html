@@ -1,0 +1,67 @@
+<div class="user-orders">
+  <div class="user-orders__header">
+    <h1 class="user-orders__title">Meus Pedidos</h1>
+    <p class="user-orders__subtitle">Acompanhe seus pedidos e histórico de compras</p>
+  </div>
+
+  <!-- Filtros -->
+  <div class="user-orders__filters">
+    <div class="filter-group">
+      <label for="statusFilter" class="filter-group__label">Filtrar por status:</label>
+      <select id="statusFilter" [(ngModel)]="statusFilter" (change)="onStatusFilterChange($event)"
+        class="filter-group__select" [disabled]="loading">
+        <option *ngFor="let option of statusOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="user-orders__loading">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Carregando pedidos...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="user-orders__error">
+    <div class="alert alert--error">
+      <span class="alert__icon">⚠️</span>
+      <span class="alert__message">{{ error }}</span>
+    </div>
+    <button class="btn btn--primary" (click)="loadOrders()">
+      Tentar Novamente
+    </button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && !error && orders.length === 0" class="user-orders__empty">
+    <div class="empty-state">
+      <div class="empty-state__icon">📦</div>
+      <h3 class="empty-state__title">Nenhum pedido encontrado</h3>
+      <p class="empty-state__description">
+        Você ainda não fez nenhum pedido ou não há pedidos com o filtro selecionado.
+      </p>
+      <button class="btn btn--primary" routerLink="/products">
+        Continuar Comprando
+      </button>
+    </div>
+  </div>
+
+  <!-- Orders List -->
+  <div *ngIf="!loading && orders.length > 0" class="user-orders__content">
+    <div class="orders-stats">
+      <p class="orders-stats__text">{{ totalItems }} pedido(s) encontrado(s)</p>
+    </div>
+
+    <div class="orders-list">
+      <app-order-card *ngFor="let order of orders" [order]="order" (reorder)="onReorder($event)">
+      </app-order-card>
+    </div>
+
+    <!-- Paginação -->
+    <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [totalItems]="totalItems"
+      [itemsPerPage]="itemsPerPage" (pageChange)="onPageChange($event)" class="user-orders__pagination">
+    </app-pagination>
+  </div>
+</div>
