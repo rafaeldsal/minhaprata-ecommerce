@@ -1,63 +1,149 @@
 <div class="user-auth-icon">
   <!-- Estado: Não autenticado -->
-  <div *ngIf="!authState.isAuthenticated" class="auth-state">
+  <div *ngIf="!authState.isAuthenticated && !isLoading()" class="auth-state">
     <button (click)="handleClick()" class="auth-button" aria-label="Fazer login">
       <i class="fas fa-user"></i>
     </button>
   </div>
 
   <!-- Estado: Autenticado -->
-  <div *ngIf="authState.isAuthenticated && authState.user" class="auth-state authenticated">
+  <div *ngIf="authState.isAuthenticated && authState.user && !isLoading()" class="auth-state authenticated">
     <div class="user-menu">
       <button (click)="toggleDropdown()" class="user-button" aria-label="Menu do usuário">
-        <img [src]="authState.user.avatar || 'https://via.placeholder.com/32'" [alt]="authState.user.name"
-          class="user-avatar">
+        <img [src]="getAvatarUrl()" [alt]="authState.user.name" class="user-avatar">
         <span class="user-name">{{ getFirstName() }}</span>
 
-        <!-- Badge de admin -->
+        <!-- Badge de admin usando isAdmin() -->
         <span *ngIf="isAdmin()" class="admin-badge" title="Administrador">
           <i class="fas fa-crown"></i>
         </span>
 
-        <i class="fas fa-chevron-down dropdown-arrow"></i>
+        <i class="fas fa-chevron-down dropdown-arrow" [class.rotated]="isDropdownOpen"></i>
       </button>
 
       <!-- Menu dropdown -->
       <div class="user-dropdown" [class.show]="isDropdownOpen">
-        <!-- Item Dashboard Admin (apenas para admins) -->
-        <a *ngIf="isAdmin()" routerLink="/admin" class="dropdown-item admin-item" (click)="closeDropdown()">
-          <i class="fas fa-tachometer-alt"></i>
-          Dashboard Admin
-          <span class="admin-tag">ADM</span>
-        </a>
+        <!-- Header do usuário com getUserRoleDisplay() -->
+        <div class="dropdown-header" *ngIf="authState.user">
+          <img [src]="getAvatarUrl()" [alt]="authState.user.name" class="header-avatar">
+          <div class="user-info">
+            <strong>{{ authState.user.name }}</strong>
+            <small>{{ getUserRoleDisplay() }}</small>
+            <small>{{ authState.user.email }}</small>
+          </div>
+        </div>
 
-        <a routerLink="/user/profile" class="dropdown-item" (click)="closeDropdown()">
+        <div class="dropdown-divider"></div>
+
+        <!-- Seção Admin usando canAccessAdminPanel() -->
+        <div *ngIf="canAccessAdminPanel()">
+          <a (click)="goToAdminPanel()" (keyup.enter)="goToAdminPanel()" (keyup.space)="goToAdminPanel()" tabindex="0"
+            class="dropdown-item admin-item">
+            <i class="fas fa-tachometer-alt"></i>
+            Painel Admin
+            <span class="admin-tag">ADM</span>
+          </a>
+
+          <!-- Itens admin com hasPermission() -->
+          <a *ngIf="hasPermission('canManageProducts')" (click)="goToProductManagement()"
+            (keyup.enter)="goToProductManagement()" (keyup.space)="goToProductManagement()" tabindex="0"
+            class="dropdown-item admin-item">
+            <i class="fas fa-box"></i>
+            Gerenciar Produtos
+            <span class="item-badge">{{ isAdmin() ? 'Editar' : 'Visualizar' }}</span>
+          </a>
+
+          <a *ngIf="hasPermission('canManageUsers')" (click)="goToUserManagement()" (keyup.enter)="goToUserManagement()"
+            (keyup.space)="goToUserManagement()" tabindex="0" class="dropdown-item admin-item">
+            <i class="fas fa-users"></i>
+            Gerenciar Usuários
+            <span class="item-badge">Ver</span>
+          </a>
+
+          <a *ngIf="hasPermission('canViewAnalytics')" (click)="goToAnalytics()" (keyup.enter)="goToAnalytics()"
+            (keyup.space)="goToAnalytics()" tabindex="0" class="dropdown-item admin-item">
+            <i class="fas fa-chart-bar"></i>
+            Relatórios
+            <span class="item-badge">Analisar</span>
+          </a>
+
+          <div class="dropdown-divider"></div>
+        </div>
+
+        <!-- Menu principal do usuário -->
+        <a (click)="goToProfile()" class="dropdown-item" (keyup.enter)="goToProfile()" (keyup.space)="goToProfile()"
+          tabindex="0">
           <i class="fas fa-user"></i>
           Meu Perfil
+          <span class="item-badge">Gerenciar</span>
         </a>
-        <a routerLink="/user/orders" class="dropdown-item" (click)="closeDropdown()">
+
+        <a *ngIf="hasPermission('canViewOrderHistory')" (click)="goToOrderHistory()" (keyup.enter)="goToOrderHistory()"
+          (keyup.space)="goToOrderHistory()" tabindex="0" class="dropdown-item">
           <i class="fas fa-shopping-bag"></i>
           Meus Pedidos
+          <span class="item-badge">Ver</span>
         </a>
-        <a routerLink="/user/settings" class="dropdown-item" (click)="closeDropdown()">
-          <i class="fas fa-cog"></i>
-          Configurações
+
+        <a *ngIf="hasPermission('canManageOwnAddress')" (click)="goToAddresses()" (keyup.enter)="goToAddresses()"
+          (keyup.space)="goToAddresses()" tabindex="0" class="dropdown-item">
+          <i class="fas fa-map-marker-alt"></i>
+          Meus Endereços
+          <span class="item-badge">Gerenciar</span>
+        </a>
+
+        <a (click)="goToWishlist()" class="dropdown-item" (keyup.enter)="goToWishlist()" (keyup.space)="goToWishlist()"
+          tabindex="0">
+          <i class="fas fa-heart"></i>
+          Lista de Desejos
+          <span class="item-badge">Ver</span>
         </a>
 
         <div class="dropdown-divider"></div>
 
+        <!-- Configurações e ajuda -->
+        <a (click)="goToSettings()" (keyup.enter)="goToSettings()" (keyup.space)="goToSettings()" tabindex="0"
+          class="dropdown-item">
+          <i class="fas fa-cog"></i>
+          Configurações
+          <span class="item-badge">Personalizar</span>
+        </a>
+
+        <a (click)="goToHelp()" class="dropdown-item" (keyup.enter)="goToHelp()" (keyup.space)="goToHelp()"
+          tabindex="0">
+          <i class="fas fa-question-circle"></i>
+          Ajuda & Suporte
+          <span class="item-badge">Ajuda</span>
+        </a>
+
+        <div class="dropdown-divider"></div>
+
+        <!-- Logout -->
         <button (click)="logout()" class="dropdown-item logout">
           <i class="fas fa-sign-out-alt"></i>
           Sair
+          <span class="item-badge logout-badge">Sair</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Estado: Carregando -->
-  <div *ngIf="authState.isLoading" class="auth-state loading">
+  <!-- Estado: Carregando usando isLoading() -->
+  <div *ngIf="isLoading()" class="auth-state loading">
     <div class="loading-spinner">
-      <i class="spinner"></i>
+      <div class="spinner"></div>
+      <span class="loading-text">Carregando...</span>
+    </div>
+  </div>
+
+  <!-- Mensagem de erro usando hasError() e getErrorMessage() -->
+  <div *ngIf="hasError()" class="error-message">
+    <div class="error-content">
+      <i class="fas fa-exclamation-triangle error-icon"></i>
+      <span class="error-text">{{ getErrorMessage() }}</span>
+      <button (click)="clearError()" class="error-close">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
   </div>
 </div>

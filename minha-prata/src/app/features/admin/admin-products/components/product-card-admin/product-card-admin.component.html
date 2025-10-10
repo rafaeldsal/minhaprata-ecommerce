@@ -1,0 +1,12 @@
+<div class="product-card-admin" [class.selected]="selected">
+  <div class="product-image">
+    <img [src]="product.imgUrl" [alt]="product.name" />
+  </div>
+  <div class="product-info">
+    <h4 class="product-name">{{ product.name }}</h4>
+    <p class="product-description">{{ product.description }}</p>
+    <div class="product-meta">
+      <span class="sku">SKU: {{ product.id }}</span>
+    </div>
+  </div>
+</div>

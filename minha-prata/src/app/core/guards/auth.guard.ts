@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../services/auth/auth.service';
 import { map, take } from 'rxjs';
 
 export const authGuard: CanActivateFn = (route, state) => {
@@ -10,20 +10,14 @@ export const authGuard: CanActivateFn = (route, state) => {
   return authService.authState$.pipe(
     take(1),
     map((authState) => {
-      const isAuthenticated = authState.isAuthenticated;
-
-      if (isAuthenticated) {
+      if (authState.isAuthenticated) {
         return true;
       }
 
-      return router.createUrlTree(
-        ['/login'],
-        {
-          queryParams: {
-            returnUrl: state.url
-          }
-        }
-      );
+      // Redireciona para login com returnUrl
+      return router.createUrlTree(['/auth/login'], {
+        queryParams: { returnUrl: state.url }
+      });
     })
   );
 };

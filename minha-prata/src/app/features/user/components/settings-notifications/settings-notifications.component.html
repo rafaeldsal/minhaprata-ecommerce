@@ -23,7 +23,7 @@
         <div class="category-toggle">
           <label class="toggle-switch">
             <input type="checkbox" [checked]="isCategoryEnabled(category.id)"
-              (change)="toggleCategory(category.id, $any($event.target).checked)">
+              (change)="toggleCategoryByEvent(category.id, $event)">
             <span class="toggle-slider"></span>
           </label>
         </div>
@@ -133,6 +133,8 @@
 
       <!-- 🎯 Promoções e Ofertas -->
       <div *ngIf="category.id === 'promotions'" class="notification-channels">
+
+        <!-- Email -->
         <div class="channel-group" formGroupName="promotions">
           <h4 class="channel-title">📧 Email</h4>
           <div class="channel-options" formGroupName="email">
@@ -178,7 +180,8 @@
           </div>
         </div>
 
-        <div class="channel-group">
+        <!-- Push -->
+        <div class="channel-group" formGroupName="promotions">
           <h4 class="channel-title">📱 Notificações no App</h4>
           <div class="channel-options" formGroupName="push">
             <label class="option-toggle">
@@ -210,6 +213,8 @@
 
       <!-- 🔐 Segurança da Conta -->
       <div *ngIf="category.id === 'account'" class="notification-channels">
+
+        <!-- Email -->
         <div class="channel-group" formGroupName="security">
           <h4 class="channel-title">📧 Email</h4>
           <div class="channel-options" formGroupName="email">
@@ -247,7 +252,8 @@
           </div>
         </div>
 
-        <div class="channel-group">
+        <!-- SMS -->
+        <div class="channel-group" formGroupName="security">
           <h4 class="channel-title">💬 SMS</h4>
           <div class="channel-options" formGroupName="sms">
             <label class="option-toggle">
@@ -271,6 +277,8 @@
 
       <!-- ❤️ Produtos e Listas -->
       <div *ngIf="category.id === 'products'" class="notification-channels">
+
+        <!-- Email -->
         <div class="channel-group" formGroupName="products">
           <h4 class="channel-title">📧 Email</h4>
           <div class="channel-options" formGroupName="email">
@@ -308,7 +316,8 @@
           </div>
         </div>
 
-        <div class="channel-group">
+        <!-- Push -->
+        <div class="channel-group" formGroupName="products">
           <h4 class="channel-title">📱 Notificações no App</h4>
           <div class="channel-options" formGroupName="push">
             <label class="option-toggle">

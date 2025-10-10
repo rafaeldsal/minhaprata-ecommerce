@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, signal } from '@angular/core';
-import { SettingsService } from '../../services/user-settings/settings.service';
-import { UserSettings } from 'src/app/core/models/user';
+import { UserDataService } from '../../../../core/services/data/user-data.service';
+import { UserSettings } from '../../../../core/models';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -19,7 +19,7 @@ export class SettingsAccountComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private settingsService: SettingsService
+    private userDataService: UserDataService
   ) {
     this.accountForm = this.createForm();
   }
@@ -68,7 +68,7 @@ export class SettingsAccountComponent implements OnInit {
       this.isLoading.set(true);
 
       try {
-        await this.settingsService.updateAccountSettings(this.accountForm.value).toPromise();
+        await this.userDataService.updateAccountSettings(this.accountForm.value).toPromise();
         this.isEditing.set(false);
         // Feedback de sucesso
       } catch (error) {

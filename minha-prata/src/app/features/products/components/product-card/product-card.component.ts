@@ -1,9 +1,9 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ProductService } from '../../services/product.service';
-import { Product } from '../../models/product';
+import { Component, Input } from '@angular/core';
+import { Product } from '../../../../core/models';
 import { Router } from '@angular/router';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { CartService } from 'src/app/features/cart/services/cart.service';
+import { NotificationService } from '../../../../core/services/shared/notification.service';
+import { CartService } from 'src/app/core/services/business/cart.service';
+
 
 @Component({
   selector: 'app-product-card',

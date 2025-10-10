@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CategoryService } from '../../../products/services/category.service';
+import { ProductDataService } from '../../../../core/services/data/product-data.service';
 
 @Component({
   selector: 'app-category',
@@ -13,7 +13,7 @@ export class CategoryComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private categoryService: CategoryService
+    private productDataService: ProductDataService
   ) { }
 
   ngOnInit() {
@@ -24,7 +24,7 @@ export class CategoryComponent implements OnInit {
   }
 
   loadCategoryName(): void {
-    this.categoryService.getCategoryBySlug(this.categoryId).subscribe({
+    this.productDataService.getCategoryBySlug(this.categoryId).subscribe({
       next: (category) => {
         this.categoryName = category?.name || 'Categoria';
       },

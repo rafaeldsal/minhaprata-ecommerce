@@ -1,5 +1,5 @@
 <div class="product-list-container">
-  <!-- Header de resultados da busca -->
+  <!-- Header de resultados da busca - MELHORADO -->
   <div class="search-results-header" *ngIf="isSearching || searchTerm">
     <div class="search-info">
       <h3 *ngIf="searchResultsCount > 0">
@@ -14,9 +14,14 @@
     </div>
   </div>
 
-  <!-- Informações de paginação -->
-  <div class="pagination-info" *ngIf="!loading && displayedProducts.length > 0">
-    <p>Mostrando {{ showingStart }} - {{ showingEnd }} de {{ totalItems }} produtos</p>
+  <!-- ✅ NOVA SEÇÃO: Informações de exibição dinâmica -->
+  <div class="display-info" *ngIf="!loading && displayedProducts.length > 0">
+    <p class="display-text">{{ displayText }}</p>
+
+    <!-- ✅ Indicador visual de busca ativa -->
+    <div class="search-indicator" *ngIf="isShowingSearchResults">
+      <span class="search-badge">🔍 Busca Ativa</span>
+    </div>
   </div>
 
   <!-- Estados de loading -->
@@ -25,24 +30,45 @@
     <p>Carregando produtos...</p>
   </div>
 
-  <!-- Estado vazio -->
+  <!-- Estado vazio - MELHORADO -->
   <div class="empty-state" *ngIf="!loading && displayedProducts.length === 0">
     <i class="fa-solid fa-box-open"></i>
-    <h3>Nenhum produto encontrado</h3>
-    <p *ngIf="searchTerm">Tente buscar por outro termo</p>
-    <p *ngIf="!searchTerm">Tente buscar por outro termo ou categoria</p>
+
+    <!-- ✅ Mensagem contextual baseada no estado -->
+    <h3 *ngIf="isShowingSearchResults && searchResultsCount === 0">
+      Nenhum resultado para "{{ searchTerm }}"
+    </h3>
+    <h3 *ngIf="!isShowingSearchResults">
+      Nenhum produto encontrado
+    </h3>
+
+    <p *ngIf="isShowingSearchResults && searchResultsCount === 0">
+      Tente buscar por outro termo ou verifique a ortografia
+    </p>
+    <p *ngIf="!isShowingSearchResults && categoryFilter !== 'all'">
+      Não há produtos na categoria selecionada no momento
+    </p>
+    <p *ngIf="!isShowingSearchResults && categoryFilter === 'all'">
+      Não há produtos disponíveis no momento
+    </p>
+
+    <!-- ✅ Botão contextual -->
+    <button class="clear-search-btn" (click)="clearSearch()" *ngIf="isShowingSearchResults">
+      ✕ Limpar busca
+    </button>
   </div>
 
-  <!-- Grid de produtos - ESTA É A PARTE IMPORTANTE -->
+  <!-- Grid de produtos -->
   <div class="product-grid" *ngIf="!loading && displayedProducts.length > 0">
     <app-product-card *ngFor="let product of displayedProducts" [product]="product" (click)="onProductClick(product)">
     </app-product-card>
   </div>
 
-  <!-- Paginação simples -->
+  <!-- Paginação simples - MELHORADA -->
   <div class="simple-pagination" *ngIf="!loading && displayedProducts.length > 0 && totalPages > 1">
     <div class="pagination-info">
-      <span>Página {{ currentPage }} de {{ totalPages }} ({{ totalItems }} produtos)</span>
+      <!-- ✅ Substitui o texto estático pelo dinâmico -->
+      <span>{{ displayText }}</span>
     </div>
 
     <div class="pagination-controls">

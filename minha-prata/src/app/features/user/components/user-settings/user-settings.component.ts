@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { SettingsService } from '../../services/user-settings/settings.service';
-import { UserSettings } from 'src/app/core/models/user';
+import { UserSettings } from 'src/app/core/models/';
+import { UserDataService } from 'src/app/core/services/data/user-data.service';
 
 interface SettingsTab {
   id: 'account' | 'privacy' | 'notifications' | 'devices' | 'danger';
@@ -24,10 +24,10 @@ export class UserSettingsComponent implements OnInit {
     { id: 'danger', label: 'Zona de Risco', icon: '⚠️' }
   ];
 
-  constructor(private settingsService: SettingsService) { }
+  constructor(private userDataService: UserDataService) { }
 
   ngOnInit(): void {
-    this.settingsService.settings$.subscribe(settings => {
+    this.userDataService.settings$.subscribe(settings => {
       this.settings.set(settings);
     });
   }

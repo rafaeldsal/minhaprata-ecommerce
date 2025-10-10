@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../../../../core/services/auth.service';
-import { UserPermissions } from '../../../../core/models/user';
+import { AuthService } from '../../../../core/services/auth/auth.service';
+import { UserPermissions } from '../../../../core/models';
 
 @Component({
   selector: 'app-admin-sidebar',

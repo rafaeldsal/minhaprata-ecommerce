@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { SettingsService } from '../../services/user-settings/settings.service';
-import { DeviceSession } from 'src/app/core/models/user';
+import { DeviceSession } from '../../../../core/models';
+import { UserDataService } from 'src/app/core/services/data/user-data.service';
 
 @Component({
   selector: 'app-settings-devices',
@@ -20,7 +20,7 @@ export class SettingsDevicesComponent implements OnInit {
     other: 0
   });
 
-  constructor(private settingsService: SettingsService) { }
+  constructor(private userDataService: UserDataService) { }
 
   ngOnInit(): void {
     this.loadDevices();
@@ -30,7 +30,7 @@ export class SettingsDevicesComponent implements OnInit {
     this.isLoading.set(true);
 
     try {
-      const devices = await this.settingsService.getActiveSessions().toPromise();
+      const devices = await this.userDataService.getActiveSessions().toPromise();
       this.devices.set(devices || []);
       this.updateStats();
     } catch (error) {
@@ -58,7 +58,7 @@ export class SettingsDevicesComponent implements OnInit {
     this.terminatingSession.set(sessionId);
 
     try {
-      await this.settingsService.terminateSession(sessionId).toPromise();
+      await this.userDataService.terminateSession(sessionId).toPromise();
 
       // Remover da lista localmente
       this.devices.update(devices => devices.filter(d => d.id !== sessionId));
@@ -82,7 +82,7 @@ export class SettingsDevicesComponent implements OnInit {
     this.terminatingAll.set(true);
 
     try {
-      await this.settingsService.terminateAllSessions().toPromise();
+      await this.userDataService.terminateAllSessions().toPromise();
 
       // Manter apenas a sessão atual
       this.devices.update(devices => devices.filter(d => d.isCurrent));

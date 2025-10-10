@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Product, ProductOption } from '../../models/product';
-import { ProductService } from '../../services/product.service';
-import { CartService } from '../../../cart/services/cart.service';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { Product } from '../../../../core/models/product/product.model';
+import { ProductDataService } from '../../../../core/services/data/product-data.service';
+import { CartService } from '../../../../core/services/business/cart.service';
+import { NotificationService } from '../../../../core/services/shared/notification.service';
 
 @Component({
   selector: 'app-product-details',
@@ -21,7 +21,7 @@ export class ProductDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private productService: ProductService,
+    private productDataService: ProductDataService,
     private cartService: CartService,
     private notificationService: NotificationService
   ) { }
@@ -39,7 +39,7 @@ export class ProductDetailsComponent implements OnInit {
     }
 
     this.loading = true;
-    this.productService.getById(productId).subscribe({
+    this.productDataService.getProductById(productId).subscribe({
       next: (product) => {
         this.product = product;
         if (product) {
@@ -118,10 +118,7 @@ export class ProductDetailsComponent implements OnInit {
 
   // Adicionar ao carrinho
   addToCart(): void {
-    console.log('🎯 Add to Cart clicked');
-
     if (this.product && this.isProductInStock() && this.areAllOptionsSelected()) {
-      console.log('✅ Conditions met - adding to cart');
       this.cartService.addToCart(
         this.product,
         this.quantity,
@@ -131,7 +128,6 @@ export class ProductDetailsComponent implements OnInit {
       this.notificationService.showSuccess(
         `${this.product.name} adicionado ao carrinho! 🛒`
       );
-      console.log('📢 Notification should be shown');
 
     } else if (!this.areAllOptionsSelected()) {
       console.log('❌ Conditions not met:');

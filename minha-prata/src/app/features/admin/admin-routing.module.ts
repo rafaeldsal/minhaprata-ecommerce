@@ -8,7 +8,7 @@ const routes: Routes = [
   {
     path: '', component: AdminLayoutComponent, canActivate: [adminGuard], children: [
       { path: '', component: AdminDashboardComponent },
-      // { path: 'products', loadChildren: () => import('./admin-products/admin-products.module').then(m => m.AdminProductsModule) },
+      { path: 'products', loadChildren: () => import('./admin-products/admin-products.module').then(m => m.AdminProductsModule) },
       // { path: 'categories', loadChildren: () => import('./admin-categories/admin-categories.module').then(m => m.AdminCategoriesModule) },
       // { path: 'users', loadChildren: () => import('./admin-users/admin-users.module').then(m => m.AdminUsersModule) }
     ]

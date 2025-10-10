@@ -4,7 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { CategoryComponent } from './components/category/category.component';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { ProductsModule } from '../products/products/products.module';
+import { ProductsModule } from '../products/products.module';
 
 const routes: Routes = [
   { path: '', component: CategoryComponent }

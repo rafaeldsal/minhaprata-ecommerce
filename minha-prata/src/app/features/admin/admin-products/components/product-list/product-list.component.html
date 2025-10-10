@@ -1,0 +1,197 @@
+<div class="product-list-admin">
+  <!-- Cabeçalho -->
+  <div class="admin-header">
+    <div class="header-content">
+      <h1 class="page-title">Gerenciar Produtos</h1>
+      <p class="page-subtitle">Gerencie seu catálogo de produtos</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" routerLink="/admin/products/new">
+        <span class="btn-icon">➕</span>
+        Novo Produto
+      </button>
+    </div>
+  </div>
+
+  <!-- Barra de Ferramentas -->
+  <div class="toolbar">
+    <!-- Busca -->
+    <div class="search-box">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input #searchInputRef type="text" [value]="searchInput()" (input)="searchInput.set($any($event.target).value)"
+          (keyup.enter)="onSearchChange()" placeholder="Buscar produtos..." class="search-input">
+        <button *ngIf="searchInput()" class="clear-search" (click)="searchInput.set(''); onSearchChange()">
+          ✕
+        </button>
+      </div>
+    </div>
+
+    <!-- Controles -->
+    <div class="toolbar-controls">
+      <button class="btn btn-outline" (click)="showFilters.set(!showFilters())">
+        <span class="btn-icon">🎛️</span>
+        Filtros
+      </button>
+
+      <button class="btn btn-outline" (click)="loadProducts()" [disabled]="isLoading()">
+        <span class="btn-icon">🔄</span>
+        Atualizar
+      </button>
+    </div>
+  </div>
+
+  <!-- Filtros Avançados -->
+  <div class="filters-panel" *ngIf="showFilters()">
+    <app-product-filters [filters]="filters()" [categories]="categories()"
+      (filtersChange)="filters.set($event); applyFilters()" (clear)="clearFilters()">
+    </app-product-filters>
+  </div>
+
+  <!-- Ações em Lote -->
+  <div class="bulk-actions-panel" *ngIf="selectedProducts().length > 0">
+    <app-product-bulk-actions [selectedCount]="selectedProducts().length" [isLoading]="isBulkActionLoading()"
+      (action)="executeBulkAction($event)">
+    </app-product-bulk-actions>
+  </div>
+
+  <!-- Conteúdo Principal -->
+  <div class="content-area">
+    <!-- Loading State -->
+    <div *ngIf="isLoading()" class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Carregando produtos...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading() && products().length === 0" class="empty-state">
+      <div class="empty-icon">📦</div>
+      <h3>Nenhum produto encontrado</h3>
+      <p>Não encontramos produtos com os filtros atuais.</p>
+      <button class="btn btn-primary" (click)="clearFilters()">
+        Limpar Filtros
+      </button>
+    </div>
+
+    <!-- Lista de Produtos -->
+    <div *ngIf="!isLoading() && products().length > 0" class="products-container">
+      <!-- Cabeçalho da Tabela -->
+      <div class="table-header">
+        <div class="table-row header-row">
+          <div class="table-cell select-cell">
+            <label class="checkbox-wrapper">
+              <input type="checkbox" [checked]="isAllSelected()" (change)="toggleSelectAll()"
+                [indeterminate]="isSomeSelected()">
+              <span class="checkmark"></span>
+            </label>
+          </div>
+          <div class="table-cell product-cell">Produto</div>
+          <div class="table-cell category-cell">Categoria</div>
+          <div class="table-cell price-cell">Preço</div>
+          <div class="table-cell stock-cell">Estoque</div>
+          <div class="table-cell status-cell">Status</div>
+          <div class="table-cell actions-cell">Ações</div>
+        </div>
+      </div>
+
+      <!-- Lista de Produtos -->
+      <div class="table-body">
+        <div *ngFor="let product of products()" class="table-row product-row"
+          [class.selected]="selectedProducts().includes(product.id)">
+
+          <!-- Seleção -->
+          <div class="table-cell select-cell">
+            <label class="checkbox-wrapper">
+              <input type="checkbox" [checked]="selectedProducts().includes(product.id)"
+                (change)="toggleProductSelection(product.id)">
+              <span class="checkmark"></span>
+            </label>
+          </div>
+
+          <!-- Informações do Produto -->
+          <div class="table-cell product-cell">
+            <app-product-card-admin [product]="product" [selected]="selectedProducts().includes(product.id)">
+            </app-product-card-admin>
+          </div>
+
+          <!-- Categoria -->
+          <div class="table-cell category-cell">
+            <span class="category-badge">
+              {{ product.category.name }}
+            </span>
+          </div>
+
+          <!-- Preço -->
+          <div class="table-cell price-cell">
+            <div class="price-display">
+              <span class="current-price">{{ product.price | currency:'BRL' }}</span>
+            </div>
+          </div>
+
+          <!-- Estoque -->
+          <div class="table-cell stock-cell">
+            <div class="stock-display">
+              <span class="stock-quantity">{{ product.stockQuantity }}</span>
+              <span class="stock-label">unidades</span>
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div class="table-cell status-cell">
+            <span class="status-badge" [class]="getStockStatusClass(product)">
+              {{ getStockStatusText(product) }}
+            </span>
+          </div>
+
+          <!-- Ações -->
+          <div class="table-cell actions-cell">
+            <div class="action-buttons">
+              <button class="btn btn-text btn-primary" [routerLink]="['/admin/products/edit', product.id]"
+                title="Editar produto">
+                <span class="btn-icon">✏️</span>
+              </button>
+
+              <button class="btn btn-text btn-danger" (click)="deleteProduct(product)" title="Excluir produto">
+                <span class="btn-icon">🗑️</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paginação -->
+    <div *ngIf="!isLoading() && products().length > 0" class="pagination-container">
+      <div class="pagination-info">
+        Mostrando {{ products().length }} de {{ pagination().totalItems }} produtos
+      </div>
+
+      <div class="pagination-controls">
+        <button class="btn btn-outline" (click)="goToPage(pagination().currentPage - 1)"
+          [disabled]="pagination().currentPage === 1">
+          ‹ Anterior
+        </button>
+
+        <div class="page-numbers">
+          <span class="page-info">
+            Página {{ pagination().currentPage }} de {{ pagination().totalPages }}
+          </span>
+        </div>
+
+        <button class="btn btn-outline" (click)="goToPage(pagination().currentPage + 1)"
+          [disabled]="pagination().currentPage === pagination().totalPages">
+          Próxima ›
+        </button>
+      </div>
+
+      <div class="page-size-selector">
+        <label>Itens por página:</label>
+        <select [value]="pagination().pageSize" (change)="changePageSize($any($event.target).value)">
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>

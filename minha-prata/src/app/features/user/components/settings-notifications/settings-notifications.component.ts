@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { UserSettings } from 'src/app/core/models/user';
-import { SettingsService } from '../../services/user-settings/settings.service';
+import { UserSettings } from '../../../../core/models';
+import { UserDataService } from 'src/app/core/services/data/user-data.service';
 
 @Component({
   selector: 'app-settings-notifications',
@@ -41,7 +41,7 @@ export class SettingsNotificationsComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private settingsService: SettingsService
+    private userDataService: UserDataService
   ) {
     this.notificationsForm = this.createForm();
   }
@@ -140,7 +140,7 @@ export class SettingsNotificationsComponent implements OnInit {
       this.isLoading.set(true);
 
       try {
-        await this.settingsService.updateNotificationSettings(this.notificationsForm.value).toPromise();
+        await this.userDataService.updateNotificationSettings(this.notificationsForm.value).toPromise();
         this.lastSaved.set(new Date());
       } catch (error) {
         console.error('Erro ao salvar configurações de notificação:', error);

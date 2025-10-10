@@ -1,5 +1,5 @@
 import { Component, ElementRef, signal, ViewChild } from '@angular/core';
-import { SettingsService } from '../../services/user-settings/settings.service';
+import { UserDataService } from '../../../../core/services/data/user-data.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -23,7 +23,7 @@ export class SettingsDangerZoneComponent {
   requiredText = 'EXCLUIR MINHA CONTA';
 
   constructor(
-    private settingsService: SettingsService,
+    private userDataService: UserDataService,
     private router: Router
   ) { }
 
@@ -32,7 +32,7 @@ export class SettingsDangerZoneComponent {
     this.isExporting.set(true);
 
     try {
-      await this.settingsService.exportUserData().toPromise();
+      await this.userDataService.exportUserData().toPromise();
 
       // Simular download (em produção, seria um arquivo real)
       this.showExportModal.set(true);
@@ -57,7 +57,7 @@ export class SettingsDangerZoneComponent {
     this.isDeleting.set(true);
 
     try {
-      await this.settingsService.deleteAccount().toPromise();
+      await this.userDataService.deleteAccount().toPromise();
 
       // Feedback de sucesso
       alert('✅ Sua conta foi excluída com sucesso.');

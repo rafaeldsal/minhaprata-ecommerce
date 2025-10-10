@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../../../core/services/auth.service';
-import { UserPermissions, UserRole } from '../../../../core/models/user';
+import { AuthService } from '../../../../core/services/auth/auth.service';
+import { UserPermissions, UserRole } from '../../../../core/models';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
 export class AdminDashboardComponent implements OnInit {
   permissions: UserPermissions;
   userRole: UserRole;
-  isDevelopment = !environment.production; 
+  isDevelopment = !environment.production;
   stats = {
     totalProducts: 0,
     totalCategories: 0,
