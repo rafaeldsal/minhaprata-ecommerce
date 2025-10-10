@@ -1,12 +1,60 @@
 <div class="product-card-admin" [class.selected]="selected">
-  <div class="product-image">
-    <img [src]="product.imgUrl" [alt]="product.name" />
+  <div class="product-image-container">
+    <img [src]="mainImage" [alt]="product.name" class="product-image" (error)="getImageError($event)" loading="lazy">
+
+    <div class="image-overlay">
+      <button class="btn btn-primary btn-sm" (click)="onView()" title="Visualizar produto">
+        <span class="btn-icon">👁️</span>
+      </button>
+      <button class="btn btn-secondary btn-sm" (click)="onEdit()" title="Editar produto">
+        <span class="btn-icon">✏️</span>
+      </button>
+    </div>
+
+    <div class="product-badges">
+      <span *ngIf="product.stockQuantity === 0" class="badge badge-danger">Esgotado</span>
+      <span *ngIf="product.stockQuantity > 0 && product.stockQuantity <= 10" class="badge badge-warning">
+        Poucas unidades
+      </span>
+    </div>
   </div>
+
   <div class="product-info">
-    <h4 class="product-name">{{ product.name }}</h4>
-    <p class="product-description">{{ product.description }}</p>
+    <h3 class="product-name" [title]="product.name">
+      {{ product.name }}
+    </h3>
+
+    <p class="product-description" [title]="product.description">
+      {{ product.description | truncate:80 }}
+    </p>
+
     <div class="product-meta">
-      <span class="sku">SKU: {{ product.id }}</span>
+      <div class="meta-item">
+        <span class="meta-label">Categoria:</span>
+        <span class="meta-value">{{ product.category.name }}</span>
+      </div>
+
+      <div class="meta-item">
+        <span class="meta-label">Estoque:</span>
+        <span class="meta-value" [class]="stockStatus.class">
+          {{ product.stockQuantity }} unidades
+        </span>
+      </div>
+    </div>
+
+    <div class="product-footer">
+      <div class="product-price">
+        {{ formatPrice(product.price) }}
+      </div>
+
+      <div class="product-actions">
+        <button class="btn btn-text btn-primary" (click)="onEdit()" title="Editar">
+          <span class="btn-icon">✏️</span>
+        </button>
+        <button class="btn btn-text btn-danger" title="Excluir">
+          <span class="btn-icon">🗑️</span>
+        </button>
+      </div>
     </div>
   </div>
 </div>

@@ -1,26 +1,43 @@
-@import '../../../../../styles/variables';
-@import '../../../../../styles/mixins';
+@import 'src/styles/variables';
+@import 'src/styles/mixins';
 
 .admin-layout {
   display: flex;
   min-height: 100vh;
-  background-color: var(--bg-primary);
+  background: var(--color-gray-50);
+}
+
+.admin-sidebar-container {
+  flex-shrink: 0;
 }
 
 .admin-content {
   flex: 1;
-  background-color: var(--bg-primary);
-  overflow-y: auto;
-}
+  margin-left: 280px; // Largura do sidebar
+  min-height: 100vh;
 
-// Responsividade
-@include respond-to-max('md') {
-  .admin-layout {
-    flex-direction: column;
-    padding-top: 80px; // Altura do sidebar fixo no mobile
+  @include respond-to-max('lg') {
+    margin-left: 260px;
   }
 
-  .admin-content {
-    padding-top: var(--space-4);
+  @include respond-to-max('md') {
+    margin-left: 0;
+  }
+}
+
+.content-wrapper {
+  padding: var(--space-8);
+  max-width: 100%;
+
+  @include respond-to-max('xl') {
+    padding: var(--space-6);
+  }
+
+  @include respond-to-max('lg') {
+    padding: var(--space-4);
+  }
+
+  @include respond-to-max('md') {
+    padding: var(--space-4);
   }
 }

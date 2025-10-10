@@ -12,6 +12,7 @@ import { CartIconComponent } from '../features/cart/components/cart-icon/cart-ic
 import { SocialLoginButtonsComponent } from './components/social-login-buttons/social-login-buttons.component';
 import { HasPermissionDirective } from './directives/has-permission.directive';
 import { PaginationComponent } from './components/pagination/pagination.component';
+import { TruncatePipe } from './pipes/truncate.pipe';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { PaginationComponent } from './components/pagination/pagination.componen
     CartIconComponent,
     SocialLoginButtonsComponent,
     HasPermissionDirective,
-    PaginationComponent
+    PaginationComponent,
+    TruncatePipe
   ],
   imports: [
     CommonModule,
@@ -42,7 +44,8 @@ import { PaginationComponent } from './components/pagination/pagination.componen
     CartIconComponent,
     SocialLoginButtonsComponent,
     HasPermissionDirective,
-    PaginationComponent
+    PaginationComponent,
+    TruncatePipe
   ]
 })
 export class SharedModule { }

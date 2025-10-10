@@ -1,5 +1,69 @@
 <div class="product-filters">
-  <!-- Filtros serão implementados aqui -->
-  <p>Filtros em desenvolvimento...</p>
-  <button class="btn btn-outline" (click)="clear.emit()">Limpar Filtros</button>
+  <!-- Header dos Filtros -->
+  <div class="filters-header">
+    <h3 class="filters-title">Filtros Avançados</h3>
+    <div class="filters-actions">
+      <button class="btn btn-text" (click)="toggleExpansion()" type="button">
+        <span class="btn-icon">{{ isExpanded() ? '📕' : '📖' }}</span>
+        {{ isExpanded() ? 'Recolher' : 'Expandir' }}
+      </button>
+      <button class="btn btn-text btn-danger" (click)="clearFilters()" type="button">
+        <span class="btn-icon">🗑️</span>
+        Limpar
+      </button>
+    </div>
+  </div>
+
+  <!-- Conteúdo dos Filtros -->
+  <div class="filters-content" [class.expanded]="isExpanded()">
+    <div class="filters-grid">
+      <!-- Busca -->
+      <div class="filter-group">
+        <label class="filter-label">Buscar</label>
+        <input type="text" [formControl]="searchControl" placeholder="Nome, descrição..." class="filter-input">
+      </div>
+
+      <!-- Categoria -->
+      <div class="filter-group">
+        <label class="filter-label">Categoria</label>
+        <select [formControl]="categoryControl" class="filter-select">
+          <option value="">Todas as categorias</option>
+          <option *ngFor="let category of categoriesList()" [value]="category.id">
+            {{ getCategoryName(category) }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Status -->
+      <div class="filter-group">
+        <label class="filter-label">Status</label>
+        <select [formControl]="statusControl" class="filter-select">
+          <option value="all">Todos os status</option>
+          <option value="active">Ativos</option>
+          <option value="out_of_stock">Sem estoque</option>
+        </select>
+      </div>
+
+      <!-- Status do Estoque -->
+      <div class="filter-group">
+        <label class="filter-label">Status do Estoque</label>
+        <select [formControl]="stockStatusControl" class="filter-select">
+          <option value="all">Todos</option>
+          <option value="in_stock">Em estoque</option>
+          <option value="low_stock">Estoque baixo</option>
+          <option value="out_of_stock">Sem estoque</option>
+        </select>
+      </div>
+
+      <!-- Faixa de Preço (mostrado apenas quando expandido) -->
+      <div class="filter-group price-range" *ngIf="isExpanded()">
+        <label class="filter-label">Faixa de Preço</label>
+        <div class="price-inputs">
+          <input type="number" [formControl]="minPriceControl" placeholder="Mínimo" class="price-input" min="0">
+          <span class="price-separator">-</span>
+          <input type="number" [formControl]="maxPriceControl" placeholder="Máximo" class="price-input" min="0">
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

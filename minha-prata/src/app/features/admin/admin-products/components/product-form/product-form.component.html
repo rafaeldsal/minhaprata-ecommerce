@@ -1,1 +1,234 @@
-<p>product-form works!</p>
+<div class="product-form-container">
+  <!-- Header -->
+  <div class="form-header">
+    <h1 class="page-title">
+      {{ isEditing() ? 'Editar Produto' : 'Novo Produto' }}
+    </h1>
+    <p class="page-subtitle">
+      {{ isEditing() ? 'Atualize as informações do produto' : 'Adicione um novo produto ao catálogo' }}
+    </p>
+  </div>
+
+  <!-- Form Container -->
+  <div class="form-wrapper">
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form">
+
+      <!-- Informações Básicas -->
+      <div class="form-section">
+        <h2 class="section-title">Informações Básicas</h2>
+
+        <div class="form-grid">
+          <!-- Nome -->
+          <div class="form-group" [class.error]="productForm.get('name')?.invalid && productForm.get('name')?.touched">
+            <label for="name" class="form-label">
+              Nome do Produto *
+            </label>
+            <input id="name" type="text" formControlName="name" placeholder="Ex: Anel Solitário em Prata 925"
+              class="form-input">
+            <div class="error-message" *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched">
+              <span *ngIf="productForm.get('name')?.errors?.['required']">Nome é obrigatório</span>
+              <span *ngIf="productForm.get('name')?.errors?.['minlength']">
+                Mínimo de {{ productForm.get('name')?.errors?.['minlength']?.requiredLength }} caracteres
+              </span>
+              <span *ngIf="productForm.get('name')?.errors?.['maxlength']">
+                Máximo de {{ productForm.get('name')?.errors?.['maxlength']?.requiredLength }} caracteres
+              </span>
+            </div>
+          </div>
+
+          <!-- Categoria -->
+          <div class="form-group"
+            [class.error]="productForm.get('category')?.invalid && productForm.get('category')?.touched">
+            <label for="category" class="form-label">
+              Categoria *
+            </label>
+            <select id="category" formControlName="category" class="form-select">
+              <option value="">Selecione uma categoria</option>
+              <option *ngFor="let category of categories()" [value]="category.id">
+                {{ getCategoryName(category) }}
+              </option>
+            </select>
+            <div class="error-message"
+              *ngIf="productForm.get('category')?.invalid && productForm.get('category')?.touched">
+              Categoria é obrigatória
+            </div>
+          </div>
+
+          <!-- Preço -->
+          <div class="form-group"
+            [class.error]="productForm.get('price')?.invalid && productForm.get('price')?.touched">
+            <label for="price" class="form-label">
+              Preço *
+            </label>
+            <div class="price-input-wrapper">
+              <span class="currency-symbol">R$</span>
+              <input id="price" type="number" formControlName="price" placeholder="0.00" step="0.01" min="0.01"
+                class="form-input price-input">
+            </div>
+            <div class="error-message" *ngIf="productForm.get('price')?.invalid && productForm.get('price')?.touched">
+              <span *ngIf="productForm.get('price')?.errors?.['required']">Preço é obrigatório</span>
+              <span *ngIf="productForm.get('price')?.errors?.['min']">Preço deve ser maior que zero</span>
+            </div>
+          </div>
+
+          <!-- Estoque -->
+          <div class="form-group"
+            [class.error]="productForm.get('stockQuantity')?.invalid && productForm.get('stockQuantity')?.touched">
+            <label for="stockQuantity" class="form-label">
+              Quantidade em Estoque *
+            </label>
+            <input id="stockQuantity" type="number" formControlName="stockQuantity" placeholder="0" min="0"
+              class="form-input">
+            <div class="error-message"
+              *ngIf="productForm.get('stockQuantity')?.invalid && productForm.get('stockQuantity')?.touched">
+              <span *ngIf="productForm.get('stockQuantity')?.errors?.['required']">Estoque é obrigatório</span>
+              <span *ngIf="productForm.get('stockQuantity')?.errors?.['min']">Estoque não pode ser negativo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Descrição -->
+      <div class="form-section">
+        <div class="form-group"
+          [class.error]="productForm.get('description')?.invalid && productForm.get('description')?.touched">
+          <label for="description" class="form-label">
+            Descrição do Produto *
+          </label>
+          <textarea id="description" formControlName="description" placeholder="Descreva o produto em detalhes..."
+            rows="4" class="form-textarea">
+          </textarea>
+          <div class="char-count">
+            {{ productForm.get('description')?.value?.length || 0 }}/500
+          </div>
+          <div class="error-message"
+            *ngIf="productForm.get('description')?.invalid && productForm.get('description')?.touched">
+            <span *ngIf="productForm.get('description')?.errors?.['required']">Descrição é obrigatória</span>
+            <span *ngIf="productForm.get('description')?.errors?.['minlength']">
+              Mínimo de {{ productForm.get('description')?.errors?.['minlength']?.requiredLength }} caracteres
+            </span>
+            <span *ngIf="productForm.get('description')?.errors?.['maxlength']">
+              Máximo de {{ productForm.get('description')?.errors?.['maxlength']?.requiredLength }} caracteres
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Imagens -->
+      <div class="form-section">
+        <h2 class="section-title">Imagens do Produto</h2>
+
+        <!-- Imagem Principal -->
+        <div class="form-group"
+          [class.error]="productForm.get('imgUrl')?.invalid && productForm.get('imgUrl')?.touched">
+          <label for="imgUrl" class="form-label">
+            URL da Imagem Principal *
+          </label>
+          <input id="imgUrl" type="url" formControlName="imgUrl" placeholder="https://exemplo.com/imagem.jpg"
+            class="form-input">
+          <div class="error-message" *ngIf="productForm.get('imgUrl')?.invalid && productForm.get('imgUrl')?.touched">
+            URL da imagem principal é obrigatória
+          </div>
+
+          <!-- Preview da Imagem Principal -->
+          <div class="image-preview" *ngIf="productForm.get('imgUrl')?.value">
+            <img [src]="productForm.get('imgUrl')?.value" alt="Preview" class="preview-image"
+              (error)="onImageError($event)">
+          </div>
+        </div>
+
+        <!-- Imagens Adicionais -->
+        <div class="form-group">
+          <label class="form-label">
+            Imagens Adicionais
+          </label>
+
+          <div class="images-container">
+            <div *ngFor="let image of imagesArray.controls; let i = index" class="image-item">
+              <input type="url" [formControl]="$any(image)" (input)="onImageUrlChange($event, i)"
+                placeholder="https://exemplo.com/imagem-adicional.jpg" class="form-input image-url-input">
+
+              <div class="image-preview-small" *ngIf="imagePreviews[i]">
+                <img [src]="imagePreviews[i]" alt="Preview" class="preview-image-small" (error)="onImageError($event)">
+              </div>
+
+              <button type="button" class="btn btn-text btn-danger" (click)="removeImage(i)" title="Remover imagem">
+                <span class="btn-icon">🗑️</span>
+              </button>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-outline" (click)="addImage()">
+            <span class="btn-icon">➕</span>
+            Adicionar Imagem
+          </button>
+        </div>
+      </div>
+
+      <!-- Opções do Produto -->
+      <div class="form-section">
+        <h2 class="section-title">Opções do Produto</h2>
+
+        <div class="options-container">
+          <div *ngFor="let option of optionsArray.controls; let i = index" class="option-item">
+            <div class="option-header">
+              <h3 class="option-title">Opção {{ i + 1 }}</h3>
+              <button type="button" class="btn btn-text btn-danger" (click)="removeOption(i)" title="Remover opção">
+                <span class="btn-icon">🗑️</span>
+              </button>
+            </div>
+
+            <div class="option-content">
+              <!-- Nome da Opção -->
+              <div class="form-group">
+                <label class="form-label">Nome da Opção</label>
+                <input type="text" [formControl]="$any(option.get('name'))" placeholder="Ex: Tamanho, Cor, Material"
+                  class="form-input">
+              </div>
+
+              <!-- Valores da Opção -->
+              <div class="form-group">
+                <label class="form-label">Valores</label>
+                <div class="values-container">
+                  <div *ngFor="let value of getOptionValues(i).controls; let j = index" class="value-item">
+                    <input type="text" [formControl]="$any(value)" placeholder="Ex: P, M, G"
+                      class="form-input value-input">
+                    <button type="button" class="btn btn-text btn-danger" (click)="removeOptionValue(i, j)"
+                      [disabled]="getOptionValues(i).length === 1" title="Remover valor">
+                      <span class="btn-icon">✕</span>
+                    </button>
+                  </div>
+                </div>
+
+                <button type="button" class="btn btn-outline btn-sm" (click)="addOptionValue(i)">
+                  <span class="btn-icon">➕</span>
+                  Adicionar Valor
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-outline" (click)="addOption()">
+            <span class="btn-icon">⚙️</span>
+            Adicionar Opção
+          </button>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-outline" (click)="onCancel()" [disabled]="isLoading()">
+          Cancelar
+        </button>
+
+        <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid || isLoading()">
+          <span class="btn-icon" *ngIf="!isLoading()">
+            {{ isEditing() ? '💾' : '✨' }}
+          </span>
+          <span class="loading-spinner" *ngIf="isLoading()"></span>
+          {{ isLoading() ? 'Salvando...' : (isEditing() ? 'Atualizar Produto' : 'Criar Produto') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -62,7 +62,7 @@ export class UserAuthIconComponent implements OnInit, OnDestroy {
     if (this.authState.isAuthenticated) {
       this.toggleDropdown();
     } else {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/auth/login']);
     }
   }
 

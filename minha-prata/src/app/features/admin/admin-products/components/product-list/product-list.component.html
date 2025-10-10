@@ -10,31 +10,42 @@
         <span class="btn-icon">➕</span>
         Novo Produto
       </button>
+
+      <!-- 🧪 Botões de Desenvolvimento (remover em produção) -->
+      <div class="dev-actions" *ngIf="false">
+        <button class="btn btn-outline" (click)="addMockProduct()" title="Adicionar produto mock">
+          🧪 Add Mock
+        </button>
+        <button class="btn btn-outline" (click)="resetToMockProducts()" title="Resetar produtos">
+          🔄 Reset
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- Barra de Ferramentas -->
   <div class="toolbar">
-    <!-- Busca -->
     <div class="search-box">
       <div class="search-input-wrapper">
         <span class="search-icon">🔍</span>
-        <input #searchInputRef type="text" [value]="searchInput()" (input)="searchInput.set($any($event.target).value)"
-          (keyup.enter)="onSearchChange()" placeholder="Buscar produtos..." class="search-input">
-        <button *ngIf="searchInput()" class="clear-search" (click)="searchInput.set(''); onSearchChange()">
+        <input type="text" [value]="searchInput()" (input)="onSearchInput($any($event.target).value)"
+          (keyup.enter)="applyFilters()" placeholder="Buscar por nome, descrição ou categoria..." class="search-input">
+        <button *ngIf="searchInput()" class="clear-search" (click)="clearSearch()" type="button"
+          aria-label="Limpar busca">
           ✕
         </button>
       </div>
     </div>
 
-    <!-- Controles -->
     <div class="toolbar-controls">
-      <button class="btn btn-outline" (click)="showFilters.set(!showFilters())">
+      <button class="btn btn-outline" (click)="showFilters.set(!showFilters())" [class.active]="showFilters()"
+        title="Mostrar/ocultar filtros">
         <span class="btn-icon">🎛️</span>
         Filtros
+        <span class="badge" *ngIf="showFilters()">{{ categories().length }}</span>
       </button>
 
-      <button class="btn btn-outline" (click)="loadProducts()" [disabled]="isLoading()">
+      <button class="btn btn-outline" (click)="refreshProducts()" [disabled]="isLoading()" title="Recarregar produtos">
         <span class="btn-icon">🔄</span>
         Atualizar
       </button>
@@ -43,45 +54,52 @@
 
   <!-- Filtros Avançados -->
   <div class="filters-panel" *ngIf="showFilters()">
-    <app-product-filters [filters]="filters()" [categories]="categories()"
-      (filtersChange)="filters.set($event); applyFilters()" (clear)="clearFilters()">
+    <app-product-filters [filters]="filters()" [categories]="categories()" (filtersChange)="onFiltersChange($event)"
+      (clear)="clearFilters()">
     </app-product-filters>
   </div>
 
   <!-- Ações em Lote -->
   <div class="bulk-actions-panel" *ngIf="selectedProducts().length > 0">
-    <app-product-bulk-actions [selectedCount]="selectedProducts().length" [isLoading]="isBulkActionLoading()"
-      (action)="executeBulkAction($event)">
+    <app-product-bulk-actions [selectedCount]="selectedCount()" [isLoading]="isBulkActionLoading()"
+      (action)="executeBulkAction($event)" (clear)="clearSelection()">
     </app-product-bulk-actions>
   </div>
 
   <!-- Conteúdo Principal -->
   <div class="content-area">
     <!-- Loading State -->
-    <div *ngIf="isLoading()" class="loading-state">
+    <div class="loading-state" *ngIf="isLoading()">
       <div class="loading-spinner"></div>
       <p>Carregando produtos...</p>
     </div>
 
     <!-- Empty State -->
-    <div *ngIf="!isLoading() && products().length === 0" class="empty-state">
+    <div class="empty-state" *ngIf="!isLoading() && products().length === 0">
       <div class="empty-icon">📦</div>
       <h3>Nenhum produto encontrado</h3>
       <p>Não encontramos produtos com os filtros atuais.</p>
-      <button class="btn btn-primary" (click)="clearFilters()">
-        Limpar Filtros
-      </button>
+      <div class="empty-actions">
+        <button class="btn btn-primary" (click)="clearFilters()">
+          Limpar Filtros
+        </button>
+        <button class="btn btn-outline" routerLink="/admin/products/new">
+          Criar Primeiro Produto
+        </button>
+      </div>
     </div>
 
     <!-- Lista de Produtos -->
-    <div *ngIf="!isLoading() && products().length > 0" class="products-container">
+    <div class="products-container" *ngIf="!isLoading() && products().length > 0">
+
       <!-- Cabeçalho da Tabela -->
       <div class="table-header">
         <div class="table-row header-row">
           <div class="table-cell select-cell">
             <label class="checkbox-wrapper">
               <input type="checkbox" [checked]="isAllSelected()" (change)="toggleSelectAll()"
-                [indeterminate]="isSomeSelected()">
+                [indeterminate]="isSomeSelected()"
+                [attr.aria-label]="isAllSelected() ? 'Desmarcar todos' : 'Marcar todos'">
               <span class="checkmark"></span>
             </label>
           </div>
@@ -97,61 +115,72 @@
       <!-- Lista de Produtos -->
       <div class="table-body">
         <div *ngFor="let product of products()" class="table-row product-row"
-          [class.selected]="selectedProducts().includes(product.id)">
+          [class.selected]="selectedProducts().includes(product.id)" [class.low-stock]="hasLowStock(product)"
+          [class.out-of-stock]="isOutOfStock(product)">
 
           <!-- Seleção -->
           <div class="table-cell select-cell">
             <label class="checkbox-wrapper">
               <input type="checkbox" [checked]="selectedProducts().includes(product.id)"
-                (change)="toggleProductSelection(product.id)">
+                (change)="toggleProductSelection(product.id)" [attr.aria-label]="'Selecionar ' + product.name">
               <span class="checkmark"></span>
             </label>
           </div>
 
           <!-- Informações do Produto -->
           <div class="table-cell product-cell">
-            <app-product-card-admin [product]="product" [selected]="selectedProducts().includes(product.id)">
+            <app-product-card-admin [product]="product" [selected]="selectedProducts().includes(product.id)"
+              (view)="viewProduct(product.id)" (edit)="editProduct(product.id)">
             </app-product-card-admin>
           </div>
 
           <!-- Categoria -->
           <div class="table-cell category-cell">
-            <span class="category-badge">
-              {{ product.category.name }}
+            <span class="category-badge" [title]="product.category.description">
+              {{ getCategoryName(product) }}
             </span>
           </div>
 
           <!-- Preço -->
           <div class="table-cell price-cell">
             <div class="price-display">
-              <span class="current-price">{{ product.price | currency:'BRL' }}</span>
+              <span class="current-price">{{ formatPrice(product.price) }}</span>
             </div>
           </div>
 
           <!-- Estoque -->
           <div class="table-cell stock-cell">
             <div class="stock-display">
-              <span class="stock-quantity">{{ product.stockQuantity }}</span>
+              <span class="stock-quantity" [class.low-stock]="hasLowStock(product)"
+                [class.out-of-stock]="isOutOfStock(product)">
+                {{ product.stockQuantity }}
+              </span>
               <span class="stock-label">unidades</span>
             </div>
           </div>
 
           <!-- Status -->
           <div class="table-cell status-cell">
-            <span class="status-badge" [class]="getStockStatusClass(product)">
-              {{ getStockStatusText(product) }}
+            <span class="status-badge" [class]="getStockStatus(product).class">
+              {{ getStockStatus(product).text }}
             </span>
           </div>
 
           <!-- Ações -->
           <div class="table-cell actions-cell">
             <div class="action-buttons">
-              <button class="btn btn-text btn-primary" [routerLink]="['/admin/products/edit', product.id]"
-                title="Editar produto">
+              <button class="btn btn-text btn-primary" (click)="editProduct(product.id)" title="Editar produto"
+                [disabled]="isBulkActionLoading()">
                 <span class="btn-icon">✏️</span>
               </button>
 
-              <button class="btn btn-text btn-danger" (click)="deleteProduct(product)" title="Excluir produto">
+              <button class="btn btn-text btn-secondary" (click)="viewProduct(product.id)" title="Visualizar produto"
+                [disabled]="isBulkActionLoading()">
+                <span class="btn-icon">👁️</span>
+              </button>
+
+              <button class="btn btn-text btn-danger" (click)="deleteProduct(product)" title="Excluir produto"
+                [disabled]="isBulkActionLoading()">
                 <span class="btn-icon">🗑️</span>
               </button>
             </div>
@@ -161,36 +190,28 @@
     </div>
 
     <!-- Paginação -->
-    <div *ngIf="!isLoading() && products().length > 0" class="pagination-container">
-      <div class="pagination-info">
-        Mostrando {{ products().length }} de {{ pagination().totalItems }} produtos
-      </div>
+    <div class="pagination-wrapper" *ngIf="!isLoading() && products().length > 0">
 
-      <div class="pagination-controls">
-        <button class="btn btn-outline" (click)="goToPage(pagination().currentPage - 1)"
-          [disabled]="pagination().currentPage === 1">
-          ‹ Anterior
-        </button>
-
-        <div class="page-numbers">
-          <span class="page-info">
-            Página {{ pagination().currentPage }} de {{ pagination().totalPages }}
-          </span>
-        </div>
-
-        <button class="btn btn-outline" (click)="goToPage(pagination().currentPage + 1)"
-          [disabled]="pagination().currentPage === pagination().totalPages">
-          Próxima ›
-        </button>
-      </div>
-
+      <!-- Seletor de Itens por Página -->
       <div class="page-size-selector">
-        <label>Itens por página:</label>
-        <select [value]="pagination().pageSize" (change)="changePageSize($any($event.target).value)">
+        <label for="pageSize">Itens por página:</label>
+        <select id="pageSize" [value]="pagination().pageSize" (change)="changePageSize($any($event.target).value)">
           <option value="10">10</option>
           <option value="25">25</option>
           <option value="50">50</option>
+          <option value="100">100</option>
         </select>
+      </div>
+
+      <!-- Componente de Paginação -->
+      <app-pagination [currentPage]="pagination().currentPage" [totalPages]="pagination().totalPages"
+        [totalItems]="pagination().totalItems" [itemsPerPage]="pagination().pageSize"
+        (pageChange)="onPageChange($event)">
+      </app-pagination>
+
+      <!-- Informação de Seleção -->
+      <div class="selection-info" *ngIf="selectedCount() > 0">
+        <span>{{ selectedCount() }} produto(s) selecionado(s)</span>
       </div>
     </div>
   </div>
