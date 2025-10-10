@@ -307,7 +307,16 @@ export class CartService {
         stockQuantity: 10,
         dtCreated: new Date().toISOString(),
         dtUpdated: new Date().toISOString(),
-        category: { id: '1', name: 'aneis', description: 'Anéis', slug: CategorySlug.ANEIS }
+        category: {
+          id: '1', 
+          name: 'aneis', 
+          description: 'Anéis', 
+          slug: CategorySlug.ANEIS, 
+          isActive: true,
+          order: 1,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
       },
       {
         id: 'mock-2',
@@ -318,7 +327,16 @@ export class CartService {
         stockQuantity: 5,
         dtCreated: new Date().toISOString(),
         dtUpdated: new Date().toISOString(),
-        category: { id: '2', name: 'colares', description: 'Colares', slug: CategorySlug.COLARES }
+        category: { 
+          id: '2', 
+          name: 'colares', 
+          description: 'Colares', 
+          slug: CategorySlug.COLARES,
+          isActive: true,
+          order: 2,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
       }
     ];
 

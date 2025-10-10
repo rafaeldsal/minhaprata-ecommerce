@@ -11,6 +11,7 @@ import { NotificationService } from 'src/app/core/services/shared/notification.s
 import { Product, ProductHelper } from 'src/app/core/models/product/product.model';
 import { Category } from 'src/app/core/models/product/category.model';
 import { ProductFilters, BulkAction, ProductAdminHelper } from 'src/app/core/models/product/product-admin.model';
+import { CategoryDataService } from 'src/app/core/services/data/category-data.service';
 
 interface PaginationState {
   currentPage: number;
@@ -28,6 +29,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   // 🔧 Injeção de Dependências
   private readonly productDataService = inject(ProductDataService);
   private readonly notificationService = inject(NotificationService);
+  private readonly categoryDataService = inject(CategoryDataService);
   private readonly router = inject(Router);
 
   // 🚦 Gerenciamento de Subscriptions
@@ -130,7 +132,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   private loadCategories(): void {
-    this.productDataService.getCategories().subscribe({
+    this.categoryDataService.getCategories().subscribe({
       next: (categories) => this.categories.set(categories),
       error: (error) => {
         console.error('❌ Erro ao carregar categorias:', error);

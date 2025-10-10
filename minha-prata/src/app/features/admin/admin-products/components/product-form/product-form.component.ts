@@ -3,6 +3,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs';
 import { Category, Product, ProductFormData } from 'src/app/core/models';
+import { CategoryDataService } from 'src/app/core/services/data/category-data.service';
 import { ProductDataService } from 'src/app/core/services/data/product-data.service';
 import { NotificationService } from 'src/app/core/services/shared/notification.service';
 
@@ -33,6 +34,7 @@ export class ProductFormComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private productDataService: ProductDataService,
+    private categoryDataService: CategoryDataService,
     private notificationService: NotificationService
   ) {
     this.productForm = this.createProductForm();
@@ -75,7 +77,7 @@ export class ProductFormComponent implements OnInit {
   }
 
   private loadCategories(): void {
-    this.productDataService.getCategories().subscribe(categories => {
+    this.categoryDataService.getCategories().subscribe(categories => {
       this.categories.set(categories);
     });
   }

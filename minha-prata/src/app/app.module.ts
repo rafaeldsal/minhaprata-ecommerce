@@ -9,6 +9,7 @@ import { CartModule } from './features/cart/cart.module';
 import { CoreModule } from './core/core.module';
 import { CategoryModule } from './features/category/category.module';
 import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { HttpClientModule } from '@angular/common/http';
     CategoryModule,
     HttpClientModule,
     CartModule,
-    CoreModule
+    CoreModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -418,7 +418,16 @@ export class SearchService {
           stockQuantity: 10,
           dtCreated: new Date().toISOString(),
           dtUpdated: new Date().toISOString(),
-          category: { id: '1', name: 'aneis', description: 'Anéis', slug: CategorySlug.ANEIS }
+          category: { 
+            id: '1', 
+            name: 'aneis', 
+            description: 'Anéis', 
+            slug: CategorySlug.ANEIS,
+            isActive: true,
+            order: 1,
+            createdAt: new Date(),
+            updatedAt: new Date() 
+          }
         }
       ];
 

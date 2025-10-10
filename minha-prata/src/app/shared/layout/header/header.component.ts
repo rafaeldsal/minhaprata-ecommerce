@@ -4,6 +4,7 @@ import { NotificationService } from 'src/app/core/services/shared/notification.s
 import { ProductDataService } from 'src/app/core/services/data/product-data.service';
 import { Category, CategorySlug } from 'src/app/core/models';
 import { SearchService } from 'src/app/core/services/business/search.service';
+import { CategoryDataService } from 'src/app/core/services/data/category-data.service';
 
 @Component({
   selector: 'app-header',
@@ -21,6 +22,7 @@ export class HeaderComponent implements OnInit {
   constructor(
     private router: Router,
     private productDataService: ProductDataService,
+    private categoryDataService: CategoryDataService,
     private notificationService: NotificationService,
     private searchService: SearchService
   ) { }
@@ -45,7 +47,7 @@ export class HeaderComponent implements OnInit {
   }
 
   loadCategories(): void {
-    this.productDataService.getCategories().subscribe({
+    this.categoryDataService.getCategories().subscribe({
       next: (categories) => {
         this.categories = categories;
       },
