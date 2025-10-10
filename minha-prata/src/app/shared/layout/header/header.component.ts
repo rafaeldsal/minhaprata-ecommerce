@@ -1,12 +1,10 @@
 import { Component, EventEmitter, OnInit, Output, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
-import { Category, CategorySlug } from '../../models/category';
-import { ModalService } from '../../../core/services/modal.service';
-import { CategoryService } from 'src/app/features/products/services/category.service';
-import { SearchStateService } from 'src/app/core/services/search-state.service';
-import { NotificationService } from 'src/app/core/services/notification.service';
-import { User } from 'src/app/core/models/user';
-import { AuthService } from 'src/app/core/services/auth.service';
+import { NotificationService } from 'src/app/core/services/shared/notification.service';
+import { ProductDataService } from 'src/app/core/services/data/product-data.service';
+import { Category, CategorySlug } from 'src/app/core/models';
+import { SearchService } from 'src/app/core/services/business/search.service';
+import { CategoryDataService } from 'src/app/core/services/data/category-data.service';
 
 @Component({
   selector: 'app-header',
@@ -18,19 +16,19 @@ export class HeaderComponent implements OnInit {
   @Output() categorySelected = new EventEmitter<string>();
 
   categories: Category[] = [];
-  activeCategory = CategorySlug.ALL;
+  activeCategory: CategorySlug | string = CategorySlug.ALL;
   isMobileMenuOpen = false;
 
   constructor(
     private router: Router,
-    private categoryService: CategoryService,
+    private productDataService: ProductDataService,
+    private categoryDataService: CategoryDataService,
     private notificationService: NotificationService,
-    private authService: AuthService,
-    private searchStateService: SearchStateService
+    private searchService: SearchService
   ) { }
 
   ngOnInit(): void {
-    this.searchStateService.clearSearch();
+    this.searchService.clearSearch();
     this.loadCategories();
   }
 
@@ -49,7 +47,7 @@ export class HeaderComponent implements OnInit {
   }
 
   loadCategories(): void {
-    this.categoryService.getAllCategories().subscribe({
+    this.categoryDataService.getCategories().subscribe({
       next: (categories) => {
         this.categories = categories;
       },
@@ -90,14 +88,15 @@ export class HeaderComponent implements OnInit {
     this.router.navigate(['/']);
     this.activeCategory = CategorySlug.ALL;
     this.categorySelected.emit(CategorySlug.ALL);
-    this.searchStateService.clearSearch();
+    this.searchService.clearSearch();
     this.closeMobileMenu();
   }
 
   onCategorySelect(category: Category): void {
-    this.activeCategory = category.slug;
+    const categorySlug = category.slug || CategorySlug.ALL;
+    this.activeCategory = categorySlug;
     this.categorySelected.emit(category.slug);
-    this.searchStateService.clearSearch();
+    this.searchService.clearSearch();
 
     if (category.slug === CategorySlug.ALL) {
       this.router.navigate(['/']);
@@ -108,7 +107,7 @@ export class HeaderComponent implements OnInit {
   }
 
   trackByCategory(index: number, category: Category): string {
-    return category.slug;
+    return category.slug || `category-${index}`;
   }
 
   onCartClick(): void {

@@ -1,9 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AuthState, LoginCredentials } from 'src/app/core/models/user';
-import { AuthService } from 'src/app/core/services/auth.service';
+import { AuthState, LoginCredentials } from '../../../../core/models/user/user-auth.model';
+import { AuthService } from '../../../../core/services/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -24,7 +24,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private ngZone: NgZone
   ) {
     this.loginForm = this.createLoginForm();
   }
@@ -60,7 +61,9 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     // Se autenticado e não está carregando, redireciona
     if (authState.isAuthenticated && !authState.isLoading) {
-      this.router.navigate([this.returnUrl]);
+      this.ngZone.run(() => {
+        this.router.navigate([this.returnUrl]);
+      });
     }
   }
 

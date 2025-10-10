@@ -1,14 +1,12 @@
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ModalService } from './services/modal.service';
-import { NotificationService } from './services/notification.service';
-import { SearchStateService } from './services/search-state.service';
+import { NotificationService } from './services/shared/notification.service';
+import { SearchService } from './services/business/search.service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
-import { LoadingService } from './services/loading.service';
+import { LoadingService } from './services/shared/loading.service';
 import { LoadingSpinnerComponent } from './components/loading-spinner/loading-spinner.component';
-
 
 
 @NgModule({
@@ -30,9 +28,8 @@ import { LoadingSpinnerComponent } from './components/loading-spinner/loading-sp
       multi: true
     },
     LoadingService,
-    ModalService,
     NotificationService,
-    SearchStateService
+    SearchService
   ],
   exports: [
     LoadingSpinnerComponent

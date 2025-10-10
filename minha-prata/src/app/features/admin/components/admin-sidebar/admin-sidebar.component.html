@@ -1,49 +1,102 @@
 <nav class="admin-sidebar">
+  <!-- Cabeçalho -->
   <div class="sidebar-header">
-    <h3>MinhaPrata Admin</h3>
+    <h1 class="sidebar-title">
+      <span class="sidebar-logo">💎</span>
+      MinhaPrata
+    </h1>
+    <p class="sidebar-subtitle">Painel Administrativo</p>
   </div>
 
-  <ul class="sidebar-menu">
-    <li>
-      <a routerLink="/admin" routerLinkActive="active">
-        <span class="icon">📊</span>
-        Dashboard
+  <!-- Navegação -->
+  <ul class="sidebar-nav">
+    <!-- Dashboard -->
+    <li class="nav-item">
+      <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+        <div class="nav-content">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Dashboard</span>
+        </div>
+        <span class="nav-badge">Novo</span>
       </a>
     </li>
 
-    <li *appHasPermission="'canManageProducts'">
-      <a routerLink="/admin/products" routerLinkActive="active">
-        <span class="icon">📦</span>
-        Produtos
+    <!-- Produtos -->
+    <li class="nav-item">
+      <a routerLink="/admin/products" routerLinkActive="active" class="nav-link">
+        <div class="nav-content">
+          <span class="nav-icon">📦</span>
+          <span class="nav-text">Produtos</span>
+        </div>
+        <span class="nav-badge">15</span>
       </a>
     </li>
 
-    <li *appHasPermission="'canManageCategories'">
-      <a routerLink="/admin/categories" routerLinkActive="active">
-        <span class="icon">📁</span>
-        Categorias
+    <!-- Categorias -->
+    <li class="nav-item">
+      <a routerLink="/admin/categories" routerLinkActive="active" class="nav-link">
+        <div class="nav-content">
+          <span class="nav-icon">🏷️</span>
+          <span class="nav-text">Categorias</span>
+        </div>
+        <span class="nav-badge">8</span>
       </a>
     </li>
 
-    <li *appHasPermission="'canManageUsers'">
-      <a routerLink="/admin/users" routerLinkActive="active">
-        <span class="icon">👥</span>
-        Usuários
+    <!-- Usuários -->
+    <li class="nav-item">
+      <a routerLink="/admin/users" routerLinkActive="active" class="nav-link">
+        <div class="nav-content">
+          <span class="nav-icon">👥</span>
+          <span class="nav-text">Usuários</span>
+        </div>
+        <span class="nav-badge">24</span>
       </a>
     </li>
 
-    <li *appHasPermission="'canViewAnalytics'">
-      <a href="#" class="disabled">
-        <span class="icon">📈</span>
-        Analytics
-        <span class="badge">Em breve</span>
+    <!-- Pedidos -->
+    <li class="nav-item">
+      <a routerLink="/admin/orders" routerLinkActive="active" class="nav-link">
+        <div class="nav-content">
+          <span class="nav-icon">🛒</span>
+          <span class="nav-text">Pedidos</span>
+        </div>
+        <span class="nav-badge">12</span>
+      </a>
+    </li>
+
+    <!-- Analytics -->
+    <li class="nav-item">
+      <a routerLink="/admin/analytics" routerLinkActive="active" class="nav-link">
+        <div class="nav-content">
+          <span class="nav-icon">📈</span>
+          <span class="nav-text">Analytics</span>
+        </div>
+      </a>
+    </li>
+
+    <!-- Configurações -->
+    <li class="nav-item">
+      <a routerLink="/admin/settings" routerLinkActive="active" class="nav-link">
+        <div class="nav-content">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-text">Configurações</span>
+        </div>
       </a>
     </li>
   </ul>
 
+  <!-- Footer do Sidebar -->
   <div class="sidebar-footer">
-    <button class="btn btn-outline-danger btn-sm" (click)="logout()">
-      Sair
+    <div class="user-info">
+      <div class="user-avatar">👤</div>
+      <div class="user-details">
+        <span class="user-name">Administrador</span>
+        <span class="user-role">Super Admin</span>
+      </div>
+    </div>
+    <button class="logout-btn" title="Sair do sistema">
+      <span class="logout-icon">🚪</span>
     </button>
   </div>
 </nav>

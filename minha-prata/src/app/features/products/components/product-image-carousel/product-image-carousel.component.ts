@@ -1,5 +1,5 @@
 import { Component, HostListener, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { getProductImages, Product } from '../../models/product';
+import { ProductHelper, Product } from '../../../../core/models/product/product.model';
 
 @Component({
   selector: 'app-product-image-carousel',
@@ -35,7 +35,7 @@ export class ProductImageCarouselComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['product']) {
-      this.images = getProductImages(this.product);
+      this.images = ProductHelper.getProductImages(this.product);
       this.currentImageIndex = 0;
     }
   }

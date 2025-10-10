@@ -1,9 +1,9 @@
 // src/app/features/user/components/order-details/order-details.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { OrderService } from '../../../../core/services/order/order.service';
-import { UserOrder, OrderStatus } from '../../../../core/models/order.types';
-import { CartService } from 'src/app/features/cart/services/cart.service';
+import { OrderDataService } from '../../../../core/services/data/order-data.service';
+import { UserOrder, OrderStatus } from '../../../../core/models/order/order.model';
+import { CartService } from '../../../../core/services/business/cart.service';
 
 @Component({
   selector: 'app-order-details',
@@ -29,7 +29,7 @@ export class OrderDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private cartService: CartService,
-    private orderService: OrderService
+    private orderDataService: OrderDataService
   ) { }
 
   ngOnInit(): void {
@@ -47,7 +47,7 @@ export class OrderDetailsComponent implements OnInit {
       return;
     }
 
-    this.orderService.getOrderById(orderId).subscribe({
+    this.orderDataService.getOrderById(orderId).subscribe({
       next: (order) => {
         this.order = order;
         this.loading = false;
@@ -125,7 +125,7 @@ export class OrderDetailsComponent implements OnInit {
     this.reorderSuccess = false;
 
     // Obtém os produtos formatados para o carrinho
-    const cartItems = this.orderService.getProductsForReorder(this.order.id);
+    const cartItems = this.orderDataService.getProductsForReorder(this.order.id);
 
     if (cartItems.length === 0) {
       this.error = 'Não foi possível encontrar os itens do pedido';

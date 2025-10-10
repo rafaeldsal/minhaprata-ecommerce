@@ -1,0 +1,274 @@
+@import '../../../../../../styles/variables';
+@import '../../../../../../styles/mixins';
+
+// ========== MODAL OVERRIDES ==========
+::ng-deep .category-form-modal {
+  .mat-mdc-dialog-container {
+    padding: 0;
+    border-radius: var(--border-radius-xl);
+    overflow: hidden;
+  }
+}
+
+.category-form-modal {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-white);
+}
+
+// ========== MODAL HEADER ==========
+.modal-header {
+  flex-shrink: 0;
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--color-gray-200);
+  background: var(--color-white);
+
+  .header-content {
+    @include flex-between;
+    gap: var(--space-4);
+
+    .header-title {
+      flex: 1;
+
+      .modal-title {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-gray-900);
+        margin: 0 0 var(--space-1) 0;
+        line-height: var(--line-height-tight);
+      }
+
+      .modal-subtitle {
+        font-size: var(--font-size-sm);
+        color: var(--color-gray-600);
+        margin: 0;
+        line-height: var(--line-height-normal);
+      }
+    }
+
+    .close-button {
+      color: var(--color-gray-500);
+      flex-shrink: 0;
+
+      &:hover {
+        background: var(--color-gray-100);
+        color: var(--color-gray-700);
+      }
+    }
+  }
+}
+
+// ========== MODAL CONTENT ==========
+.modal-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-6);
+  background: var(--color-gray-50);
+}
+
+// ========== FORM SECTIONS ==========
+.form-section {
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-6);
+  margin-bottom: var(--space-4);
+  border: 1px solid var(--color-gray-200);
+
+  .section-title {
+    @include flex-center;
+    gap: var(--space-3);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-gray-800);
+    margin: 0 0 var(--space-4) 0;
+
+    mat-icon {
+      color: var(--color-primary);
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+// ========== FORM ELEMENTS ==========
+.full-width {
+  width: 100%;
+}
+
+// Slug Container
+.slug-container {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-3);
+  align-items: start;
+}
+
+// Icon Container
+.icon-container {
+  .icon-preview {
+    margin-top: var(--space-3);
+
+    .preview-card {
+      @include flex-center;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      background: var(--color-primary-light);
+      border-radius: var(--border-radius-md);
+      border: 1px solid var(--color-primary);
+
+      .preview-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        color: var(--color-primary);
+      }
+
+      .preview-label {
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-medium);
+        color: var(--color-primary);
+      }
+    }
+  }
+}
+
+// Options Styles
+.icon-option,
+.parent-option,
+.status-option {
+  @include flex-center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+
+  .icon-preview mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .parent-icon {
+    color: var(--color-gray-500);
+  }
+}
+
+// ========== MODAL FOOTER ==========
+.modal-footer {
+  flex-shrink: 0;
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-white);
+
+  .footer-actions {
+    @include flex-between;
+    gap: var(--space-3);
+
+    .cancel-btn {
+      min-width: 120px;
+    }
+
+    .submit-btn {
+      min-width: 160px;
+    }
+
+    .button-spinner {
+      margin-right: var(--space-2);
+    }
+  }
+}
+
+// ========== LOADING STATE ==========
+.loading-state {
+  @include flex-center;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-12);
+  color: var(--color-gray-500);
+  text-align: center;
+}
+
+// ========== VALIDATION STYLES ==========
+.field-invalid {
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: var(--color-error) !important;
+  }
+}
+
+// ========== RESPONSIVE ADJUSTMENTS ==========
+@include respond-to-max('sm') {
+  .modal-header {
+    padding: var(--space-4);
+
+    .header-content {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-3);
+
+      .header-title {
+        text-align: center;
+      }
+
+      .close-button {
+        align-self: flex-end;
+        margin-top: -50px;
+      }
+    }
+  }
+
+  .modal-content {
+    padding: var(--space-4);
+  }
+
+  .form-section {
+    padding: var(--space-4);
+  }
+
+  .slug-container {
+    grid-template-columns: 1fr;
+
+    .generate-slug-btn {
+      justify-self: start;
+    }
+  }
+
+  .modal-footer {
+    padding: var(--space-4);
+
+    .footer-actions {
+      flex-direction: column-reverse;
+
+      button {
+        width: 100%;
+        min-width: auto;
+      }
+    }
+  }
+}
+
+// ========== SCROLLBAR STYLING ==========
+.modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: var(--color-gray-100);
+  border-radius: var(--border-radius-full);
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: var(--color-gray-400);
+  border-radius: var(--border-radius-full);
+
+  &:hover {
+    background: var(--color-gray-500);
+  }
+}

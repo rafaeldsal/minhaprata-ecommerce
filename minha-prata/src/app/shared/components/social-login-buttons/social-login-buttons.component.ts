@@ -1,10 +1,9 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { AuthService } from 'src/app/core/services/auth.service';
-import { environment } from '../../../../environments/environment';
-import { SocialAuthService } from 'src/app/core/services/social-auth.service';
-import { NotificationService } from 'src/app/core/services/notification.service';
-import { SocialUser } from 'src/app/core/models/social-user';
+import { Component, OnInit, ViewChild, ElementRef, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/core/services/auth/auth.service';
+import { environment } from '../../../../environments/environment';
+import { NotificationService } from 'src/app/core/services/shared/notification.service';
+import { SocialUser } from 'src/app/core/models';
 
 @Component({
   selector: 'app-social-login-buttons',
@@ -20,27 +19,20 @@ export class SocialLoginButtonsComponent implements OnInit {
   private googleClientId = environment.googleClientId;
 
   constructor(
-    private socialAuthService: SocialAuthService,
-    private notificationService: NotificationService,
     private authService: AuthService,
-    private router: Router
+    private notificationService: NotificationService,
+    private router: Router,
+    private ngZone: NgZone
   ) { }
 
   ngOnInit(): void {
     this.validateGoogleConfig();
-    this.socialAuthService.initializeSocialAuth().subscribe({
-      next: () => {
-        console.log('✅ Serviço de auth social inicializado');
-      },
-      error: (error) => {
-        console.warn('⚠️ Auth social não inicializou:', error);
-      }
-    });
   }
 
   private validateGoogleConfig(): void {
     if (!this.googleClientId || this.googleClientId === 'SEU_GOOGLE_CLIENT_ID_AQUI') {
       console.warn('⚠️ Google Client ID não configurado em environment.ts');
+      this.notificationService.showWarning('Configuração do Google não encontrada');
     } else {
       console.log('✅ Google Client ID configurado');
     }
@@ -53,21 +45,29 @@ export class SocialLoginButtonsComponent implements OnInit {
     this.isLoading = true;
     this.currentProvider = 'google';
 
-    this.socialAuthService.signInWithGoogle().subscribe({
+    this.authService.loginWithGoogle().subscribe({
       next: (socialUser: SocialUser) => {
         console.log('✅ Login Google bem-sucedido:', socialUser.name);
         this.handleSocialLoginSuccess(socialUser);
       },
       error: (error) => {
         console.error('❌ Erro no login Google:', error);
-        this.handleSocialLoginError(error);
+
+        // Tratamento mais específico de erros
+        if (error.message?.includes('popup')) {
+          this.handlePopupBlocked();
+        } else if (error.message?.includes('Tempo limite')) {
+          this.handleTimeoutError();
+        } else {
+          this.handleSocialLoginError(error);
+        }
+
         this.isLoading = false;
         this.currentProvider = null;
       }
     });
   }
 
-  // Método alternativo usando botão renderizado
   useGoogleButton(): void {
     if (this.isLoading) return;
 
@@ -75,22 +75,25 @@ export class SocialLoginButtonsComponent implements OnInit {
     this.isLoading = true;
     this.currentProvider = 'google';
 
-    // Mostra o container
-    this.googleButtonContainer.nativeElement.style.display = 'block';
+    if (this.googleButtonContainer?.nativeElement) {
+      this.googleButtonContainer.nativeElement.style.display = 'block';
+    }
 
-    // Usa o método com botão renderizado
-    // (Você precisaria adicionar este método ao SocialAuthService)
+    this.signInWithGoogle();
   }
 
   private handleSocialLoginSuccess(socialUser: SocialUser): void {
-    this.authService.loginWithSocial(socialUser).subscribe({
+    this.authService.loginWithSocial('google').subscribe({
       next: (success) => {
         this.isLoading = false;
         this.currentProvider = null;
 
         if (success) {
           this.notificationService.showSuccess('Login com Google realizado com sucesso!');
-          this.router.navigate(['/']);
+
+          this.ngZone.run(() => {
+            this.router.navigate(['/']);
+          });
         } else {
           this.handleSocialLoginError('Falha na integração com o sistema');
         }
@@ -114,11 +117,25 @@ export class SocialLoginButtonsComponent implements OnInit {
       errorMessage = 'Popup bloqueado. Permita popups para este site.';
     } else if (error?.message?.includes('CORS')) {
       errorMessage = 'Erro de configuração. Verifique as credenciais do Google.';
-    } else if (error?.message?.includes('cancelado')) {
+    } else if (error?.message?.includes('cancelado') || error?.message?.includes('canceled')) {
       errorMessage = 'Login cancelado pelo usuário.';
       return; // Não mostra notificação para cancelamento
+    } else if (error?.message?.includes('não inicializado')) {
+      errorMessage = 'Serviço de autenticação não inicializado. Recarregue a página.';
     }
 
     this.notificationService.showError(errorMessage);
+  }
+
+  private handlePopupBlocked(): void {
+    this.notificationService.showWarning(
+      'Popup bloqueado. Por favor, permita popups para este site e tente novamente.'
+    );
+  }
+
+  private handleTimeoutError(): void {
+    this.notificationService.showWarning(
+      'Tempo limite excedido. Recarregue a página e tente novamente.'
+    );
   }
 }

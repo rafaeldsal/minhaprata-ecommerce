@@ -1,8 +1,8 @@
 // src/app/user/components/order-card/order-card.component.ts
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { UserOrder } from '../../../../core/models/order.types';
-import { OrderService } from 'src/app/core/services/order/order.service';
-import { CartService } from 'src/app/features/cart/services/cart.service';
+import { UserOrder } from '../../../../core/models/order/order.model';
+import { OrderDataService } from '../../../../core/services/data/order-data.service';
+import { CartService } from '../../../../core/services/business/cart.service';
 
 @Component({
   selector: 'app-order-card',
@@ -17,7 +17,7 @@ export class OrderCardComponent {
   reorderSuccess = false;
 
   constructor(
-    private orderService: OrderService,
+    private orderDataService: OrderDataService,
     private cartService: CartService
   ) { }
 
@@ -50,7 +50,7 @@ export class OrderCardComponent {
     this.reorderSuccess = false;
 
     // Obtém os produtos formatados para o carrinho
-    const cartItems = this.orderService.getProductsForReorder(this.order.id);
+    const cartItems = this.orderDataService.getProductsForReorder(this.order.id);
 
     if (cartItems.length === 0) {
       console.error('Não foi possível encontrar os itens do pedido');

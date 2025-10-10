@@ -1,0 +1,174 @@
+<div class="category-form-modal">
+  <!-- Header Fixo -->
+  <header class="modal-header">
+    <div class="header-content">
+      <div class="header-title">
+        <h2 class="modal-title">{{ getDialogTitle() }}</h2>
+        <p class="modal-subtitle">
+          {{ isEditMode ? 'Atualize os dados da categoria' : 'Preencha os dados para criar uma nova categoria' }}
+        </p>
+      </div>
+      <button mat-icon-button mat-dialog-close class="close-button" matTooltip="Fechar">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <!-- Conteúdo Rolável -->
+  <main class="modal-content">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-state">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Carregando dados da categoria...</p>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="categoryForm" class="category-form" *ngIf="!loading">
+
+      <!-- Informações Básicas -->
+      <section class="form-section">
+        <h3 class="section-title">
+          <mat-icon>info</mat-icon>
+          Informações Básicas
+        </h3>
+
+        <div class="form-grid">
+          <!-- Nome -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nome da Categoria</mat-label>
+            <input matInput formControlName="name" placeholder="Ex: Anéis de Prata" maxlength="50">
+            <mat-icon matSuffix>category</mat-icon>
+            <mat-hint>Máximo 50 caracteres</mat-hint>
+            <mat-error>{{ getFieldError('name') }}</mat-error>
+          </mat-form-field>
+
+          <!-- Descrição -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Descrição</mat-label>
+            <textarea matInput formControlName="description" placeholder="Descreva a categoria..." rows="3"
+              maxlength="200"></textarea>
+            <mat-hint>Máximo 200 caracteres</mat-hint>
+            <mat-error>{{ getFieldError('description') }}</mat-error>
+          </mat-form-field>
+        </div>
+      </section>
+
+      <!-- Configurações Técnicas -->
+      <section class="form-section">
+        <h3 class="section-title">
+          <mat-icon>settings</mat-icon>
+          Configurações Técnicas
+        </h3>
+
+        <div class="form-grid">
+          <!-- Slug -->
+          <div class="slug-container">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Slug</mat-label>
+              <input matInput formControlName="slug" placeholder="ex: aneis-prata" [readonly]="isEditMode">
+              <mat-icon matSuffix>link</mat-icon>
+              <mat-hint>URL amigável (apenas letras minúsculas, números e hífens)</mat-hint>
+              <mat-error>{{ getFieldError('slug') }}</mat-error>
+            </mat-form-field>
+
+            <button *ngIf="!isEditMode" type="button" mat-stroked-button class="generate-slug-btn"
+              (click)="onGenerateSlug()" [disabled]="!categoryForm.get('name')?.value">
+              <mat-icon>auto_fix_high</mat-icon>
+              Gerar
+            </button>
+          </div>
+
+          <!-- Status -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="isActive">
+              <mat-option *ngFor="let option of statusOptions" [value]="option.value">
+                <div class="status-option">
+                  <mat-icon [color]="option.value ? 'primary' : 'warn'">{{ option.icon }}</mat-icon>
+                  <span>{{ option.label }}</span>
+                </div>
+              </mat-option>
+            </mat-select>
+            <mat-hint>Define se a categoria está ativa e visível</mat-hint>
+          </mat-form-field>
+        </div>
+      </section>
+
+      <!-- Personalização -->
+      <section class="form-section">
+        <h3 class="section-title">
+          <mat-icon>palette</mat-icon>
+          Personalização
+        </h3>
+
+        <div class="form-grid">
+          <!-- Ícone -->
+          <div class="icon-container">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Ícone</mat-label>
+              <mat-select formControlName="icon" [class.field-invalid]="isFieldInvalid('icon')">
+                <ngx-mat-select-search placeholderLabel="Buscar ícone..."
+                  noEntriesFoundLabel="Nenhum ícone encontrado"></ngx-mat-select-search>
+
+                <mat-option *ngFor="let option of iconOptions" [value]="option.value">
+                  <div class="icon-option">
+                    <span class="icon-preview">
+                      <mat-icon>{{ getIconPreviewForOption(option.value) }}</mat-icon>
+                    </span>
+                    <span class="icon-label">{{ option.label }}</span>
+                  </div>
+                </mat-option>
+              </mat-select>
+              <mat-icon matSuffix>emoji_objects</mat-icon>
+              <mat-hint>Escolha um ícone representativo</mat-hint>
+              <mat-error>{{ getFieldError('icon') }}</mat-error>
+            </mat-form-field>
+
+            <!-- Prévia do Ícone -->
+            <div *ngIf="categoryForm.get('icon')?.value" class="icon-preview">
+              <div class="preview-card">
+                <mat-icon class="preview-icon" color="primary">{{ getIconPreview() }}</mat-icon>
+                <span class="preview-label">Prévia</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Categoria Pai -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Categoria Pai</mat-label>
+            <mat-select formControlName="parentId">
+              <mat-option value="">Nenhuma (Categoria Principal)</mat-option>
+              <mat-option *ngFor="let parent of parentCategories" [value]="parent.id"
+                [disabled]="parent.id === currentCategory?.id">
+                <div class="parent-option">
+                  <mat-icon class="parent-icon">folder</mat-icon>
+                  <span>{{ parent.name }}</span>
+                </div>
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix>account_tree</mat-icon>
+            <mat-hint>Opcional - para criar subcategoria</mat-hint>
+          </mat-form-field>
+        </div>
+      </section>
+
+    </form>
+  </main>
+
+  <!-- Footer Fixo -->
+  <footer class="modal-footer">
+    <div class="footer-actions">
+      <button mat-stroked-button (click)="onCancel()" [disabled]="saving" class="cancel-btn">
+        <mat-icon>close</mat-icon>
+        Cancelar
+      </button>
+
+      <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="categoryForm.invalid || saving"
+        class="submit-btn">
+        <mat-icon *ngIf="!saving">{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+        <mat-spinner *ngIf="saving" diameter="20" class="button-spinner"></mat-spinner>
+        {{ getSubmitButtonText() }}
+      </button>
+    </div>
+  </footer>
+</div>

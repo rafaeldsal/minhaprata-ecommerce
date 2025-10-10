@@ -1,9 +1,9 @@
 import { Component, OnInit, OnChanges, SimpleChanges, OnDestroy, Input } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Product } from '../../models/product';
-import { ProductService } from '../../services/product.service';
+import { Product } from '../../../../core/models/product/product.model';
+import { ProductDataService } from '../../../../core/services/data/product-data.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SearchStateService } from '../../../../core/services/search-state.service';
+import { SearchService } from '../../../../core/services/business/search.service';
 
 @Component({
   selector: 'app-product-list',
@@ -32,8 +32,8 @@ export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
   private subscriptions = new Subscription();
 
   constructor(
-    private productService: ProductService,
-    private searchStateService: SearchStateService,
+    private productDataService: ProductDataService,
+    private searchService: SearchService,
     private router: Router
   ) { }
 
@@ -64,7 +64,7 @@ export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private loadAllProducts(): void {
-    this.productService.getAll().subscribe({
+    this.productDataService.getProducts().subscribe({
       next: (products) => {
         this.handleProductsLoaded(products);
       },
@@ -76,7 +76,7 @@ export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private loadProductsByCategory(categorySlug: string): void {
-    this.productService.getByCategory(categorySlug).subscribe({
+    this.productDataService.getProductsByCategory(categorySlug).subscribe({
       next: (products) => {
         this.handleProductsLoaded(products);
       },
@@ -92,7 +92,7 @@ export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
     this.totalItems = products.length;
     this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
 
-    if (!this.searchStateService.isSearching || !this.searchStateService.searchTerm) {
+    if (!this.searchService.isSearching || !this.searchService.searchTerm) {
       this.applyPagination();
     }
 
@@ -100,18 +100,15 @@ export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private subscribeToSearchState(): void {
-    const searchingSub = this.searchStateService.isSearching$.subscribe(
-      searching => {
-        this.isSearching = searching;
-      }
-    );
+    const searchStateSub = this.searchService.searchState$.subscribe(
+      state => {
+        this.isSearching = state.isSearching;
+        this.searchTerm = state.term;
+        this.searchResultsCount = state.resultsCount;
 
-    const resultsSub = this.searchStateService.currentSearchResult$.subscribe(
-      results => {
-        if (results.length > 0) {
-          this.searchResultsCount = results.length;
-          this.displayedProducts = this.applyPaginationToResults(results);
-        } else if (this.searchStateService.searchTerm && this.searchStateService.isSearching) {
+        if (state.results.length > 0) {
+          this.displayedProducts = this.applyPaginationToResults(state.results);
+        } else if (state.term && state.isSearching) {
           this.searchResultsCount = 0;
           this.displayedProducts = [];
         } else {
@@ -121,15 +118,7 @@ export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
       }
     );
 
-    const termSub = this.searchStateService.currentSearchTerm$.subscribe(
-      term => {
-        this.searchTerm = term;
-      }
-    );
-
-    this.subscriptions.add(searchingSub);
-    this.subscriptions.add(resultsSub);
-    this.subscriptions.add(termSub);
+    this.subscriptions.add(searchStateSub);
   }
 
   private applyPagination(): void {
@@ -146,7 +135,7 @@ export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
 
   // Métodos públicos
   clearSearch(): void {
-    this.searchStateService.clearSearch();
+    this.searchService.clearSearch();
     this.currentPage = 1;
     this.applyPagination();
   }
@@ -161,9 +150,9 @@ export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
 
     if (this.isSearching && this.searchTerm) {
       // Usa o observable para obter os resultados atuais
-      const currentResults = this.searchStateService.currentSearchResult$;
-      currentResults.subscribe(results => {
-        this.displayedProducts = this.applyPaginationToResults(results);
+      const currentResults = this.searchService.searchState$;
+      currentResults.subscribe(state => {
+        this.displayedProducts = this.applyPaginationToResults(state.results);
       });
     } else {
       this.applyPagination();
@@ -179,5 +168,30 @@ export class ProductListComponent implements OnInit, OnChanges, OnDestroy {
   get showingEnd(): number {
     const end = this.currentPage * this.itemsPerPage;
     return end > this.totalItems ? this.totalItems : end;
+  }
+
+  get isShowingSearchResults(): boolean {
+    return this.isSearching && this.searchTerm.length > 0 && this.searchResultsCount > 0;
+  }
+
+  get displayText(): string {
+    if (this.isShowingSearchResults) {
+      return `Mostrando ${this.showingStart}-${this.showingEnd} de ${this.searchResultsCount} resultados para "${this.searchTerm}"`;
+    } else if (this.categoryFilter && this.categoryFilter !== 'all') {
+      const categoryName = this.getCategoryDisplayName(this.categoryFilter);
+      return `Mostrando ${this.showingStart}-${this.showingEnd} de ${this.totalItems} produtos em ${categoryName}`;
+    } else {
+      return `Mostrando ${this.showingStart}-${this.showingEnd} de ${this.totalItems} produtos`;
+    }
+  }
+
+  private getCategoryDisplayName(categorySlug: string): string {
+    const categoryMap: { [key: string]: string } = {
+      'aneis': 'Anéis',
+      'braceletes': 'Braceletes',
+      'colares': 'Colares',
+      'brincos': 'Brincos'
+    };
+    return categoryMap[categorySlug] || categorySlug;
   }
 }

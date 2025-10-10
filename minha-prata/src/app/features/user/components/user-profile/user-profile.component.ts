@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { User, UserAddress, UpdateProfileData, ChangePasswordData } from 'src/app/core/models/user';
-import { AuthService } from 'src/app/core/services/auth.service';
-import { NotificationService } from 'src/app/core/services/notification.service';
-import { UserProfileService } from '../../services/user-profile/user-profile.service';
-import { MaskService } from 'src/app/core/services/mask.service';
+import { User, UserAddress, UpdateProfileData, ChangePasswordData } from '../../../../core/models';
+import { AuthService } from '../../../../core/services/auth/auth.service';
+import { NotificationService } from '../../../../core/services/shared/notification.service';
+import { MaskService } from '../../../../core/services/shared/mask.service';
+import { UserDataService } from 'src/app/core/services/data/user-data.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -33,7 +33,7 @@ export class UserProfileComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private notificationService: NotificationService,
-    private userProfileService: UserProfileService,
+    private userDataService: UserDataService,
     private maskService: MaskService,
     private fb: FormBuilder
   ) { }
@@ -144,7 +144,7 @@ export class UserProfileComponent implements OnInit {
   private loadAddresses(): void {
     if (!this.currentUser) return;
 
-    this.userProfileService.getAddresses(this.currentUser.id).subscribe({
+    this.userDataService.getAddresses(this.currentUser.id).subscribe({
       next: (addresses) => {
         this.userAddresses = addresses;
       },
@@ -202,7 +202,7 @@ export class UserProfileComponent implements OnInit {
     this.isLoading = true;
     const formData: UpdateProfileData = this.profileForm.value;
 
-    this.userProfileService.updateProfile(this.currentUser.id, formData).subscribe({
+    this.userDataService.updateProfile(this.currentUser.id, formData).subscribe({
       next: (updatedUser) => {
         this.isLoading = false;
         this.isEditing = false;
@@ -262,7 +262,7 @@ export class UserProfileComponent implements OnInit {
     this.isLoading = true;
     const passwordData: ChangePasswordData = this.passwordForm.value;
 
-    this.userProfileService.changePassword(this.currentUser.id, passwordData).subscribe({
+    this.userDataService.changePassword(this.currentUser.id, passwordData).subscribe({
       next: (response) => {
         this.isLoading = false;
 
@@ -303,7 +303,7 @@ export class UserProfileComponent implements OnInit {
     }
 
     this.isLoading = true;
-    this.userProfileService.updateAvatar(this.currentUser.id, file).subscribe({
+    this.userDataService.updateAvatar(this.currentUser.id, file).subscribe({
       next: (response) => {
         this.isLoading = false;
 
@@ -347,7 +347,7 @@ export class UserProfileComponent implements OnInit {
     const addressData: UserAddress = this.addressForm.value;
 
     if (this.selectedAddress) {
-      this.userProfileService.updateAddress(
+      this.userDataService.updateAddress(
         this.currentUser.id,
         this.selectedAddress.id!,
         addressData
@@ -359,7 +359,7 @@ export class UserProfileComponent implements OnInit {
         error: (error) => this.handleAddressError('Erro ao atualizar endereço')
       });
     } else {
-      this.userProfileService.addAddress(this.currentUser.id, addressData).subscribe({
+      this.userDataService.addAddress(this.currentUser.id, addressData).subscribe({
         next: (newAddress) => {
           this.handleAddressSuccess('Endereço adicionado com sucesso!');
           this.userAddresses.push(newAddress);
@@ -393,7 +393,7 @@ export class UserProfileComponent implements OnInit {
     if (!this.currentUser || !address.id) return;
 
     if (confirm('Tem certeza que deseja excluir este endereço?')) {
-      this.userProfileService.deleteAddress(this.currentUser.id, address.id).subscribe({
+      this.userDataService.deleteAddress(this.currentUser.id, address.id).subscribe({
         next: (response) => {
           this.userAddresses = this.userAddresses.filter(addr => addr.id !== address.id);
           this.notificationService.showSuccess(response.message);
@@ -408,7 +408,7 @@ export class UserProfileComponent implements OnInit {
   setDefaultAddress(address: UserAddress): void {
     if (!this.currentUser || !address.id) return;
 
-    this.userProfileService.setDefaultAddress(this.currentUser.id, address.id).subscribe({
+    this.userDataService.setDefaultAddress(this.currentUser.id, address.id).subscribe({
       next: (addresses) => {
         this.userAddresses = addresses;
         this.notificationService.showSuccess('Endereço padrão definido com sucesso!');

@@ -44,7 +44,7 @@ const routes: Routes = [
   //   loadChildren: () => import('./features/admin/admin-users/admin-users.module').then(m => m.AdminUsersModule)
   // },
 
-  { path: 'login', component: LoginComponent },
+  { path: 'auth/login', component: LoginComponent },
   { path: 'produto/:id', component: ProductDetailsComponent },
   { path: 'cart', component: CartPageComponent },
   { path: '**', component: PageNotFoundComponent }

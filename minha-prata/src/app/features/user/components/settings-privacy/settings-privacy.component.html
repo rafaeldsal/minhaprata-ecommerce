@@ -1,0 +1,258 @@
+<div class="settings-section">
+  <div class="settings-section__header">
+    <h2 class="settings-section__title">Privacidade e Preferências</h2>
+    <button class="btn btn--outline" (click)="resetToDefaults()">
+      <span class="btn__icon">🔄</span>
+      Restaurar Padrões
+    </button>
+  </div>
+
+  <p class="settings-description">
+    Controle como suas informações são utilizadas para melhorar sua experiência de compras.
+    Sua privacidade e preferências são importantes para nós.
+  </p>
+
+  <form [formGroup]="privacyForm" class="settings-form">
+
+    <!-- 🛒 Dados de Compras e Perfil -->
+    <div class="privacy-category">
+      <h3 class="privacy-category__title">🛒 Dados de Compras e Perfil</h3>
+
+      <div class="toggle-group">
+        <label class="toggle-label">
+          <div class="toggle-content">
+            <span class="toggle-title">Mostrar histórico de compras no perfil</span>
+            <span class="toggle-description">
+              Exibir seus pedidos anteriores em seu perfil (apenas você pode ver)
+            </span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" formControlName="showPurchaseHistory">
+            <span class="toggle-slider"></span>
+          </label>
+        </label>
+      </div>
+
+      <div class="toggle-group">
+        <label class="toggle-label">
+          <div class="toggle-content">
+            <span class="toggle-title">Lista de desejos pública</span>
+            <span class="toggle-description">
+              Permitir que outros vejam seus produtos favoritados (em desenvolvimento)
+            </span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" formControlName="showWishlist">
+            <span class="toggle-slider"></span>
+          </label>
+        </label>
+      </div>
+
+      <div class="toggle-group">
+        <label class="toggle-label">
+          <div class="toggle-content">
+            <span class="toggle-title">Ocultar valores dos pedidos</span>
+            <span class="toggle-description">
+              Não mostrar preços no histórico de pedidos (apenas valores totais)
+            </span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" formControlName="hideOrderPrices">
+            <span class="toggle-slider"></span>
+          </label>
+        </label>
+      </div>
+    </div>
+
+    <!-- 📧 Marketing e Recomendações -->
+    <div class="privacy-category">
+      <h3 class="privacy-category__title">📧 Recomendações e Comunicações</h3>
+
+      <div class="toggle-group">
+        <label class="toggle-label">
+          <div class="toggle-content">
+            <span class="toggle-title">Recomendações personalizadas</span>
+            <span class="toggle-description">
+              {{ getRecommendationDescription() }}
+            </span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" formControlName="personalizedRecommendations">
+            <span class="toggle-slider"></span>
+          </label>
+        </label>
+      </div>
+
+      <div class="toggle-group">
+        <label class="toggle-label">
+          <div class="toggle-content">
+            <span class="toggle-title">Alertas de queda de preço</span>
+            <span class="toggle-description">
+              Notificar quando produtos da sua lista de desejos ficarem mais baratos
+            </span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" formControlName="priceDropNotifications">
+            <span class="toggle-slider"></span>
+          </label>
+        </label>
+      </div>
+
+      <div class="toggle-group">
+        <label class="toggle-label">
+          <div class="toggle-content">
+            <span class="toggle-title">Lembretes de carrinho abandonado</span>
+            <span class="toggle-description">
+              Enviar lembretes quando você deixar produtos no carrinho sem finalizar
+            </span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" formControlName="abandonedCartReminders">
+            <span class="toggle-slider"></span>
+          </label>
+        </label>
+      </div>
+
+      <div class="toggle-group">
+        <label class="toggle-label">
+          <div class="toggle-content">
+            <span class="toggle-title">Solicitações de avaliação</span>
+            <span class="toggle-description">
+              Lembrar de avaliar produtos após a compra
+            </span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" formControlName="productReviewReminders">
+            <span class="toggle-slider"></span>
+          </label>
+        </label>
+      </div>
+    </div>
+
+    <!-- 🔐 Segurança e Pagamentos -->
+    <div class="privacy-category">
+      <h3 class="privacy-category__title">🔐 Segurança e Pagamentos</h3>
+
+      <div class="toggle-group">
+        <label class="toggle-label">
+          <div class="toggle-content">
+            <span class="toggle-title">Salvar métodos de pagamento</span>
+            <span class="toggle-description">
+              Armazenar cartões de forma segura para compras futuras
+            </span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" formControlName="savePaymentMethods">
+            <span class="toggle-slider"></span>
+          </label>
+        </label>
+      </div>
+
+      <div class="toggle-group">
+        <label class="toggle-label">
+          <div class="toggle-content">
+            <span class="toggle-title">Checkout rápido</span>
+            <span class="toggle-description">
+              Finalizar compras com um clique usando dados salvos (requer pagamentos salvos)
+            </span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" formControlName="quickCheckout"
+              [disabled]="!privacyForm.get('savePaymentMethods')?.value">
+            <span class="toggle-slider"></span>
+          </label>
+        </label>
+      </div>
+
+      <div class="toggle-group">
+        <label class="toggle-label">
+          <div class="toggle-content">
+            <span class="toggle-title">Alertas de rastreamento de pedidos</span>
+            <span class="toggle-description">
+              Notificações automáticas sobre atualizações no status da entrega
+            </span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" formControlName="orderTrackingAlerts">
+            <span class="toggle-slider"></span>
+          </label>
+        </label>
+      </div>
+    </div>
+
+    <!-- 📊 Compartilhamento de Dados -->
+    <div class="privacy-category">
+      <h3 class="privacy-category__title">📊 Compartilhamento de Dados</h3>
+
+      <div class="toggle-group">
+        <label class="toggle-label">
+          <div class="toggle-content">
+            <span class="toggle-title">Compartilhamento de dados para analytics</span>
+            <span class="toggle-description">
+              Dados anônimos para melhorar produtos, ofertas e experiência do usuário
+            </span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" formControlName="dataSharing">
+            <span class="toggle-slider"></span>
+          </label>
+        </label>
+      </div>
+
+      <div class="toggle-group">
+        <label class="toggle-label">
+          <div class="toggle-content">
+            <span class="toggle-title">Marketing de parceiros</span>
+            <span class="toggle-description">
+              Receber ofertas e promoções de marcas parceiras selecionadas
+            </span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" formControlName="thirdPartyMarketing">
+            <span class="toggle-slider"></span>
+          </label>
+        </label>
+      </div>
+
+      <div class="toggle-group">
+        <label class="toggle-label">
+          <div class="toggle-content">
+            <span class="toggle-title">Rastreamento de navegação</span>
+            <span class="toggle-description">
+              Cookies para personalizar anúncios e recomendações baseadas no seu comportamento
+            </span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" formControlName="browserTracking">
+            <span class="toggle-slider"></span>
+          </label>
+        </label>
+      </div>
+    </div>
+
+  </form>
+
+  <div class="settings-footer">
+    <div class="save-indicator" *ngIf="isLoading() || lastSaved()">
+      <span *ngIf="isLoading()" class="save-status saving">
+        <span class="spinner"></span>
+        Salvando configurações...
+      </span>
+      <span *ngIf="lastSaved() && !isLoading()" class="save-status saved">
+        ✓ Configurações salvas {{ lastSaved() | date:'HH:mm:ss' }}
+      </span>
+    </div>
+
+    <div class="privacy-info">
+      <h4>🔒 Sua Privacidade no E-commerce</h4>
+      <ul>
+        <li><strong>Seus dados de pagamento são sempre criptografados</strong> e seguimos os mais altos padrões de
+          segurança</li>
+        <li><strong>Nunca compartilhamos informações de cartão de crédito</strong> com terceiros</li>
+        <li><strong>Você pode exportar ou excluir seus dados</strong> a qualquer momento na seção "Zona de Risco"</li>
+        <li><strong>Configurações de marketing podem ser ajustadas</strong> individualmente para cada tipo de
+          comunicação</li>
+      </ul>
+    </div>
+  </div>
+</div>

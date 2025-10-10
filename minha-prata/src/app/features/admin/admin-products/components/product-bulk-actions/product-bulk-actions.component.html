@@ -1,0 +1,50 @@
+<div class="bulk-actions">
+  <div class="bulk-header">
+    <div class="selection-info">
+      <span class="selection-count">{{ selectedCountValue() }}</span>
+      <span class="selection-text">produto(s) selecionado(s)</span>
+    </div>
+
+    <div class="bulk-controls">
+      <!-- Dropdown de Ações -->
+      <div class="dropdown" [class.open]="isDropdownOpen()">
+        <button class="btn btn-primary dropdown-toggle" (click)="toggleDropdown()" [disabled]="isLoadingValue()"
+          type="button">
+          <span class="btn-icon">⚡</span>
+          Ações em Lote
+          <span class="dropdown-arrow">▼</span>
+        </button>
+
+        <div class="dropdown-menu">
+          <div class="dropdown-header">
+            <span class="dropdown-title">Ações em Lote</span>
+            <button class="dropdown-close" (click)="closeDropdown()" type="button">✕</button>
+          </div>
+
+          <div class="dropdown-actions">
+            <button *ngFor="let action of actions" class="dropdown-item" [class.danger]="action.danger"
+              (click)="executeAction(action.type)" [disabled]="isLoadingValue()" type="button">
+              <span class="action-icon">{{ action.icon }}</span>
+              <div class="action-content">
+                <span class="action-label">{{ action.label }}</span>
+                <span class="action-description">{{ action.description }}</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botão Limpar Seleção -->
+      <button class="btn btn-outline" (click)="clearSelection()" [disabled]="isLoadingValue()" type="button">
+        <span class="btn-icon">✕</span>
+        Limpar
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" *ngIf="isLoadingValue()">
+    <div class="loading-spinner"></div>
+    <span class="loading-text">Processando...</span>
+  </div>
+</div>

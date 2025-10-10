@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { CartItem, CartState } from '../../models/cart-item';
+import { CartItem, CartState } from '../../../../core/models/order/cart.model';
 import { Observable } from 'rxjs';
-import { CartService } from '../../services/cart.service';
+import { CartService } from '../../../../core/services/business/cart.service';
 import { Router } from '@angular/router';
 
 @Component({

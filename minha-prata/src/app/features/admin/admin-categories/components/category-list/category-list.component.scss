@@ -1,0 +1,483 @@
+@import '../../../../../../styles/variables';
+@import '../../../../../../styles/mixins';
+
+.categories-admin {
+  padding: var(--space-6);
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+// ========== HEADER STYLES ==========
+.categories-header {
+  @include flex-between;
+  margin-bottom: var(--space-8);
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  padding: var(--space-6) 0;
+  border-bottom: 1px solid var(--color-gray-200);
+
+  .header-content {
+    flex: 1;
+    min-width: 300px;
+
+    .page-title {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-gray-900);
+      margin: 0 0 var(--space-2) 0;
+      line-height: var(--line-height-tight);
+    }
+
+    .page-subtitle {
+      font-size: var(--font-size-base);
+      color: var(--color-gray-600);
+      margin: 0;
+      line-height: var(--line-height-normal);
+    }
+  }
+
+  .header-actions {
+    @include flex-center;
+    gap: var(--space-3);
+  }
+}
+
+// ========== FILTERS STYLES ==========
+.categories-filters {
+  margin-bottom: var(--space-6);
+  padding: var(--space-5);
+  background: var(--color-white);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-gray-200);
+
+  .filters-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: var(--space-4);
+    align-items: start;
+
+    @include respond-to-max('lg') {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @include respond-to-max('md') {
+      grid-template-columns: 1fr;
+    }
+
+    .filter-field {
+      width: 100%;
+    }
+
+    .filter-actions {
+      @include flex-center;
+      height: 56px; // Match form field height
+
+      button {
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+// ========== TOOLBAR STYLES ==========
+.categories-toolbar {
+  @include flex-between;
+  margin-bottom: var(--space-6);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-gray-50);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-gray-200);
+  flex-wrap: wrap;
+  gap: var(--space-4);
+
+  .toolbar-left {
+    @include flex-center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+
+    .selected-count {
+      color: var(--color-primary);
+      font-weight: var(--font-weight-medium);
+      background: var(--color-white);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--border-radius-full);
+      border: 1px solid var(--color-primary-light);
+    }
+  }
+
+  .toolbar-right {
+    @include flex-center;
+    gap: var(--space-2);
+
+    .view-controls {
+      button.active {
+        background: var(--color-primary);
+        color: var(--color-white);
+      }
+    }
+  }
+}
+
+// ========== CONTENT STYLES ==========
+.categories-content {
+  min-height: 400px;
+  position: relative;
+}
+
+// Loading State
+.loading-state {
+  @include flex-center;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-16);
+  color: var(--color-gray-500);
+  text-align: center;
+
+  mat-spinner {
+    margin-bottom: var(--space-4);
+  }
+}
+
+// Empty State
+.empty-state {
+  @include flex-center;
+  flex-direction: column;
+  text-align: center;
+  padding: var(--space-16) var(--space-8);
+  color: var(--color-gray-500);
+
+  .empty-icon {
+    margin-bottom: var(--space-6);
+
+    mat-icon {
+      font-size: 4rem;
+      width: 4rem;
+      height: 4rem;
+      opacity: 0.4;
+    }
+  }
+
+  .empty-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-gray-700);
+    margin: 0 0 var(--space-3) 0;
+  }
+
+  .empty-description {
+    font-size: var(--font-size-base);
+    color: var(--color-gray-600);
+    margin: 0 0 var(--space-6) 0;
+    max-width: 400px;
+    line-height: var(--line-height-relaxed);
+  }
+}
+
+// Results Info
+.results-info {
+  color: var(--color-gray-500);
+  margin-bottom: var(--space-4);
+  padding: 0 var(--space-2);
+}
+
+// ========== GRID VIEW STYLES ==========
+.categories-grid-view {
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: var(--space-4);
+
+    @include respond-to-max('lg') {
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    }
+
+    @include respond-to-max('md') {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// ========== CATEGORY CARD STYLES ==========
+.category-card {
+  border: 2px solid transparent;
+  border-radius: var(--border-radius-xl);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: visible;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-gray-300);
+  }
+
+  &--selected {
+    border-color: var(--color-primary);
+    background: linear-gradient(135deg, var(--color-white) 0%, rgba(34, 166, 179, 0.03) 100%);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      border: 2px solid var(--color-primary);
+      border-radius: var(--border-radius-xl);
+      z-index: -1;
+    }
+  }
+
+  &--has-children {
+    .category-name {
+      position: relative;
+
+      .children-indicator {
+        margin-left: var(--space-2);
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: var(--color-secondary);
+      }
+    }
+  }
+
+  // Card Header
+  .category-card-header {
+    padding: var(--space-4) var(--space-4) var(--space-2);
+
+    .category-checkbox {
+      margin-right: var(--space-3);
+    }
+
+    .category-avatar {
+      @include flex-center;
+      background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary) 100%);
+      color: var(--color-white);
+      border-radius: var(--border-radius-lg);
+      width: 48px;
+      height: 48px;
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    .category-name {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-gray-900);
+      margin-bottom: var(--space-1);
+      @include flex-center;
+    }
+
+    .category-description {
+      color: var(--color-gray-600);
+      line-height: var(--line-height-normal);
+      font-size: var(--font-size-sm);
+    }
+  }
+
+  // Card Content
+  .category-card-content {
+    padding: 0 var(--space-4) var(--space-3);
+
+    .category-meta {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+
+      .meta-item {
+        @include flex-center;
+        gap: var(--space-2);
+        color: var(--color-gray-600);
+
+        .meta-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+          opacity: 0.7;
+        }
+
+        .meta-text {
+          font-size: var(--font-size-sm);
+        }
+      }
+    }
+  }
+
+  // Card Actions
+  .category-card-actions {
+    @include flex-between;
+    padding: var(--space-3) var(--space-4);
+    border-top: 1px solid var(--color-gray-200);
+    margin: 0 !important;
+    min-height: 64px;
+
+    .status-section {
+      @include flex-center;
+      gap: var(--space-3);
+
+      .status-chip {
+        .chip-icon {
+          margin-right: var(--space-1);
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+      }
+
+      .order-badge {
+        background: var(--color-gray-100);
+        color: var(--color-gray-600);
+        padding: var(--space-1) var(--space-2);
+        border-radius: var(--border-radius-sm);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-medium);
+      }
+    }
+
+    .actions-section {
+      @include flex-center;
+      gap: var(--space-1);
+    }
+  }
+}
+
+// ========== BULK ACTIONS ==========
+.bulk-actions-panel {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  z-index: 1000;
+}
+
+// ========== ANIMATIONS ==========
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.categories-grid .category-card {
+  animation: cardEntrance 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: both;
+
+  @for $i from 1 through 20 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.05}s;
+    }
+  }
+}
+
+// Spin animation for refresh icon
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ========== RESPONSIVE ADJUSTMENTS ==========
+@include respond-to-max('sm') {
+  .categories-admin {
+    padding: var(--space-4);
+  }
+
+  .categories-header {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    gap: var(--space-4);
+
+    .header-actions {
+      justify-content: center;
+    }
+  }
+
+  .categories-filters {
+    padding: var(--space-4);
+
+    .filters-grid {
+      gap: var(--space-3);
+    }
+  }
+
+  .category-card {
+    .category-card-actions {
+      flex-direction: column;
+      gap: var(--space-3);
+      align-items: stretch;
+
+      .status-section {
+        justify-content: center;
+      }
+
+      .actions-section {
+        justify-content: center;
+      }
+    }
+  }
+}
+
+// ========== MATERIAL OVERRIDES ==========
+::ng-deep {
+  .category-menu {
+    .mat-mdc-menu-item {
+      @include flex-center;
+      gap: var(--space-3);
+
+      .mat-icon {
+        margin-right: 0;
+      }
+    }
+
+    .delete-action {
+      color: var(--color-error);
+
+      &:hover {
+        background: var(--color-error-light);
+      }
+    }
+  }
+
+  .mat-mdc-checkbox {
+    margin-right: var(--space-3);
+  }
+
+  // Custom scrollbar for better UX
+  .categories-grid-view {
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--color-gray-100);
+      border-radius: var(--border-radius-full);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--color-gray-400);
+      border-radius: var(--border-radius-full);
+
+      &:hover {
+        background: var(--color-gray-500);
+      }
+    }
+  }
+}

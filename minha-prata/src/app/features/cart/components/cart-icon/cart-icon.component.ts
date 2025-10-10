@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CartState } from '../../models/cart-item';
-import { CartService } from '../../services/cart.service';
+import { CartState } from '../../../../core/models/order/cart.model';
+import { CartService } from '../../../../core/services/business/cart.service';
 
 @Component({
   selector: 'app-cart-icon',

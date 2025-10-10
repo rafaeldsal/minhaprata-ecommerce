@@ -1,11 +1,11 @@
 import { Component, Output, EventEmitter, ElementRef, ViewChild, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap, catchError } from 'rxjs/operators';
-import { ProductService } from '../../../features/products/services/product.service';
-import { SearchStateService } from '../../../core/services/search-state.service';
-import { Product } from 'src/app/features/products/models/product';
-import { Route, Router } from '@angular/router';
-import { NotificationService } from 'src/app/core/services/notification.service';
+import { ProductDataService } from '../../../core/services/data/product-data.service';
+import { Router } from '@angular/router';
+import { NotificationService } from 'src/app/core/services/shared/notification.service';
+import { SearchService } from 'src/app/core/services/business/search.service';
+import { Product } from 'src/app/core/models';
 
 @Component({
   selector: 'app-search',
@@ -29,8 +29,8 @@ export class SearchComponent implements OnInit, OnDestroy {
   private isClickingResult: boolean = false;
 
   constructor(
-    private productService: ProductService,
-    private searchStateService: SearchStateService,
+    private productDataService: ProductDataService,
+    private searchService: SearchService,
     private notificationService: NotificationService,
     private router: Router
   ) { }
@@ -42,7 +42,7 @@ export class SearchComponent implements OnInit, OnDestroy {
       tap(() => {
         this.isLoading = true;
         this.hasSearched = true;
-        this.searchStateService.setIsSearching(true);
+        this.searchService.setIsSearching(true);
       }),
       switchMap(searchTerm => this.performSearch(searchTerm))
     ).subscribe({
@@ -51,14 +51,14 @@ export class SearchComponent implements OnInit, OnDestroy {
         this.isLoading = false;
 
         // Atualizar o estado global da busca
-        this.searchStateService.setSearchResults(products);
-        this.searchStateService.setSearchTerm(this.searchTerm);
+        this.searchService.setSearchResults(products);
+        this.searchService.setSearchTerm(this.searchTerm);
       },
       error: (error) => {
         console.error('Erro na busca:', error);
         this.isLoading = false;
         this.filteredProducts = [];
-        this.searchStateService.setIsSearching(false);
+        this.searchService.setIsSearching(false);
       }
     });
 
@@ -89,7 +89,7 @@ export class SearchComponent implements OnInit, OnDestroy {
       this.hasSearched = false;
       this.filteredProducts = [];
       this.searchChange.emit('');
-      this.searchStateService.clearSearch();
+      this.searchService.clearSearch();
       return;
     }
 
@@ -122,21 +122,21 @@ export class SearchComponent implements OnInit, OnDestroy {
       this.showResults = false;
       this.filteredProducts = [];
       this.searchChange.emit(searchTerm);
-      this.searchStateService.setIsSearching(false);
-      return this.productService.searchProducts('');
+      this.searchService.setIsSearching(false);
+      return this.productDataService.searchProducts('');
     }
 
     this.showResults = true;
 
-    return this.productService.searchProducts(searchTerm).pipe(
+    return this.productDataService.searchProducts(searchTerm).pipe(
       tap(products => {
         this.searchChange.emit(searchTerm);
       }),
       catchError(error => {
         console.error('Erro ao buscar produtos:', error);
         this.searchChange.emit(searchTerm);
-        this.searchStateService.setIsSearching(false);
-        return this.productService.searchProducts('');
+        this.searchService.setIsSearching(false);
+        return this.productDataService.searchProducts('');
       })
     );
   }
@@ -160,7 +160,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.hasSearched = false;
     this.filteredProducts = [];
     this.searchChange.emit('');
-    this.searchStateService.clearSearch();
+    this.searchService.clearSearch();
     this.searchInput.nativeElement.focus();
     this.notificationService.showInfo('Busca limpa 🔍');
   }

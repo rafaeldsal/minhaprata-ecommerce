@@ -1,8 +1,9 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
-import { UserRole } from '../models/user';
 import { map, take } from 'rxjs';
+
+import { AuthService } from '../services/auth/auth.service';
+import { UserRole } from '../models/user/user.model';
 
 export const roleGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
@@ -13,22 +14,27 @@ export const roleGuard: CanActivateFn = (route, state) => {
   return authService.authState$.pipe(
     take(1),
     map((authState) => {
-      const user = authState.user;
-
-      if (!authState.isAuthenticated || !user) {
-        return router.createUrlTree(
-          ['/login'],
-          { queryParams: { returnUrl: state.url } }
-        );
+      // Verifica autenticação
+      if (!authState.isAuthenticated || !authState.user) {
+        return router.createUrlTree(['/auth/login'], {
+          queryParams: { returnUrl: state.url }
+        });
       }
 
-      const hasRequiredRole = allowedRoles.includes(user.role as UserRole);
-
-      if (!hasRequiredRole) {
-        return router.createUrlTree(['/access-denied']);
+      // Verifica se há roles requeridas
+      if (!allowedRoles || allowedRoles.length === 0) {
+        return true;
       }
 
-      return true;
+      // Verifica se o usuário tem uma das roles permitidas
+      const hasRequiredRole = allowedRoles.includes(authState.user.role);
+
+      if (hasRequiredRole) {
+        return true;
+      }
+
+      // Acesso negado - redireciona para página de acesso negado
+      return router.createUrlTree(['/access-denied']);
     })
   );
 };

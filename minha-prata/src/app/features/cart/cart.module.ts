@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CartIconComponent } from './components/cart-icon/cart-icon.component';
 import { CartItemComponent } from './components/cart-item/cart-item.component';
 import { CartPageComponent } from './components/cart-page/cart-page.component';
 import { RouterModule } from '@angular/router';

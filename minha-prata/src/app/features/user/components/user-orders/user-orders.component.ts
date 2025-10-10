@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { OrderService } from '../../../../core/services/order/order.service';
-import { UserOrder, OrderStatus, OrdersResponse } from '../../../../core/models/order.types';
-import { NotificationService } from 'src/app/core/services/notification.service';
+import { UserOrder, OrderStatus, OrdersResponse } from '../../../../core/models';
+import { NotificationService } from '../../../../core/services/shared/notification.service';
+import { OrderDataService } from 'src/app/core/services/data/order-data.service';
 
 @Component({
   selector: 'app-user-orders',
@@ -31,7 +31,7 @@ export class UserOrdersComponent implements OnInit {
   ];
 
   constructor(
-    private orderService: OrderService,
+    private orderDataService: OrderDataService,
     private notificationService: NotificationService
   ) { }
 
@@ -44,7 +44,7 @@ export class UserOrdersComponent implements OnInit {
     this.error = '';
 
     // Passe o statusFilter diretamente (já inclui 'all')
-    this.orderService.getOrders(this.currentPage, this.itemsPerPage, this.statusFilter)
+    this.orderDataService.getOrders(this.currentPage, this.itemsPerPage, this.statusFilter)
       .subscribe({
         next: (response) => {
           this.orders = response.orders;
@@ -73,7 +73,7 @@ export class UserOrdersComponent implements OnInit {
   }
 
   onReorder(orderId: string): void {
-    this.orderService.reorder(orderId).subscribe({
+    this.orderDataService.reorder(orderId).subscribe({
       next: (success) => {
         if (success) {
           this.notificationService.showSuccess('Produtos adicionados ao carrinho com sucesso!');

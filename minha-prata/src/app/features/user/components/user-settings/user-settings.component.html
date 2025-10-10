@@ -1,1 +1,34 @@
-<p>user-settings works!</p>
+<!-- src/app/features/user/components/user-settings/user-settings.component.html -->
+<div class="user-settings">
+  <div class="user-settings__header">
+    <h1 class="user-settings__title">Configurações</h1>
+    <p class="user-settings__subtitle">Gerencie suas preferências e configurações de conta</p>
+  </div>
+
+  <div class="user-settings__layout">
+    <nav class="user-settings__nav">
+      <button *ngFor="let tab of tabs" class="user-settings__nav-item"
+        [class.user-settings__nav-item--active]="activeTab() === tab.id"
+        [class.user-settings__nav-item--danger]="tab.id === 'danger'" (click)="setActiveTab(tab.id)">
+        <span class="user-settings__nav-icon">{{tab.icon}}</span>
+        {{tab.label}}
+      </button>
+    </nav>
+
+    <main class="user-settings__content">
+      <div [ngSwitch]="activeTab()">
+        <app-settings-account *ngSwitchCase="'account'" [settings]="settings()">
+        </app-settings-account>
+
+        <app-settings-privacy *ngSwitchCase="'privacy'" [settings]="settings()">
+        </app-settings-privacy>
+
+        <app-settings-notifications *ngSwitchCase="'notifications'" [settings]="settings()">
+        </app-settings-notifications>
+
+        <app-settings-devices *ngSwitchCase="'devices'"></app-settings-devices>
+        <app-settings-danger-zone *ngSwitchCase="'danger'"></app-settings-danger-zone>
+      </div>
+    </main>
+  </div>
+</div>

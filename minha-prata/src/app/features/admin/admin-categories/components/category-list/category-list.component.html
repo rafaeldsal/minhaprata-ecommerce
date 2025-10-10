@@ -1,0 +1,256 @@
+<div class="categories-admin">
+  <!-- Header -->
+  <header class="categories-header">
+    <div class="header-content">
+      <h1 class="page-title">Gerenciar Categorias</h1>
+      <p class="page-subtitle">Organize as categorias e subcategorias da sua loja</p>
+    </div>
+
+    <div class="header-actions">
+      <button mat-raised-button color="primary" (click)="openCreateModal()">
+        <mat-icon>add</mat-icon>
+        Nova Categoria
+      </button>
+    </div>
+  </header>
+
+  <!-- Filters -->
+  <section class="categories-filters">
+    <div class="filters-grid">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Buscar categorias</mat-label>
+        <input matInput placeholder="Digite para buscar por nome, descrição ou slug..."
+          [formControl]="filtersForm.controls.search">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Status</mat-label>
+        <mat-select [formControl]="filtersForm.controls.status">
+          <mat-option *ngFor="let option of statusOptions" [value]="option.value">
+            {{ option.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Categoria pai</mat-label>
+        <mat-select [formControl]="filtersForm.controls.parent">
+          <mat-option *ngFor="let option of parentOptions" [value]="option.value">
+            {{ option.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="filter-actions">
+        <button mat-stroked-button (click)="clearFilters()" [disabled]="!filtersForm.dirty">
+          <mat-icon>clear_all</mat-icon>
+          Limpar Filtros
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Toolbar -->
+  <section class="categories-toolbar" *ngIf="categories.length > 0">
+    <div class="toolbar-left">
+      <mat-checkbox [checked]="isAllSelected()" (change)="toggleSelectAll()" color="primary"
+        [indeterminate]="hasSelectedCategories() && !isAllSelected()">
+        Selecionar todos
+      </mat-checkbox>
+
+      <span *ngIf="hasSelectedCategories()" class="selected-count mat-body-2">
+        {{ getSelectedCount() }} {{ getSelectedCount() === 1 ? 'categoria selecionada' : 'categorias selecionadas' }}
+      </span>
+    </div>
+
+    <div class="toolbar-right">
+      <div class="view-controls">
+        <button mat-stroked-button (click)="toggleViewMode()" [class.active]="viewMode === 'list'" disabled>
+          <mat-icon>{{ viewMode === 'list' ? 'view_list' : 'account_tree' }}</mat-icon>
+          {{ viewMode === 'list' ? 'Vista em Lista' : 'Vista em Árvore' }}
+          <small>(em breve)</small>
+        </button>
+      </div>
+
+      <button mat-icon-button (click)="refreshCategories()" matTooltip="Atualizar lista"
+        [disabled]="(state$ | async)?.loading">
+        <mat-icon [class.spin]="(state$ | async)?.loading">refresh</mat-icon>
+      </button>
+    </div>
+  </section>
+
+  <!-- Content Area -->
+  <section class="categories-content">
+    <!-- Loading State -->
+    <div *ngIf="(state$ | async)?.loading" class="loading-state">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p class="mat-body-1">Carregando categorias...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!((state$ | async)?.loading) && categories.length === 0" class="empty-state">
+      <div class="empty-icon">
+        <mat-icon>folder_open</mat-icon>
+      </div>
+      <h3 class="empty-title mat-headline-6">Nenhuma categoria encontrada</h3>
+      <p class="empty-description mat-body-1">
+        Comece criando sua primeira categoria
+      </p>
+      <button mat-raised-button color="primary" (click)="openCreateModal()">
+        <mat-icon>add</mat-icon>
+        Criar Primeira Categoria
+      </button>
+    </div>
+
+    <!-- No Results State -->
+    <div *ngIf="!((state$ | async)?.loading) && categories.length > 0 && getFilteredCategories().length === 0"
+      class="empty-state">
+      <div class="empty-icon">
+        <mat-icon>search_off</mat-icon>
+      </div>
+      <h3 class="empty-title mat-headline-6">Nenhum resultado encontrado</h3>
+      <p class="empty-description mat-body-1">
+        Não encontramos categorias com os filtros aplicados. Tente ajustar sua busca.
+      </p>
+      <button mat-stroked-button (click)="clearFilters()">
+        <mat-icon>clear_all</mat-icon>
+        Limpar Filtros
+      </button>
+    </div>
+
+    <!-- Categories Content -->
+    <div *ngIf="!((state$ | async)?.loading) && getFilteredCategories().length > 0" class="categories-list-container">
+      <!-- Tree View (Temporariamente desativado) -->
+      <!-- <app-category-tree
+        *ngIf="viewMode === 'tree'"
+        [categories]="getFilteredCategories()"
+        [selectedCategories]="(state$ | async)?.selectedCategories || []"
+        (selectionChange)="toggleCategorySelection($event)"
+        (edit)="openEditModal($event)"
+        (delete)="deleteCategory($event)"
+        class="category-tree-view"
+      >
+      </app-category-tree> -->
+
+      <!-- Grid/List View -->
+      <div class="categories-grid-view">
+        <div class="results-info mat-caption">
+          Mostrando {{ getFilteredCategories().length }} de {{ categories.length }} categorias
+        </div>
+
+        <div class="categories-grid">
+          <mat-card *ngFor="let category of getFilteredCategories(); trackBy: trackByCategoryId" class="category-card"
+            [class.category-card--selected]="(state$ | async)?.selectedCategories?.includes(category.id)"
+            [class.category-card--has-children]="category.children && category.children.length > 0">
+            <!-- Card Header -->
+            <mat-card-header class="category-card-header">
+              <mat-checkbox class="category-checkbox"
+                [checked]="(state$ | async)?.selectedCategories?.includes(category.id)"
+                (change)="toggleCategorySelection(category.id)" color="primary" (click)="$event.stopPropagation()">
+              </mat-checkbox>
+
+              <div mat-card-avatar class="category-avatar">
+                <mat-icon [color]="category.isActive ? 'primary' : 'warn'">
+                  {{ getCategoryIcon(category) }}
+                </mat-icon>
+              </div>
+
+              <mat-card-title class="category-name">
+                {{ category.name }}
+                <mat-icon *ngIf="category.children && category.children.length > 0" class="children-indicator"
+                  matTooltip="{{ category.children.length }} subcategorias">
+                  account_tree
+                </mat-icon>
+              </mat-card-title>
+
+              <mat-card-subtitle class="category-description">
+                {{ category.description }}
+              </mat-card-subtitle>
+            </mat-card-header>
+
+            <!-- Card Content -->
+            <mat-card-content class="category-card-content">
+              <div class="category-meta">
+                <div class="meta-item">
+                  <mat-icon class="meta-icon">link</mat-icon>
+                  <span class="meta-text">/{{ category.slug }}</span>
+                </div>
+
+                <div class="meta-item">
+                  <mat-icon class="meta-icon">inventory_2</mat-icon>
+                  <span class="meta-text">{{ category.productCount || 0 }} produtos</span>
+                </div>
+
+                <div class="meta-item" *ngIf="category.children && category.children.length > 0">
+                  <mat-icon class="meta-icon">folder</mat-icon>
+                  <span class="meta-text">{{ category.children.length }} subcategorias</span>
+                </div>
+              </div>
+            </mat-card-content>
+
+            <!-- Card Actions -->
+            <mat-card-actions align="end" class="category-card-actions">
+              <div class="status-section">
+                <mat-chip [color]="category.isActive ? 'primary' : 'warn'" class="status-chip">
+                  <mat-icon class="chip-icon">
+                    {{ category.isActive ? 'check_circle' : 'cancel' }}
+                  </mat-icon>
+                  {{ category.isActive ? 'Ativa' : 'Inativa' }}
+                </mat-chip>
+
+                <span class="order-badge" matTooltip="Ordem de exibição">
+                  #{{ category.order }}
+                </span>
+              </div>
+
+              <div class="actions-section">
+                <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="Ações da categoria"
+                  (click)="$event.stopPropagation()">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+
+                <mat-menu #menu="matMenu" class="category-menu">
+                  <button mat-menu-item (click)="openEditModal(category.id)">
+                    <mat-icon color="primary">edit</mat-icon>
+                    <span>Editar Categoria</span>
+                  </button>
+
+                  <button mat-menu-item (click)="deleteCategory(category.id)" class="delete-action">
+                    <mat-icon color="warn">delete</mat-icon>
+                    <span>Excluir Categoria</span>
+                  </button>
+
+                  <!-- Temporariamente removido até implementar -->
+                  <!-- <mat-divider></mat-divider> -->
+
+                  <button mat-menu-item [disabled]="!category.isActive"
+                    matTooltip="{{ category.isActive ? 'Desativar categoria' : 'Categoria já está inativa' }}">
+                    <mat-icon>toggle_off</mat-icon>
+                    <span>Desativar</span>
+                  </button>
+
+                  <button mat-menu-item [disabled]="category.isActive"
+                    matTooltip="{{ category.isActive ? 'Categoria já está ativa' : 'Ativar categoria' }}">
+                    <mat-icon>toggle_on</mat-icon>
+                    <span>Ativar</span>
+                  </button>
+                </mat-menu>
+              </div>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bulk Actions Panel (Temporariamente desativado) -->
+  <!-- <app-category-bulk-actions
+    *ngIf="hasSelectedCategories()"
+    [selectedCount]="getSelectedCount()"
+    (bulkAction)="onBulkAction($event)"
+    (clearSelection)="categoryServiceAccessor.clearSelection()"
+    class="bulk-actions-panel"
+  >
+  </app-category-bulk-actions> -->
+</div>
